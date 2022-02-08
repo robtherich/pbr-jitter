@@ -1,0 +1,146 @@
+<jittershader name="default">
+	<description>Default Slab </description>
+	<param name="env" type="int" default="0" />
+	<param name="MVP" type="mat4" state="MODELVIEW_PROJECTION_MATRIX" />
+	<param name="textureMatrix0" type="mat4" state="TEXTURE0_MATRIX" />
+	<param name="pos" type="vec3" state="POSITION" />
+	<param name="uv" type="vec2" state="TEXCOORD" />
+	<param name="rou" type="float" default="0.0" />
+	<language name="glsl" version="1.5">
+		<bind param="env" program="fp" />
+		<bind param="MVP" program="vp" />
+		<bind param="textureMatrix0" program="vp" />
+		<bind param="pos" program="vp" />
+		<bind param="uv" program="vp" />
+		<bind param="rou" program="fp" />
+		<program name="vp" type="vertex"  >
+	<![CDATA[
+	#version 330 core
+	
+	in vec3 pos;
+	in vec2 uv;
+	out jit_PerVertex {
+		smooth vec2 uv;
+	} jit_out;
+	uniform mat4 MVP;
+	uniform mat4 textureMatrix0;
+	
+	void main(void) {
+		gl_Position = MVP*vec4(pos, 1.);
+		jit_out.uv = vec2(uv.x, 1. - uv.y);
+
+	}
+]]>
+</program>		
+<program name="fp" type="fragment"  >
+<![CDATA[
+#version 330 core
+#define PI 3.14159265359
+#define TWOPI 6.28318531
+
+	
+in jit_PerVertex {
+	smooth vec2 uv;
+} jit_in;
+layout (location = 0) out vec4 col;
+	
+uniform sampler2D env;
+uniform float rou;
+
+float VanDerCorput(uint n, uint base)
+{
+    float invBase = 1.0 / float(base);
+    float denom   = 1.0;
+    float result  = 0.0;
+
+    for(uint i = 0u; i < 32u; ++i)
+    {
+        if(n > 0u)
+        {
+            denom   = mod(float(n), 2.0);
+            result += denom * invBase;
+            invBase = invBase * 0.5;
+            n       = uint(float(n) *0.5);
+        }
+    }
+
+    return result;
+}
+// ----------------------------------------------------------------------------
+vec2 HammersleyNoBitOps(uint i, uint N)
+{
+    return vec2(float(i)/float(N), VanDerCorput(i, 2u));
+}
+vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float rou)
+{
+    float a = rou*rou;
+	
+    float phi = TWOPI * Xi.x;
+    float cosTheta = sqrt((1.0 - Xi.y) / (1.0 + (a*a - 1.0) * Xi.y));
+    float sinTheta = sqrt(1.0 - cosTheta*cosTheta);
+	
+    // from spherical coordinates to cartesian coordinates
+    vec3 H;
+    H.x = cos(phi) * sinTheta;
+    H.y = sin(phi) * sinTheta;
+    H.z = cosTheta;
+	
+    // from tangent-space vector to world-space sample vector
+    vec3 up        = abs(N.z) < 0.999 ? vec3(0.0, 0.0, 1.0) : vec3(1.0, 0.0, 0.0);
+    vec3 tangent   = normalize(cross(up, N));
+    vec3 bitangent = cross(N, tangent);
+	
+    vec3 sampleVec = tangent * H.x + bitangent * H.y + N * H.z;
+    return normalize(sampleVec);
+}  
+vec2 dir2uv(vec3 v)
+{
+    vec2 uv = vec2(atan(v.z, v.x), asin(v.y));
+    uv *= vec2(-0.1591, 0.3183); //to invert atan
+    uv += 0.5;
+    uv.y = 1. - uv.y;
+    return uv;
+}
+vec3 uv2dir(vec2 uv){
+
+	float 	phi  	= (1. - uv.x - 0.5) * TWOPI;
+	float 	theta 	= (1. - uv.y) * PI;
+
+	float 	sintheta	= sin(theta);
+	float 	x 			= cos(phi)*sintheta;
+	float 	y 			= cos(theta) ;
+	float 	z 			= sin(phi)*sintheta; 
+	return 				vec3(x, y, z);
+
+}
+void main(void) {
+
+
+    vec3 N = uv2dir(jit_in.uv);    
+    vec3 R = N;
+    vec3 V = R;
+
+    const uint SAMPLE_COUNT = 1024u;
+    float totalWeight = 0.0;   
+    vec3 prefilteredColor = vec3(0.0);     
+    for(uint i = 0u; i < SAMPLE_COUNT; ++i)
+    {
+        vec2 Xi = HammersleyNoBitOps(i, SAMPLE_COUNT);
+        vec3 H  = ImportanceSampleGGX(Xi, N, rou);
+        vec3 L  = normalize(2.0 * dot(V, H) * H - V);
+
+        float NdotL = max(dot(N, L), 0.0);
+        if(NdotL > 0.0)
+        {
+            prefilteredColor += texture(env, dir2uv(L)).rgb * NdotL;
+            totalWeight      += NdotL;
+        }
+    }
+    prefilteredColor /= totalWeight;
+
+    col = vec4(prefilteredColor, 1.0);
+}
+]]>
+</program>
+</language>
+</jittershader>
