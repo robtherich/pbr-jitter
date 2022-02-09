@@ -18,6 +18,8 @@ var gSpriteSize = [100, 100];
 var gBPSize = [gSpriteSize[0]+28,300];
 
 var gMaxObjSize = gBPSize.slice();
+var gJustChanged = -1;
+var gPrevChanged = -2;
 
 
 // PUBLIC FUNCTIONS ---------------------
@@ -34,6 +36,8 @@ function reset()
     {
         gSpritesArray[sprite].ParseTextureType();
     }
+    gPrevChanged = -2;
+    gJustChanged = -1;
     outlet(0, "SetShapeTextures");
 }
 
@@ -65,8 +69,6 @@ function load_folder(path)
     outlet(0, "SetShapeTextures");
 }
 
-// PRIVATE FUNCTIONS ---------------------
-
 // CALLED BY PATCHER
 function ResizeBPatcher(newSizeX, newSizeY)
 {   
@@ -88,6 +90,33 @@ function ResizeBPatcher(newSizeX, newSizeY)
 }
 
 //--------------------------
+
+// PRIVATE FUNCTIONS ---------------------
+function SetUniqueTexType(texType, index)
+{   
+    gJustChanged = index;
+    print("just changed "+gJustChanged)
+    print("prev changed "+gPrevChanged)
+    if (gJustChanged != gPrevChanged)
+    {
+        for (var sprite in gSpritesArray)
+        {
+            var spr = gSpritesArray[sprite];
+            print("spr texture tyoe "+spr.textureType)
+            if (spr.textureType == texType && spr.index != index)
+            {   
+                print("tex index "+spr.index + " __ incoming index "+index)
+                spr.SetTypeToUndefined();
+                gPrevChanged = spr.index;
+                break;
+            }
+        }
+    }
+    else 
+    {
+        gPrevChanged = -1;
+    }
+}
 
 function GetMaxObjects()
 {

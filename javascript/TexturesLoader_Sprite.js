@@ -11,6 +11,7 @@ function Sprite(index, patcher, position, spriteSize, filename)
     this.textureType = "Undefined";
 
     this.menuYSize = 22;
+    this.justGotChanged = false;
 
     // MATRIX //
     this.matrix = new JitterMatrix();
@@ -49,17 +50,17 @@ function Sprite(index, patcher, position, spriteSize, filename)
             gGlobal.textureNames.tex_roughness = this.texture.name;
             this.textureType = "tex_roughness";
         }
-        else if (/AO|ao|occ/.test(this.filename)) 
+        else if (/AO|ao|occ|Occ/.test(this.filename)) 
         {
             gGlobal.textureNames.tex_ao = this.texture.name;
             this.textureType = "tex_ao";
         }
-        else if (/ENV|env/.test(this.filename)) 
+        else if (/ENV|env|Env/.test(this.filename)) 
         {
             gGlobal.textureNames.tex_environment = this.texture.name;
             this.textureType = "tex_environment";
         }
-        else if (/disp|height|hei/.test(this.filename)) 
+        else if (/disp|Hei|hei/.test(this.filename)) 
         {
             gGlobal.textureNames.tex_height = this.texture.name;
             this.textureType = "tex_height";
@@ -73,7 +74,7 @@ function Sprite(index, patcher, position, spriteSize, filename)
         {
             this.textureType = "Undefined";
         }
-        this.umenu.set(this.textureType);
+        this.umenu.setsymbol(this.textureType);
     }
     
     // UMENU //
@@ -90,11 +91,16 @@ function Sprite(index, patcher, position, spriteSize, filename)
 
     this.ParseTextureType();
 
-    var UmenuCallbback = (function(data) { 
+    var UmenuCallbback = (function(data) 
+    { 
         var items = Object.keys(gGlobal.textureNames);
         this.textureType = items[Math.max(data.value-1, 0)];
         gGlobal.textureNames[this.textureType] = this.texture.name;
+        
+        print("CALLBACK FROM "+this.index, this.textureType)
+        SetUniqueTexType(this.textureType, this.index);
         outlet(0, "SetShapeTextures");
+        
     }).bind(this); 
 
     this.umenuListener = new MaxobjListener(this.umenu, UmenuCallbback);
@@ -126,6 +132,13 @@ function Sprite(index, patcher, position, spriteSize, filename)
     this.buttonListener = new MaxobjListener(this.button, ButtonCallback);
 
     // FUNCTIONS //
+    this.SetTypeToUndefined = function()
+    {
+        this.textureType = "Undefined";
+        this.umenu.setsymbol(this.textureType);
+        print("set type "+this.index + " " +this.textureType)
+    }
+
     this.Resize = function(position, size)
     {
         this.size = size.slice();
