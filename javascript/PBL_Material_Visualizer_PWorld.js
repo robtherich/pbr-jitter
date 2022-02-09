@@ -48,6 +48,7 @@ function PWorld(patcher)
         this.material.specular_texture(this.textureEmpty.name);
         this.material.normals_texture(this.textureEmpty.name);
         this.material.heightmap_texture(this.textureEmpty.name);
+        this.material.glossmap_texture(this.textureEmpty.name);
     }
 
     this.SetMatToEmpty();
@@ -68,6 +69,7 @@ function PWorld(patcher)
         this.material.specular_texture(gGlobal.textureNames.tex_specular);
         this.material.normals_texture(gGlobal.textureNames.tex_normals);
         this.material.heightmap_texture(gGlobal.textureNames.tex_height);
+        this.material.glossmap_texture(gGlobal.textureNames.tex_rough);
         // this.material.emission_texture(gGlobal.tex_emission);
     }
 

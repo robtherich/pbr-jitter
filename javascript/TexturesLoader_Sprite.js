@@ -34,39 +34,37 @@ function Sprite(index, patcher, position, spriteSize, filename)
     this.texture.jit_matrix(this.matrix.name);
 
     this.ParseTextureType = function()
-    {
-        if (this.filename.indexOf("diff") >= 0 || this.filename.indexOf("col") >= 0) 
-        {
+    {   
+        if (/diff|col|alb/.test(this.filename)) {
             gGlobal.textureNames.tex_diffuse = this.texture.name;
             this.textureType = "tex_diffuse";
         }
-        else if (this.filename.indexOf("AO") >= 0) 
+        else if (/AO|ao|occ/.test(this.filename)) 
         {
             gGlobal.textureNames.tex_ao = this.texture.name;
             this.textureType = "tex_ao";
         }
-        else if (this.filename.indexOf("bump") >= 0 || this.filename.indexOf("BUMP") >= 0) 
+        else if (/bump|BUMP/.test(this.filename)) 
         {
             gGlobal.textureNames.tex_bump = this.texture.name;
             this.textureType = "tex_bump";
         }
-        else if (this.filename.indexOf("disp") >= 0 || this.filename.indexOf("DISP") >= 0 || this.filename.indexOf("height") >= 0 || 
-                 this.filename.indexOf("Height") >= 0) 
+        else if (/disp|height|hei/.test(this.filename)) 
         {
             gGlobal.textureNames.tex_height = this.texture.name;
             this.textureType = "tex_height";
         }
-        else if (this.filename.indexOf("NOR") >= 0 || this.filename.indexOf("nor") >= 0) 
+        else if (/NOR|nor/.test(this.filename)) 
         {
             gGlobal.textureNames.tex_normals = this.texture.name;
             this.textureType = "tex_normals";
         }
-        else if (this.filename.indexOf("spec") >= 0 || this.filename.indexOf("SPEC") >= 0) 
+        else if (/SPEC|spec|met/.test(this.filename)) 
         {
             gGlobal.textureNames.tex_specular = this.texture.name;
             this.textureType = "tex_specular";
         }
-        else if (this.filename.indexOf("rough") >= 0 || this.filename.indexOf("ROUGH") >= 0) 
+        else if (/rough|ROUGH|rou/.test(this.filename)) 
         {
             gGlobal.textureNames.tex_rough = this.texture.name;
             this.textureType = "tex_rough";
@@ -88,6 +86,15 @@ function Sprite(index, patcher, position, spriteSize, filename)
     }
 
     this.umenu.set(this.textureType);
+
+    var UmenuCallbback = (function(data) { 
+        var items = Object.keys(gGlobal.textureNames);
+        print(items[Math.max(data.value-1, 0)]);
+        // this.outlet.message("list", data.maxobject.filename);  
+        
+    }).bind(this); 
+
+    this.umenuListener = new MaxobjListener(this.umenu, UmenuCallbback);
 
     // PANEL //
     this.borderPanel = this.p.newdefault(this.position[0], this.position[1], "panel");
@@ -111,10 +118,11 @@ function Sprite(index, patcher, position, spriteSize, filename)
     var ButtonCallback = (function(data) { 
         // this.outlet.message("list", data.maxobject.filename);  
         outlet(0, "jit_gl_texture", this.texture.name);     
-        }).bind(this); 
+    }).bind(this); 
 
     this.buttonListener = new MaxobjListener(this.button, ButtonCallback);
 
+    // FUNCTIONS //
     this.Resize = function(position, size)
     {
         this.size = size.slice();

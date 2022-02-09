@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 379.0, 189.0, 1132.0, 743.0 ],
+		"rect" : [ 369.0, 165.0, 1132.0, 743.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -81,7 +81,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "jit_matrix", "" ],
-					"patching_rect" : [ 38.0, 579.0, 80.0, 60.0 ],
+					"patching_rect" : [ 38.0, 619.0, 80.0, 60.0 ],
 					"sync" : 1
 				}
 
@@ -93,8 +93,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 101.0, 697.0, 626.0, 22.0 ],
-					"text" : "jit_gl_texture D:/MyData/MyFiles/Assets/Textures/PBL/mahogfloor/mahogfloor_Height.png1095"
+					"patching_rect" : [ 106.0, 722.0, 626.0, 22.0 ],
+					"text" : "jit_gl_texture D:/MyData/MyFiles/Assets/Textures/PBL/bog/08_hei.png1016"
 				}
 
 			}
@@ -152,7 +152,7 @@
 					"numoutlets" : 1,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 38.0, 106.0, 444.0, 424.0 ],
+					"patching_rect" : [ 38.0, 106.0, 571.0, 403.0 ],
 					"varname" : "pbl_bpatcher",
 					"viewvisibility" : 1
 				}
@@ -260,25 +260,29 @@
  ],
 		"dependency_cache" : [ 			{
 				"name" : "PBL_Material_Visualizer.js",
-				"bootpath" : "~/Documents/Max 8/Packages/PBR_Utility/javascript",
+				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/javascript",
+				"patcherrelativepath" : "../javascript",
 				"type" : "TEXT",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "TexturesLoader.js",
-				"bootpath" : "~/Documents/Max 8/Packages/PBR_Utility/javascript",
+				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/javascript",
+				"patcherrelativepath" : "../javascript",
 				"type" : "TEXT",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "pbl.material.visualizer.maxpat",
-				"bootpath" : "~/Documents/Max 8/Packages/PBR_Utility/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/patchers",
+				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "pbl.textures.loader.maxpat",
-				"bootpath" : "~/Documents/Max 8/Packages/PBR_Utility/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/patchers",
+				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}

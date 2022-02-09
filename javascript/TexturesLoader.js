@@ -43,7 +43,6 @@ function load_folder(path)
         if (gFolder.filename.length > 0)
         {
             gFileNamesArr.push(path+gFolder.filename);
-
             gSpritesArray.push(new Sprite(index, this.patcher, position, gSpriteSize, path+gFolder.filename));
             position[1] += gSpriteSize[1]+gSpriteOffset;
             index++;
