@@ -21,21 +21,33 @@ function PWorld(patcher)
     this.material = new JitterObject("jit.gl.material");
     this.material.mat_ambient = [0.3,0.3,0.3,1];
     this.material.mat_diffuse = [1,1,1,1];
-    this.material.mat_specular = [0.2,0.2,0.2,1];
+    this.material.mat_specular = [0.3,0.3,0.3,1];
 
     this.gridshape.material = this.material.name;   
 
     // GLOBAL TEXTURE NAMES //
     gGlobal.textureNames = 
     {
-        tex_diffuse: this.textureEmpty.name,
+        tex_albedo: this.textureEmpty.name,
         tex_normals: this.textureEmpty.name,
-        tex_specular: this.textureEmpty.name,
-        tex_height: this.textureEmpty.name,
-        tex_rough: this.textureEmpty.name,
+        tex_roughness: this.textureEmpty.name,
+        tex_metallic: this.textureEmpty.name,
         tex_ao: this.textureEmpty.name,
-        tex_bump: this.textureEmpty.name
+        tex_height: this.textureEmpty.name,
+        tex_environment: this.textureEmpty.name
     };
+
+    this.SetShapeTextures = function()
+    {   
+        this.SetMatToEmpty();
+        
+        this.material.diffuse_texture(gGlobal.textureNames.tex_albedo);
+        this.material.normals_texture(gGlobal.textureNames.tex_normals);
+        this.material.glossmap_texture(gGlobal.textureNames.tex_roughness);
+        this.material.specular_texture(gGlobal.textureNames.tex_metallic);
+        this.material.heightmap_texture(gGlobal.textureNames.tex_height);
+        this.material.environment_texture(gGlobal.textureNames.tex_environment);
+    }
 
     this.Reset = function()
     {
@@ -59,18 +71,6 @@ function PWorld(patcher)
         this.light.drawto = this.name;
         this.gridshape.drawto = this.name;
         this.material.drawto = this.name;
-    }
-
-    this.SetShapeTextures = function()
-    {   
-        this.SetMatToEmpty();
-    
-        this.material.diffuse_texture(gGlobal.textureNames.tex_diffuse);
-        this.material.specular_texture(gGlobal.textureNames.tex_specular);
-        this.material.normals_texture(gGlobal.textureNames.tex_normals);
-        this.material.heightmap_texture(gGlobal.textureNames.tex_height);
-        this.material.glossmap_texture(gGlobal.textureNames.tex_rough);
-        // this.material.emission_texture(gGlobal.tex_emission);
     }
 
     this.ResizePWorld = function(position, size)

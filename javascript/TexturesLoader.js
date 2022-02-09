@@ -28,6 +28,15 @@ function clear()
     ResizeBPatcher(gBPSize[0], gBPSize[1]);
 }
 
+function reset()
+{
+    for (var sprite in gSpritesArray)
+    {
+        gSpritesArray[sprite].ParseTextureType();
+    }
+    outlet(0, "SetShapeTextures");
+}
+
 function load_folder(path)
 {   
     Destroy();

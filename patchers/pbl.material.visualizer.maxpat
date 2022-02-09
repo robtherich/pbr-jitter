@@ -98,7 +98,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 470.0, 649.0, 146.0, 22.0 ],
+					"patching_rect" : [ 470.0, 619.0, 146.0, 22.0 ],
 					"text" : "prepend GetPWorldName"
 				}
 
@@ -141,7 +141,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "jit_matrix", "" ],
-					"patching_rect" : [ 128.0, 0.0, 318.0, 353.0 ],
+					"patching_rect" : [ 128.0, 0.0, 312.0, 414.0 ],
 					"sync" : 1,
 					"varname" : "pbl_vis_pworld"
 				}
@@ -178,11 +178,11 @@
 					"hidden" : 1,
 					"id" : "obj-4",
 					"maxclass" : "newobj",
-					"numinlets" : 2,
-					"numoutlets" : 2,
-					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 645.0, 535.0, 91.0, 22.0 ],
-					"text" : "routepass clear"
+					"numinlets" : 3,
+					"numoutlets" : 3,
+					"outlettype" : [ "", "", "" ],
+					"patching_rect" : [ 645.0, 535.0, 121.0, 22.0 ],
+					"text" : "routepass clear reset"
 				}
 
 			}
@@ -234,7 +234,7 @@
 					"numoutlets" : 1,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 0.0, 0.0, 128.0, 353.0 ],
+					"patching_rect" : [ 0.0, 0.0, 128.0, 414.0 ],
 					"varname" : "pbl_textures_loader",
 					"viewvisibility" : 1
 				}
@@ -312,6 +312,14 @@
 					"destination" : [ "obj-4", 0 ],
 					"hidden" : 1,
 					"source" : [ "obj-3", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-1", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-4", 1 ]
 				}
 
 			}
