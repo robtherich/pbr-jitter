@@ -15,6 +15,9 @@
 	<param name="eye" 	type="vec3" state="CAMERA_POSITION" />
 	<param name="far"  	type="float" state="FAR_CLIP" />
 	<param name="near"  type="float" state="NEAR_CLIP" />
+
+	<param name="PBRParameters" state="PBR" />
+
 	//textures
 	<param name="albedoTex" 	type="int" default="0" />
 	<param name="normalTex" 	type="int" default="1" />
@@ -27,7 +30,6 @@
 
 
     <param name="useTextures"  	type="float"  	default="1." />
-	<param name="albedo"  		type="vec3" 	default="1. 1. 1." />
 	<param name="roughness"  	type="float" 	default="0.3" />
 	<param name="metalness"  	type="float" 	default="0.0" />
 
@@ -36,9 +38,9 @@
 	<param name="triplanarUV"   		type="float" default="1." />
 	<param name="triplanarExp"  		type="float" default="12." />
 	<param name="triplanarTexRepeat" 	type="vec2" default="0.5 0.5" />
-	<param name="parallaxMapping"  		type="float" default="0.." />
+	<param name="parallaxMapping"  		type="float" default="0." />
 	<param name="parallaxIterations" 	type="vec2"  default="50. 100." />
-	<param name="selfShadowing"   		type="float" default="0.." />
+	<param name="selfShadowing"   		type="float" default="0." />
 	<param name="shadowAmount"  		type="float" default="300." />
 	<param name="shadowIterations" 		type="vec2"  default="50. 100." />
 	<param name="worldLocked"  			type="float" default="0." />
@@ -59,6 +61,7 @@
 		<bind param="eye" 	program="fp" />
 		<bind param="far"   program="fp" />
 		<bind param="near"  program="fp" />
+		<bind param="PBRParameters"  program="fp" />
 		//textures
 		<bind param="albedoTex" 	program="fp" />
 		<bind param="normalTex" 	program="fp" />
@@ -69,7 +72,6 @@
 		<bind param="integMap"      program="fp" />
 
 		<bind param="useTextures" 	program="fp" />
-		<bind param="albedo" 		program="fp" />
 		<bind param="roughness"		program="fp" />
 		<bind param="metalness" 	program="fp" />
 
@@ -157,7 +159,7 @@ void 	main() {
 
 	//lighting
 	col.rgb = vec3(0.); //initialize the out color 
-/*
+//*
 	{
 		lig.ligPos		= vec3(1., 3., 0.);					//light position
 		lig.ligCol 		= vec3(1.)*9.;
@@ -195,7 +197,7 @@ void 	main() {
 		lig.cutoffOuter = -0.5;
 		col.rgb 		+= getSpotLight(lig, mate, geom);
 	}
-*/
+/*
 	{
 		lig.ligPos 		= vec3(3., 0.5, 0.);
 		lig.ligDir 		= vec3(1., 0., 0.);//vec3(0., 0., -1.);
@@ -225,7 +227,7 @@ void 	main() {
 		lig.twoSided 	= false;
 		col.rgb 		+= getRectLightTextured(lig, mate, geom);
 	}
-
+//*/
 	{
 		col.rgb 		+= getIBL(mate, geom); 
 	}

@@ -10,10 +10,32 @@ uniform sampler2D albedoTex, normalTex, RMOHTex, rectLightTex, integMap, reflect
 uniform samplerCube irradianceTex;//, reflectionTex;
 uniform float heightScale, triplanarUV, triplanarExp, parallaxMapping, selfShadowing, shadowAmount, useTextures, worldLocked;
 uniform vec2 triplanarTexRepeat, parallaxIterations, shadowIterations;
-uniform vec3 albedo;
 uniform float roughness, metalness;
 uniform float near, far;
 uniform mat4 Vmat, Pmat;
+
+struct PBRMaterialParameters {
+	vec4 diffuse;
+	vec4 emission;
+};
+
+struct PBRLightSourceParameters {
+	vec4 diffuse;
+	vec4 position;
+	vec3 direction;
+	float spotExponent;
+	float spotCutoff;
+	float spotCosCutoff;
+	float constantAttenuation;
+	float linearAttenuation;
+	float quadraticAttenuation;
+};
+
+#define NUM_LIGHTS (6)
+layout (std140) uniform PBRParameters {
+	PBRMaterialParameters pbrmtl;
+	PBRLightSourceParameters pbrlight[NUM_LIGHTS];
+};
 
 struct 	material{
 	vec3 	alb;
@@ -250,6 +272,7 @@ void  	fillStructuresFromTextures(inout material mate, inout geometry geom){
 	
 	vec4	RMOH 		= triplanarTexturing ? triplanar(RMOHTex) 			: texture(RMOHTex, geom.uv);	
 			mate.alb 	= triplanarTexturing ? triplanar(albedoTex).rgb 	: texture(albedoTex, geom.uv).rgb;	
+			mate.alb 	= mate.alb * pbrmtl.diffuse.rgb;
 			mate.rou 	= RMOH.r;	//roughness
 			mate.met 	= RMOH.g;	//metallic
 			mate.occ 	= RMOH.b;	//ambient occlusion
@@ -267,11 +290,11 @@ void  	fillStructuresFromUniform(inout material mate, inout geometry geom){
 			geom.pos  	= jit_in.pos;
 			mate.height = 1.;
 	
-			mate.alb 	= albedo;	
+			mate.alb 	= pbrmtl.diffuse.rgb;	
 			mate.rou 	= roughness;	//roughness
 			mate.met 	= metalness;	//metallic
 			mate.occ 	= 1.;	//ambient occlusion
-			mate.F0 	= mix(vec3(0.04), albedo, vec3(metalness)); 			//use alb as F0 if metallic
+			mate.F0 	= mix(vec3(0.04), mate.alb, vec3(metalness)); 			//use alb as F0 if metallic
 
 			geom.V 		= normalize(eye - jit_in.pos);	//view direction
 			geom.tanN 	= vec3(0., 0., 1.);
