@@ -4,12 +4,13 @@
 vec3	getPointLight(in light lig, in material mate, in geometry geom){
 		
 	vec3	ligMinPos 	= lig.ligPos - geom.pos;
-	float	ligDis 		= length(ligMinPos);	
-	vec3	L 			= ligMinPos/ligDis;				//light direction
-	vec3	rad 		= lig.ligCol / (1. + ligDis*ligDis);						//radiance
-	vec3	tanLigDir 	= normalize(jit_in.transTBN * ligMinPos);	//light pos in tangent space
+	float	d 			= length(ligMinPos);	
+	float 	atten 		= 1.0 / (lig.constantAttenuation+lig.linearAttenuation*d+lig.quadraticAttenuation*d*d);
+
+	vec3	L 			= normalize(ligMinPos);				//light direction
+	vec3	rad 		= lig.ligCol * atten;				//radiance
 	bool	compute 	= rad.x+rad.y+rad.z > 0.05;
-	return  compute ? 	( selfShadowing == 1. ? shadow(tanLigDir, geom.tanN, geom.uv, mate.height) : 1.) * 
+	return  compute ? 	( selfShadowing == 1. ? shadow(normalize(jit_in.transTBN * ligMinPos), geom.tanN, geom.uv, mate.height) : 1.) * 
 						getRadiance(geom.V, geom.N, L, rad, geom.pos, mate) :
 						vec3(0.); //get radiance for this light
 }	
@@ -25,11 +26,18 @@ vec3	getDirectionalLight(in light lig, in material mate, in geometry geom){
 //spot light
 vec3  	getSpotLight(in light lig, in material mate, in geometry geom){
 
-	vec3 pointLigDir = normalize(lig.ligPos - geom.pos);
-	float theta = dot(pointLigDir, -lig.ligDir);
-	float epsilon   = lig.cutoffInner - lig.cutoffOuter;
-	float intensity = saturate((theta - lig.cutoffOuter) / epsilon);  
-	return theta < lig.cutoffOuter ? getPointLight(lig, mate, geom)*intensity : vec3(0.);
+	vec3	ligMinPos 	= lig.ligPos - geom.pos;
+	float	d 			= length(ligMinPos);	
+	float 	atten 		= 1.0 / (lig.constantAttenuation+lig.linearAttenuation*d+lig.quadraticAttenuation*d*d);
+
+	vec3	L 			= normalize(ligMinPos);				//light direction
+	float 	spotatten 	= dot(-L, normalize(lig.ligDir));
+	atten 				= spotatten > lig.spotCosCutoff ? atten * pow(spotatten, lig.spotExponent) : 0.;
+	vec3	rad 		= lig.ligCol * atten;						//radiance
+	bool	compute 	= rad.x+rad.y+rad.z > 0.05;
+	return  compute ? 	( selfShadowing == 1. ? shadow(normalize(jit_in.transTBN * ligMinPos), geom.tanN, geom.uv, mate.height) : 1.) * 
+						getRadiance(geom.V, geom.N, L, rad, geom.pos, mate) :
+						vec3(0.); //get radiance for this light
 }
 
 /* ============================= HOW TO USE THE FUNCTIONS =======================================//

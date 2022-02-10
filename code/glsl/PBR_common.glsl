@@ -12,7 +12,7 @@ uniform float heightScale, triplanarUV, triplanarExp, parallaxMapping, selfShado
 uniform vec2 triplanarTexRepeat, parallaxIterations, shadowIterations;
 uniform float roughness, metalness;
 uniform float near, far;
-uniform mat4 Vmat, Pmat;
+uniform mat4 Vmat, Pmat, InvVmat;
 
 struct PBRMaterialParameters {
 	vec4 diffuse;
@@ -24,14 +24,13 @@ struct PBRLightSourceParameters {
 	vec4 position;
 	vec3 direction;
 	float spotExponent;
-	float spotCutoff;
 	float spotCosCutoff;
 	float constantAttenuation;
 	float linearAttenuation;
 	float quadraticAttenuation;
 };
 
-#define NUM_LIGHTS (6)
+#define NUM_LIGHTS (4)
 layout (std140) uniform PBRParameters {
 	PBRMaterialParameters pbrmtl;
 	PBRLightSourceParameters pbrlight[NUM_LIGHTS];
@@ -59,10 +58,14 @@ struct light{
 	vec3  	ligPos;
 	vec3    ligCol;
 	vec3  	ligDir;
-	float  	cutoffInner;
-	float  	cutoffOuter;
+	float  	spotCosCutoff;
+	float  	spotExponent;
 	float 	width, height;
 	bool 	twoSided;
+	float 	constantAttenuation;
+	float 	linearAttenuation;
+	float 	quadraticAttenuation;
+
 };
 
 in jit_PerVertex {
