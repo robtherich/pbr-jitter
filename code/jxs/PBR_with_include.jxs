@@ -15,7 +15,7 @@
 	<param name="eye" 	type="vec3" state="CAMERA_POSITION" />
 	<param name="far"  	type="float" state="FAR_CLIP" />
 	<param name="near"  type="float" state="NEAR_CLIP" />
-	
+
 	<param name="PBRParameters" state="PBR" />
 
 	//textures
@@ -88,10 +88,9 @@
 		<bind param="worldLocked"  			program="fp" />
 
 		//include 
+		<include source="PBR_frag_header.glsl" 	program="fp" />
 		<include source="PBR_common.glsl" 		program="fp" />
 		<include source="PBR_lights.glsl" 		program="fp" />
-		<include source="PBR_IBL.glsl" 			program="fp" />
-		<include source="PBR_rect_light.glsl" 	program="fp" />
 
 		<program name="vp" type="vertex">
 <![CDATA[
@@ -145,6 +144,49 @@ void main() {
 layout(location = 0) out vec4 col;
 layout(location = 1) out vec4 depth;
 layout(location = 2) out vec4 velocity;
+
+//retrieve material parameters
+void  	fillStructuresFromTextures(inout material mate, inout geometry geom){
+
+	bool	triplanarTexturing = triplanarUV == 1.;
+
+			geom.uv 	= jit_in.uv;
+			geom.pos  	= jit_in.pos;
+			mate.height = 1. - (triplanarTexturing ? triplanar(RMOHTex).w : texture(RMOHTex, geom.uv).w);
+
+	if(parallaxMapping == 1.){parallax(mate, geom);}	//texture coordinates
+	
+	vec4	RMOH 		= triplanarTexturing ? triplanar(RMOHTex) 			: texture(RMOHTex, geom.uv);	
+			mate.alb 	= triplanarTexturing ? triplanar(albedoTex).rgb 	: texture(albedoTex, geom.uv).rgb;	
+			mate.alb 	= mate.alb * pbrmtl.diffuse.rgb;
+			mate.rou 	= RMOH.r;	//roughness
+			mate.met 	= RMOH.g;	//metallic
+			mate.occ 	= RMOH.b;	//ambient occlusion
+			mate.F0 	= mix(vec3(0.04), mate.alb, vec3(mate.met)); 						//use alb as F0 if metallic
+
+			geom.V 		= normalize(eye - jit_in.pos);	//view direction
+			geom.tanN 	= normalize((triplanarTexturing ? triplanar(normalTex) : texture(normalTex, geom.uv) ).rgb*2. - 1.);
+			geom.N 		= normalize(jit_in.TBN * geom.tanN);
+			geom.R 		= reflect(geom.V, geom.N);
+			geom.pos    += geom.N * (1. - mate.height) * heightScale;
+}
+void  	fillStructuresFromUniform(inout material mate, inout geometry geom){
+
+			geom.uv 	= jit_in.uv;
+			geom.pos  	= jit_in.pos;
+			mate.height = 1.;
+	
+			mate.alb 	= pbrmtl.diffuse.rgb;	
+			mate.rou 	= roughness;	//roughness
+			mate.met 	= metalness;	//metallic
+			mate.occ 	= 1.;	//ambient occlusion
+			mate.F0 	= mix(vec3(0.04), mate.alb, vec3(metalness)); 			//use alb as F0 if metallic
+
+			geom.V 		= normalize(eye - jit_in.pos);	//view direction
+			geom.tanN 	= vec3(0., 0., 1.);
+			geom.N 		= normalize(jit_in.TBN * geom.tanN);
+			geom.R 		= reflect(geom.V, geom.N);
+}
 
 void 	main() {
 
