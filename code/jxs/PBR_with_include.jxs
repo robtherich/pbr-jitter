@@ -192,9 +192,6 @@ void 	main() {
 
 	material 	mate;
 	geometry 	geom;
-	light 		lig;
-
-	//fill structures
 
 	fillStructuresFromTextures(mate, geom);
 	//fillStructuresFromUniform(mate, geom);
@@ -203,37 +200,16 @@ void 	main() {
 	col.rgb = vec3(0.); //initialize the out color 
 //*
 	{
-		lig.ligPos		= (InvVmat * pbrlight[0].position).xyz;
-		lig.ligCol 		= pbrlight[0].diffuse.rgb;
-		lig.constantAttenuation = pbrlight[0].constantAttenuation;
-		lig.linearAttenuation = pbrlight[0].linearAttenuation;
-		lig.quadraticAttenuation = pbrlight[0].quadraticAttenuation;
-		col.rgb 		+= getPointLight(lig, mate, geom);
+		col.rgb 		+= getPointLight(pbrlight[0], mate, geom);
+	}
+	{		
+		col.rgb 		+= getPointLight(pbrlight[1], mate, geom);
 	}
 	{
-		lig.ligPos		= (InvVmat * pbrlight[1].position).xyz;
-		lig.ligCol 		= pbrlight[1].diffuse.rgb;
-		lig.constantAttenuation = pbrlight[1].constantAttenuation;
-		lig.linearAttenuation = pbrlight[1].linearAttenuation;
-		lig.quadraticAttenuation = pbrlight[1].quadraticAttenuation;		
-		col.rgb 		+= getPointLight(lig, mate, geom);
+		col.rgb 		+= getDirectionalLight(pbrlight[2], mate, geom);
 	}
 	{
-		lig.ligDir 		= normalize((InvVmat * pbrlight[2].position).xyz);		//light direction
-		lig.ligCol 		= pbrlight[2].diffuse.rgb;
-		col.rgb 		+= getDirectionalLight(lig, mate, geom);
-	}
-
-	{
-		lig.ligPos 		= (InvVmat * pbrlight[3].position).xyz;
-		lig.ligDir 		= (InvVmat * vec4(pbrlight[3].direction, 0.)).xyz;
-		lig.ligCol 		= pbrlight[3].diffuse.rgb;
-		lig.constantAttenuation = pbrlight[3].constantAttenuation;
-		lig.linearAttenuation = pbrlight[3].linearAttenuation;
-		lig.quadraticAttenuation = pbrlight[3].quadraticAttenuation;		
-		lig.spotCosCutoff = pbrlight[3].spotCosCutoff;
-		lig.spotExponent = pbrlight[3].spotExponent;
-		col.rgb 		+= getSpotLight(lig, mate, geom);
+		col.rgb 		+= getSpotLight(pbrlight[3], mate, geom);
 	}
 /*/
 	{

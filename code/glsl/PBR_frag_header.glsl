@@ -17,14 +17,14 @@ struct PBRMaterialParameters {
 };
 
 struct PBRLightSourceParameters {
-	vec4 diffuse;
+	vec4 color;
 	vec4 position;
-	vec3 direction;
+	vec3 spotDir;
 	float spotExponent;
 	float spotCosCutoff;
-	float constantAttenuation;
-	float linearAttenuation;
-	float quadraticAttenuation;
+	float constAtten;
+	float linAtten;
+	float quadAtten;
 };
 
 #define NUM_LIGHTS (4)
@@ -49,20 +49,6 @@ struct 	geometry{
 	vec3	tanN;
 	vec3	pos;
 	vec2	uv;
-};
-
-struct light{
-	vec3  	ligPos;
-	vec3    ligCol;
-	vec3  	ligDir;
-	float  	spotCosCutoff;
-	float  	spotExponent;
-	float 	width, height;
-	bool 	twoSided;
-	float 	constantAttenuation;
-	float 	linearAttenuation;
-	float 	quadraticAttenuation;
-
 };
 
 in jit_PerVertex {

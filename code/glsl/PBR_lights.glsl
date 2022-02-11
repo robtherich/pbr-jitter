@@ -1,14 +1,14 @@
 //PBR light functions
 
 //Point light	
-vec3	getPointLight(in light lig, in material mate, in geometry geom){
+vec3	getPointLight(in PBRLightSourceParameters lig, in material mate, in geometry geom){
 		
-	vec3	ligMinPos 	= lig.ligPos - geom.pos;
-	float	d 			= length(ligMinPos);	
-	float 	atten 		= 1.0 / (lig.constantAttenuation+lig.linearAttenuation*d+lig.quadraticAttenuation*d*d);
+	vec3	ligMinPos 	= lig.position.xyz - geom.pos;
+	float	d 		= length(ligMinPos);	
+	float 	atten 		= 1.0 / (lig.constAtten+lig.linAtten*d+lig.quadAtten*d*d);
 
-	vec3	L 			= normalize(ligMinPos);				//light direction
-	vec3	rad 		= lig.ligCol * atten;				//radiance
+	vec3	L 		= normalize(ligMinPos);				//light direction
+	vec3	rad 		= lig.color.rgb * atten;				//radiance
 	bool	compute 	= rad.x+rad.y+rad.z > 0.05;
 	return  compute ? 	( selfShadowing == 1. ? shadow(normalize(jit_in.transTBN * ligMinPos), geom.tanN, geom.uv, mate.height) : 1.) * 
 						getRadiance(geom.V, geom.N, L, rad, geom.pos, mate) :
@@ -16,24 +16,25 @@ vec3	getPointLight(in light lig, in material mate, in geometry geom){
 }	
 
 //Directional light
-vec3	getDirectionalLight(in light lig, in material mate, in geometry geom){
+vec3	getDirectionalLight(in PBRLightSourceParameters lig, in material mate, in geometry geom){
 	
-	vec3	tanLigDir 	= normalize(jit_in.transTBN * lig.ligDir);	//light pos in tangent space
+        vec3    direction       = normalize(lig.position.xyz);
+	vec3	tanLigDir 	= normalize(jit_in.transTBN * direction);	//light pos in tangent space
 	return  ( selfShadowing == 1. ? shadow(tanLigDir, geom.tanN, geom.uv, mate.height) : 1.) * 
-			getRadiance(geom.V, geom.N, lig.ligDir, lig.ligCol, geom.pos, mate); //get radiance for this light
+			getRadiance(geom.V, geom.N, direction, lig.color.rgb, geom.pos, mate); //get radiance for this light
 }
 
 //spot light
-vec3  	getSpotLight(in light lig, in material mate, in geometry geom){
+vec3  	getSpotLight(in PBRLightSourceParameters lig, in material mate, in geometry geom){
 
-	vec3	ligMinPos 	= lig.ligPos - geom.pos;
-	float	d 			= length(ligMinPos);	
-	float 	atten 		= 1.0 / (lig.constantAttenuation+lig.linearAttenuation*d+lig.quadraticAttenuation*d*d);
+	vec3	ligMinPos 	= lig.position.xyz - geom.pos;
+	float	d 		= length(ligMinPos);	
+	float 	atten 		= 1.0 / (lig.constAtten+lig.linAtten*d+lig.quadAtten*d*d);
 
-	vec3	L 			= normalize(ligMinPos);				//light direction
-	float 	spotatten 	= dot(-L, normalize(lig.ligDir));
-	atten 				= spotatten > lig.spotCosCutoff ? atten * pow(spotatten, lig.spotExponent) : 0.;
-	vec3	rad 		= lig.ligCol * atten;						//radiance
+	vec3	L 		= normalize(ligMinPos);				//light direction
+	float 	spotatten 	= dot(-L, lig.spotDir);
+	atten 			= spotatten > lig.spotCosCutoff ? atten * pow(spotatten, lig.spotExponent) : 0.;
+	vec3	rad 		= lig.color.rgb * atten;						//radiance
 	bool	compute 	= rad.x+rad.y+rad.z > 0.05;
 	return  compute ? 	( selfShadowing == 1. ? shadow(normalize(jit_in.transTBN * ligMinPos), geom.tanN, geom.uv, mate.height) : 1.) * 
 						getRadiance(geom.V, geom.N, L, rad, geom.pos, mate) :
@@ -46,15 +47,15 @@ vec3  	getIBL(in material mate, in geometry geom){
 	float	NdotV = max(dot(geom.N, geom.V), 0.);
 	vec3 	kS = fresnelSchlickRoughness(NdotV, mate.F0, mate.rou);
 	vec3 	kD = vec3(1.) - kS;
-			kD *= 1. - mate.met;
+		kD *= 1. - mate.met;
 	vec3 	irradiance = texture(irradianceTex, geom.N).rgb;
 	vec3	diffuse = irradiance * mate.alb * kD;
 
 	float 	lod             	= 0.;//mate.rou*15.; //*** put back a variable lod
-	vec3	ref 				= reflect(-geom.V, geom.N);
+	vec3	ref 			= reflect(-geom.V, geom.N);
 	vec3 	prefilteredColor 	= texture(reflectionTex, dir2uv(ref)).rgb;//*** put back textureLod
 	vec2 	envBRDF          	= texture(integMap, vec2(NdotV, mate.rou)).xy;
- 	vec3 	specular 			= prefilteredColor * (kS * envBRDF.x + envBRDF.y); 
+ 	vec3 	specular 		= prefilteredColor * (kS * envBRDF.x + envBRDF.y); 
 
 	return 	(diffuse + specular) * mate.occ; 
 }
@@ -62,7 +63,14 @@ vec3  	getIBL(in material mate, in geometry geom){
 //PBR rectangular light functions
 #define RECT_LIGHT_RADIUS 4.0 //controlla cosa rappresenta questo parametro ***
 #define RECT_LIGHT_INTENSITY 64.0 //controlla cosa rappresenta questo parametro ***
-vec3    getRectLight(in light lig, in material mate, in geometry geom){
+struct rectlight{
+	vec3  	ligPos;
+	vec3    ligCol;
+	vec3  	ligDir;
+	float 	width, height;
+	bool 	twoSided;
+};
+vec3    getRectLight(in rectlight lig, in material mate, in geometry geom){
     
     //fill light parameters
     vec3    right           = cross(lig.ligDir, vec3(0., 1., 0.));
@@ -142,7 +150,7 @@ vec3    getRectLight(in light lig, in material mate, in geometry geom){
     return  (kD * PI_INV * mate.alb + result*LdotR) * NdotL * lig.ligCol * sha;   
 }
 
-vec3    getRectLightTextured(in light lig, in material mate, in geometry geom){
+vec3    getRectLightTextured(in rectlight lig, in material mate, in geometry geom){
     
     //fill light parameters
     vec3    right           = cross(lig.ligDir, vec3(0., 1., 0.));
