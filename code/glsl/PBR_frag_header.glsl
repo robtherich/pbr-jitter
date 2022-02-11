@@ -5,11 +5,11 @@
 uniform vec3 eye;
 uniform sampler2D albedoTex, normalTex, RMOHTex, rectLightTex, integMap, reflectionTex;
 uniform samplerCube irradianceTex;//, reflectionTex;
-uniform float heightScale, triplanarUV, triplanarExp, parallaxMapping, selfShadowing, shadowAmount, useTextures, worldLocked;
+uniform float heightScale, triplanarExp, selfShadowing, shadowAmount, worldLocked;
 uniform vec2 triplanarTexRepeat, parallaxIterations, shadowIterations;
 uniform float roughness, metalness;
 uniform float near, far;
-uniform mat4 Vmat, Pmat, InvVmat;
+uniform mat4 Vmat, Pmat;
 
 struct PBRMaterialParameters {
 	vec4 diffuse;

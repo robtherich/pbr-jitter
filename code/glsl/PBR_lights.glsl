@@ -1,7 +1,7 @@
 //PBR light functions
 
 //Point light	
-vec3	getPointLight(in PBRLightSourceParameters lig, in material mate, in geometry geom){
+vec3	get_point_light(in PBRLightSourceParameters lig, in material mate, in geometry geom){
 		
 	vec3	ligMinPos 	= lig.position.xyz - geom.pos;
 	float	d 		= length(ligMinPos);	
@@ -16,7 +16,7 @@ vec3	getPointLight(in PBRLightSourceParameters lig, in material mate, in geometr
 }	
 
 //Directional light
-vec3	getDirectionalLight(in PBRLightSourceParameters lig, in material mate, in geometry geom){
+vec3	get_directional_light(in PBRLightSourceParameters lig, in material mate, in geometry geom){
 	
         vec3    direction       = normalize(lig.position.xyz);
 	vec3	tanLigDir 	= normalize(jit_in.transTBN * direction);	//light pos in tangent space
@@ -25,7 +25,7 @@ vec3	getDirectionalLight(in PBRLightSourceParameters lig, in material mate, in g
 }
 
 //spot light
-vec3  	getSpotLight(in PBRLightSourceParameters lig, in material mate, in geometry geom){
+vec3  	get_spot_light(in PBRLightSourceParameters lig, in material mate, in geometry geom){
 
 	vec3	ligMinPos 	= lig.position.xyz - geom.pos;
 	float	d 		= length(ligMinPos);	
