@@ -1,142 +1,131 @@
-<jittershader name="PBR">
-	<description>a physical-based rendering shader </description>
-	<param name="pos" 	type="vec3" state="POSITION" />
-	<param name="nor" 	type="vec3" state="NORMAL" />
-	<param name="tan" 	type="vec3" state="TANGENT" />
-	<param name="bit" 	type="vec3" state="BITANGENT" />
-	<param name="uv" 	type="vec2" state="TEXCOORD" />
-	<param name="MVP" 	type="mat4" state="MODELVIEW_PROJECTION_MATRIX" />
-	<param name="prevMVP" type="mat4" state="PREV_MODELVIEW_PROJECTION_MATRIX" />
-	<param name="MV"	type="mat4" state="MODELVIEW_MATRIX" />
-	<param name="M" 	type="mat4" state="WORLD_MATRIX" />
-	<param name="NM"	type="mat3" state="NORMAL_MATRIX" />
-	<param name="Vmat" 	type="mat4" state="VIEW_MATRIX" />
-	<param name="Pmat"  type="mat4" state="PROJECTION_MATRIX" />
-	<param name="eye" 	type="vec3" state="CAMERA_POSITION" />
-	<param name="far"  	type="float" state="FAR_CLIP" />
-	<param name="near"  type="float" state="NEAR_CLIP" />
-	//textures
-	<param name="albedoTex" 	type="int" default="0" />
-	<param name="normalTex" 	type="int" default="1" />
-	<param name="RMOHTex" 		type="int" default="2" />
-	<param name="irradianceTex"	type="int" default="3" />
-	<param name="reflectionTex"	type="int" default="4" />
-	<param name="rectLightTex"  type="int" default="5" />
-	<param name="integMap"		type="int" default="6" />
-	<texture file="ibl_brdf_lut.png" type="float16" unit="6" rectangle="0" filter="none none" wrap="repeat repeat"/>
+<jittershader name="pbr-test">
+        <description> An auto-generated PBR shader </description>
+        <param name="pos"       type="vec3" state="POSITION" />
+        <param name="nor"       type="vec3" state="NORMAL" />
+        <param name="tan"       type="vec3" state="TANGENT" />
+
+        <param name="uv" type="vec2" state="TEXCOORD" />
+
+        <param name="MVP"       type="mat4" state="MODELVIEW_PROJECTION_MATRIX" />
+        <param name="prevMVP" type="mat4" state="PREV_MODELVIEW_PROJECTION_MATRIX" />
+        <param name="MV"        type="mat4" state="MODELVIEW_MATRIX" />
+        <param name="M"         type="mat4" state="WORLD_MATRIX" />
+        <param name="NM"        type="mat3" state="NORMAL_MATRIX" />
+        <param name="Vmat"      type="mat4" state="VIEW_MATRIX" />
+        <param name="Pmat"  type="mat4" state="PROJECTION_MATRIX" />
+        <param name="eye"       type="vec3" state="CAMERA_POSITION" />
+        <param name="far"       type="float" state="FAR_CLIP" />
+        <param name="near"  type="float" state="NEAR_CLIP" />
+
+        <param name="PBRParameters" state="PBR" />
+
+        <param name="roughness" type="float" default="0.3" />
+        <param name="metalness" type="float" default="0.0" />
+
+        <param name="texRepeat" type="vec2" default="1. 1." />
+        <param name="heightScale" type="float" default="0.1" />
+        <param name="triplanarExp" type="float" default="12." />
+        <param name="triplanarTexRepeat" type="vec2" default="0.5 0.5" />
+        <param name="parallaxIterations" type="vec2"  default="50. 100." />
+        <param name="selfShadowing" type="float" default="0." />
+        <param name="shadowAmount" type="float" default="300." />
+        <param name="shadowIterations" type="vec2"  default="50. 100." />
+        <param name="worldLocked" type="float" default="0." />
+
+        <param name="albedoTex" type="int" default="0" />
+        <param name="normalTex" type="int" default="1" />
+        <param name="RMOHTex" type="int" default="2" />
+        <param name="irradianceTex" type="int" default="3" />
+        <param name="reflectionTex" type="int" default="4" />
+        <param name="rectLightTex" type="int" default="5" />
 
 
-    <param name="useTextures"  	type="float"  	default="1." />
-	<param name="albedo"  		type="vec3" 	default="1. 1. 1." />
-	<param name="roughness"  	type="float" 	default="0.3" />
-	<param name="metalness"  	type="float" 	default="0.0" />
+        <param name="integMap" type="int" default="6" />
+        <texture file="ibl_brdf_lut.png" type="float16" unit="6" rectangle="0" filter="none none" wrap="repeat repeat"/>
 
-	<param name="texRepeat" 			type="vec2" default="1. 1." />
-	<param name="heightScale"			type="float" default="0.1" />
-	<param name="triplanarUV"   		type="float" default="1." />
-	<param name="triplanarExp"  		type="float" default="12." />
-	<param name="triplanarTexRepeat" 	type="vec2" default="0.5 0.5" />
-	<param name="parallaxMapping"  		type="float" default="0.." />
-	<param name="parallaxIterations" 	type="vec2"  default="50. 100." />
-	<param name="selfShadowing"   		type="float" default="0.." />
-	<param name="shadowAmount"  		type="float" default="300." />
-	<param name="shadowIterations" 		type="vec2"  default="50. 100." />
-	<param name="worldLocked"  			type="float" default="0." />
-
-	<language name="glsl" version="1.5">
-		<bind param="pos" 	program="vp" />
-		<bind param="nor" 	program="vp" />
-		<bind param="tan" 	program="vp" />
-		<bind param="bit" 	program="vp" />
-		<bind param="uv" 	program="vp" />
-		<bind param="MVP" 	program="vp" />
-		<bind param="prevMVP" program="vp" />
-		<bind param="MV"	program="vp" />
-		<bind param="M" 	program="vp" />
-		<bind param="NM"	program="vp" />
-		<bind param="Vmat" 	program="fp" />
-		<bind param="Pmat" 	program="fp" />
-		<bind param="eye" 	program="fp" />
-		<bind param="far"   program="fp" />
-		<bind param="near"  program="fp" />
-		//textures
-		<bind param="albedoTex" 	program="fp" />
-		<bind param="normalTex" 	program="fp" />
-		<bind param="RMOHTex" 		program="fp" />
-		<bind param="irradianceTex" program="fp" />
-		<bind param="reflectionTex"   program="fp" />
-		<bind param="rectLightTex"  program="fp" />
-		<bind param="integMap"      program="fp" />
-
-		<bind param="useTextures" 	program="fp" />
-		<bind param="albedo" 		program="fp" />
-		<bind param="roughness"		program="fp" />
-		<bind param="metalness" 	program="fp" />
-
-		<bind param="texRepeat"				program="vp" />
-		<bind param="heightScale"   		program="fp" />
-		<bind param="triplanarUV"   		program="fp" />
-		<bind param="triplanarExp"			program="fp" />
-		<bind param="triplanarTexRepeat" 	program="fp" />
-		<bind param="parallaxMapping"  		program="fp" />
-		<bind param="parallaxIterations"   	program="fp" />
-		<bind param="selfShadowing"   		program="fp" />
-		<bind param="shadowAmount"  		program="fp" />
-		<bind param="shadowIterations"   	program="fp" />
-		<bind param="worldLocked"  			program="fp" />
-
-		//include 
-		<include source="PBR_common.glsl" 		program="fp" />
-		<include source="PBR_lights.glsl" 		program="fp" />
-		<include source="PBR_IBL.glsl" 			program="fp" />
-		<include source="PBR_rect_light.glsl" 	program="fp" />
-
-		<program name="vp" type="vertex">
+        <language name="glsl" version="1.5">
+                <bind param="pos"       program="vp" />
+                <bind param="nor"       program="vp" />
+                <bind param="tan"       program="vp" />
+                <bind param="uv"        program="vp" />
+                <bind param="MVP"       program="vp" />
+                <bind param="prevMVP" program="vp" />
+                <bind param="MV"        program="vp" />
+                <bind param="M"         program="vp" />
+                <bind param="NM"        program="vp" />
+                <bind param="Vmat"      program="fp" />
+                <bind param="Pmat"      program="fp" />
+                <bind param="eye"       program="fp" />
+                <bind param="far"   program="fp" />
+                <bind param="near"  program="fp" />
+                <bind param="PBRParameters" program="fp" />
+                <bind param="roughness" program="fp" />
+                <bind param="metalness" program="fp" />
+                <bind param="texRepeat" program="vp" />
+                <bind param="heightScale" program="fp" />
+                <bind param="triplanarExp" program="fp" />
+                <bind param="triplanarTexRepeat" program="fp" />
+                <bind param="parallaxMapping" program="fp" />
+                <bind param="parallaxIterations" program="fp" />
+                <bind param="selfShadowing" program="fp" />
+                <bind param="shadowAmount" program="fp" />
+                <bind param="shadowIterations" program="fp" />
+                <bind param="worldLocked" program="fp" />
+                <bind param="albedoTex" program="fp" />
+                <bind param="normalTex" program="fp" />
+                <bind param="RMOHTex" program="fp" />
+                <bind param="irradianceTex" program="fp" />
+                <bind param="reflectionTex" program="fp" />
+                <bind param="rectLightTex" program="fp" />
+                <bind param="integMap" program="fp" />
+                <include source="PBR_frag_header.glsl" program="fp" />
+                <include source="PBR_common.glsl" program="fp" />
+                <include source="PBR_lights.glsl" program="fp" />
+                <program name="vp" type="vertex">
 <![CDATA[
 #version 330 core
 uniform mat4 MVP, MV, M, prevMVP;
 uniform mat3 NM;
 uniform vec2 texRepeat;
-in vec3 pos, nor, tan, bit;
+in vec3 pos, nor, tan;
 in vec2 uv;
 
-out jit_PerVertex {	
-	smooth 	vec3 nor;
-	smooth 	vec3 tan;
-	smooth 	vec3 bit;
-	smooth 	vec3 pos;
-	smooth 	vec2 uv;
-	flat 	vec2 texRepeat;
-	smooth 	vec3 eyePos;
-	smooth  vec3 modelPos;
-	smooth  vec3 modelNor;
-	smooth  mat3 TBN;
-	smooth  mat3 transTBN;
-	smooth  vec4 currPos;
-	smooth  vec4 prevPos;
+out jit_PerVertex {
+        smooth  vec3 nor;
+        smooth  vec3 tan;
+        smooth  vec3 bit;
+        smooth  vec3 pos;
+        smooth  vec2 uv;
+        flat    vec2 texRepeat;
+        smooth  vec3 eyePos;
+        smooth  vec3 modelPos;
+        smooth  vec3 modelNor;
+        smooth  mat3 TBN;
+        smooth  mat3 transTBN;
+        smooth  vec4 currPos;
+        smooth  vec4 prevPos;
 } jit_out;
 
-void main() {	
-
-	jit_out.currPos = MVP * vec4(pos, 1.);	
-	jit_out.prevPos = prevMVP * vec4(pos, 1.);	
-	gl_Position = jit_out.currPos;	
-	jit_out.nor = (M * vec4(nor, 0.)).xyz;
-	jit_out.tan = (M * vec4(tan, 0.)).xyz;
-	//jit_out.tan = normalize(jit_out.tan - dot(jit_out.tan, jit_out.nor) * jit_out.nor);
-	jit_out.bit = -cross(jit_out.nor, jit_out.tan);
-	jit_out.pos = (M * vec4(pos, 1.)).xyz;
-	jit_out.uv = uv*texRepeat;
-	jit_out.texRepeat = texRepeat;
-	jit_out.eyePos = (MV * vec4(pos, 1.)).xyz;
-	jit_out.modelPos = pos;
-	jit_out.modelNor = nor;
-	jit_out.TBN = mat3(jit_out.tan, jit_out.bit, jit_out.nor);
-	jit_out.transTBN = transpose(jit_out.TBN);
+void main() {
+        jit_out.currPos = MVP * vec4(pos, 1.);
+        jit_out.prevPos = prevMVP * vec4(pos, 1.);
+        gl_Position = jit_out.currPos;
+        jit_out.nor = (M * vec4(nor, 0.)).xyz;
+        jit_out.tan = (M * vec4(tan, 0.)).xyz;
+        jit_out.bit = -cross(jit_out.nor, jit_out.tan);
+        jit_out.pos = (M * vec4(pos, 1.)).xyz;
+        jit_out.uv = uv*texRepeat;
+        jit_out.texRepeat = texRepeat;
+        jit_out.eyePos = (MV * vec4(pos, 1.)).xyz;
+        jit_out.modelPos = pos;
+        jit_out.modelNor = nor;
+        jit_out.TBN = mat3(jit_out.tan, jit_out.bit, jit_out.nor);
+        jit_out.transTBN = transpose(jit_out.TBN);
 }
+
 ]]>
-		</program>
-		<program name="fp" type="fragment">
+                </program>
+                <program name="fp" type="fragment">
 <![CDATA[
 #version 330 core
 
@@ -144,111 +133,57 @@ layout(location = 0) out vec4 col;
 layout(location = 1) out vec4 depth;
 layout(location = 2) out vec4 velocity;
 
-void 	main() {
+void    main() {
+        material        mate;
+        geometry        geom;
 
-	material 	mate;
-	geometry 	geom;
-	light 		lig;
+        geom.uv         = jit_in.uv;
+        geom.pos        = jit_in.pos;
+        mate.height = 1. - triplanar(RMOHTex).w;
+        parallax(mate, geom);
+        vec4 RMOH       = triplanar(RMOHTex);
+        mate.alb        = triplanar(albedoTex).rgb;
+        mate.alb        = mate.alb * pbrmtl.diffuse.rgb;
+        mate.rou        = RMOH.r * roughness;
+        mate.met        = RMOH.g * metalness;
+        mate.occ        = RMOH.b; //ambient occlusion
+        mate.F0         = mix(vec3(0.04), mate.alb, vec3(mate.met));  //use alb as F0 if metallic
 
-	//fill structures
+        geom.V          = normalize(eye - jit_in.pos);  //view direction
+        geom.tanN       = normalize(triplanar(normalTex).rgb * 2. - 1.);
+        geom.N          = normalize(jit_in.TBN * geom.tanN);
+        geom.R          = reflect(geom.V, geom.N);
+        geom.pos        += geom.N * (1. - mate.height) * heightScale;
 
-	fillStructuresFromTextures(mate, geom);
-	//fillStructuresFromUniform(mate, geom);
+        col.rgb = vec3(0.); //initialize the out color 
 
-	//lighting
-	col.rgb = vec3(0.); //initialize the out color 
-/*
-	{
-		lig.ligPos		= vec3(1., 3., 0.);					//light position
-		lig.ligCol 		= vec3(1.)*9.;
-		col.rgb 		+= getPointLight(lig, mate, geom);
-	}
-	{
-		lig.ligPos		= vec3(-2., 1., -1.);				//light position
-		lig.ligCol 		= vec3(0.8, 0.5, 0.1)*9.;
-		col.rgb 		+= getPointLight(lig, mate, geom);
-	}
+        col.rgb += get_point_light(pbrlight[0], mate, geom);
+        col.rgb += get_point_light(pbrlight[1], mate, geom);
+        col.rgb += get_directional_light(pbrlight[2], mate, geom);
+        col.rgb += get_spot_light(pbrlight[3], mate, geom);
 
-	{
-		lig.ligPos		= vec3(2., -0.5, 1.);				//light position
-		lig.ligCol 		= vec3(0.1, 0.5, 0.9)*9.;
-		col.rgb 		+= getPointLight(lig, mate, geom);
-	}
+        col.rgb += getIBL(mate, geom);
+        col.rgb = gammaCorrection(col.rgb);
 
-	{
-		lig.ligPos		= vec3(-2., -1., -2.);				//light position
-		lig.ligCol 		= vec3(1.)*9.;	
-		col.rgb 		+= getPointLight(lig, mate, geom);
-	}
+        // not sure about alpha
+        col.a = 1.;
+        // before or after gamma?
+        col.rgb += pbrmtl.emission.rgb;
 
-	{
-		lig.ligDir 		= normalize(vec3(0., 1., 0.));		//light direction
-		lig.ligCol 		= vec3(1.)*9.;	
-		col.rgb 		+= getDirectionalLight(lig, mate, geom);
-	}
+        // the rest...
+        float z = gl_FragCoord.z * 2.0 - 1.0; // back to NDC 
+        z = (2.0 * near * far) / (far + near - z * (far - near));
+        z /= far;
 
-	{
-		lig.ligPos 		= vec3(0., 2., 0.);
-		lig.ligDir 		= vec3(0., 1., 0.);		//light direction
-		lig.ligCol 		= vec3(1., 0.1, 0.2)*8.;	
-		lig.cutoffInner = -0.7;
-		lig.cutoffOuter = -0.5;
-		col.rgb 		+= getSpotLight(lig, mate, geom);
-	}
-*/
-	{
-		lig.ligPos 		= vec3(3., 0.5, 0.);
-		lig.ligDir 		= vec3(1., 0., 0.);//vec3(0., 0., -1.);
-		lig.ligCol 		= vec3(0.1, 0.4, 0.7)*10.;
-		lig.width 		= 1.;
-		lig.height 		= 2.;
-		lig.twoSided 	= false;
-		col.rgb 		+= getRectLight(lig, mate, geom);
-	}
+        depth.rgb = (Pmat * Vmat * vec4(geom.N, 0.)).xyz;
+        depth.a = z;
 
-	{
-		lig.ligPos 		= vec3(-3., 0.5, 0.);
-		lig.ligDir 		= vec3(-1., 0., 0.);
-		lig.ligCol 		= vec3(0.7, 0.4, 0.1)*10.;
-		lig.width 		= 1.;
-		lig.height 		= 2.;
-		lig.twoSided 	= false;
-		col.rgb 		+= getRectLight(lig, mate, geom);
-	}
+        vec2 a = (jit_in.currPos.xy / jit_in.currPos.w) * 0.5 + 0.5;
+        vec2 b = (jit_in.prevPos.xy / jit_in.prevPos.w) * 0.5 + 0.5;
+        velocity = vec4(a - b, 0., 1.);
+}
 
-	{
-		lig.ligPos 		= vec3(0., 0.5, -3.);
-		lig.ligDir 		= vec3(0., 0., -1.);
-		lig.ligCol 		= vec3(1.);
-		lig.width 		= 3.;
-		lig.height 		= 2.;
-		lig.twoSided 	= false;
-		col.rgb 		+= getRectLightTextured(lig, mate, geom);
-	}
-
-	{
-		col.rgb 		+= getIBL(mate, geom); 
-	}
-
- 	//col.rgb = normalize(jit_in.transTBN* (lig.ligPos - geom.pos));
-	col.rgb = gammaCorrection(col.rgb);
-	col.a = 1.;
-
-
-    float z = gl_FragCoord.z * 2.0 - 1.0; // back to NDC 
-    z = (2.0 * near * far) / (far + near - z * (far - near));	
-    z /= far;
-
-	depth.rgb = (Pmat * Vmat * vec4(geom.N, 0.)).xyz;
-	//depth.b *= -1.;
-	depth.a = z;
-      
-    vec2 a = (jit_in.currPos.xy / jit_in.currPos.w) * 0.5 + 0.5;
-    vec2 b = (jit_in.prevPos.xy / jit_in.prevPos.w) * 0.5 + 0.5;
-	velocity = vec4(a - b, 0., 1.);
-
-}	
 ]]>
-		</program>
-	</language>
+                </program>
+        </language>
 </jittershader>

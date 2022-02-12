@@ -1,63 +1,4 @@
 //PBR common functions
-#define PI 3.14159265
-#define TWOPI 6.28318531
-#define PI_INV 0.3183098861
-#define RECT_LIGHT_RADIUS 4.0 //controlla cosa rappresenta questo parametro ***
-#define RECT_LIGHT_INTENSITY 64.0 //controlla cosa rappresenta questo parametro ***
-
-uniform vec3 eye;
-uniform sampler2D albedoTex, normalTex, RMOHTex, rectLightTex, integMap, reflectionTex;
-uniform samplerCube irradianceTex;//, reflectionTex;
-uniform float heightScale, triplanarUV, triplanarExp, parallaxMapping, selfShadowing, shadowAmount, useTextures, worldLocked;
-uniform vec2 triplanarTexRepeat, parallaxIterations, shadowIterations;
-uniform vec3 albedo;
-uniform float roughness, metalness;
-uniform float near, far;
-uniform mat4 Vmat, Pmat;
-
-struct 	material{
-	vec3 	alb;
-	float 	occ;
-	float 	met;
-	float 	rou;
-	float 	height;
-	vec3 	F0;
-};
-
-struct 	geometry{
-	vec3	V;
-	vec3	N;
-	vec3 	R;
-	vec3	tanN;
-	vec3	pos;
-	vec2	uv;
-};
-
-struct light{
-	vec3  	ligPos;
-	vec3    ligCol;
-	vec3  	ligDir;
-	float  	cutoffInner;
-	float  	cutoffOuter;
-	float 	width, height;
-	bool 	twoSided;
-};
-
-in jit_PerVertex {
-	smooth 	vec3 nor;
-	smooth 	vec3 tan;
-	smooth 	vec3 bit;
-	smooth 	vec3 pos;
-	smooth 	vec2 uv;	
-	flat 	vec2 texRepeat;
-	smooth  vec3 eyePos;
-	smooth  vec3 modelPos;
-	smooth  vec3 modelNor;
-	smooth  mat3 TBN;
-	smooth  mat3 transTBN;
-	smooth  vec4 currPos;
-	smooth  vec4 prevPos;
-} jit_in;
 
 //utilities
 vec3 	lin2sRGB(vec3 x){ return pow(x, vec3(0.4545454545));}
@@ -237,48 +178,6 @@ vec3 	getRadiance(vec3 V, vec3 N, vec3 L, vec3 rad, vec3 pos, in material mate){
 	return 	(kD * mate.alb * PI_INV + spe) * rad * NdotL;
 }
 
-//retrieve material parameters
-void  	fillStructuresFromTextures(inout material mate, inout geometry geom){
-
-	bool	triplanarTexturing = triplanarUV == 1.;
-
-			geom.uv 	= jit_in.uv;
-			geom.pos  	= jit_in.pos;
-			mate.height = 1. - (triplanarTexturing ? triplanar(RMOHTex).w : texture(RMOHTex, geom.uv).w);
-
-	if(parallaxMapping == 1.){parallax(mate, geom);}	//texture coordinates
-	
-	vec4	RMOH 		= triplanarTexturing ? triplanar(RMOHTex) 			: texture(RMOHTex, geom.uv);	
-			mate.alb 	= triplanarTexturing ? triplanar(albedoTex).rgb 	: texture(albedoTex, geom.uv).rgb;	
-			mate.rou 	= RMOH.r;	//roughness
-			mate.met 	= RMOH.g;	//metallic
-			mate.occ 	= RMOH.b;	//ambient occlusion
-			mate.F0 	= mix(vec3(0.04), mate.alb, vec3(mate.met)); 						//use alb as F0 if metallic
-
-			geom.V 		= normalize(eye - jit_in.pos);	//view direction
-			geom.tanN 	= normalize((triplanarTexturing ? triplanar(normalTex) : texture(normalTex, geom.uv) ).rgb*2. - 1.);
-			geom.N 		= normalize(jit_in.TBN * geom.tanN);
-			geom.R 		= reflect(geom.V, geom.N);
-			geom.pos    += geom.N * (1. - mate.height) * heightScale;
-}
-void  	fillStructuresFromUniform(inout material mate, inout geometry geom){
-
-			geom.uv 	= jit_in.uv;
-			geom.pos  	= jit_in.pos;
-			mate.height = 1.;
-	
-			mate.alb 	= albedo;	
-			mate.rou 	= roughness;	//roughness
-			mate.met 	= metalness;	//metallic
-			mate.occ 	= 1.;	//ambient occlusion
-			mate.F0 	= mix(vec3(0.04), albedo, vec3(metalness)); 			//use alb as F0 if metallic
-
-			geom.V 		= normalize(eye - jit_in.pos);	//view direction
-			geom.tanN 	= vec3(0., 0., 1.);
-			geom.N 		= normalize(jit_in.TBN * geom.tanN);
-			geom.R 		= reflect(geom.V, geom.N);
-}
-
 //gamma correction
 vec3 	gammaCorrection(vec3 x){
 	x /= x + vec3(1.);  //from HDI lo LDI
@@ -286,20 +185,49 @@ vec3 	gammaCorrection(vec3 x){
 	return lin2sRGB(x);	//gamma correction
 }
 
-/* ============================= HOW TO USE THE FUNCTIONS =======================================//
+//from cube to equirectangular sampling coordinates
+vec2 	dir2uv(vec3 v){
+	/*
+    vec2 uv = vec2(atan(v.z, v.x), asin(v.y));
+    uv *= vec2(-0.1591, 0.3183); //to invert atan
+    uv += 0.5;
+    return uv;
+    */
+    vec2 uv = vec2(atan(v.z, v.x), asin(v.y));
+    uv *= vec2(-0.1591, -0.3183); //to invert atan
+    uv += 0.5;
+    return uv;
+}
 
-in the main() function:
-___________________________________________________________________________________________
-retrieve material parameters from uniforms
-    {
-		fillStructuresFromUniform(mate, geom);
-    }
-___________________________________________________________________________________________
-retrieve material parameters from textures
-    {
-		fillStructuresFromTextures(mate, geom);
-    }
-___________________________________________________________________________________________
+//compute the solid angle
+float 	rectSolidAngle(vec3 v0, vec3 v1, vec3 v2, vec3 v3){
+	// Based on the technique in EA's frostbite engine
+    vec3 n0 = normalize(cross(v0, v1));
+    vec3 n1 = normalize(cross(v1, v2));
+    vec3 n2 = normalize(cross(v2, v3));
+    vec3 n3 = normalize(cross(v3, v0));
+    
+    float g0 = acos(dot(-n0, n1));
+	float g1 = acos(dot(-n1, n2));
+	float g2 = acos(dot(-n2, n3));
+	float g3 = acos(dot(-n3, n0));
+    
+    return g0 + g1 + g2 + g3 - TWOPI; 
+}
 
-The other functions are automatically used by the lighting functions
-//============================================================================================= */
+//custom GGX
+float 	normalDistributionGGXRect(float NdotH, float alpha, float alphaPrime){
+    float 	alpha2 		= alpha * alpha;
+    float 	alpha4 		= alpha2 * alpha2;
+    float 	alphaPrime3 = alphaPrime * alphaPrime * alphaPrime;
+    float 	denom 		= NdotH * NdotH * (alpha2 - 1.) + 1.;
+    
+    return 	(alpha2 * alphaPrime3) / (denom * denom);   
+}
+
+//find intersection with plane
+vec3 	rayPlaneIntersect(vec3 ro, vec3 rd, vec3 ligDir, vec3 ligPos){
+
+	float a = dot(ligDir, rd);
+    return a == 0. ? ro + rd * (dot(ligDir, ligPos - ro) / a) : vec3(ro + rd*1000);
+}
