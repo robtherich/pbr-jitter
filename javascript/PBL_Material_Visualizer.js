@@ -8,10 +8,12 @@ var gPWorld = new PWorld(this.patcher);
 
 var gTexturesLoaderBP = this.patcher.getnamed("pbl_textures_loader");
 var gBPSize = [300,300];
+var g_pWorldPos = [128, 0];
 
 var tsk = new Task(CheckIfResized, this);
 tsk.interval = 200;
 tsk.repeat();
+
 
 var gFirstResize = false;
 
@@ -56,11 +58,16 @@ function ResizeBPatcher()
     // pp.script("sendbox", bp.varname, "patching_rect", 
     //               [0, 0, gBPSize[0], gBPSize[1]]);
     
-    gPWorld.ResizePWorld([128, 0], gBPSize);
-    print("patcher pos "+this.patcher.box.rect);
+    gPWorld.ResizePWorld(g_pWorldPos, gBPSize);
+    print("Mat visualizer patcher pos: "+this.patcher.box.rect);
 }
 
 //------------------------------------
+
+function InitTexturesLoader()
+{
+    outlet(0, "Init");
+}
 
 // PRIVATE FUNCTIONS ----------------
 function SendResizeToTexLoader()
@@ -78,7 +85,7 @@ function CheckIfResized()
         gBPSize[1] = rect[3];
         gFirstResize = true;
         SendResizeToTexLoader();
-        gPWorld.ResizePWorld([128, 0], gBPSize);
+        gPWorld.ResizePWorld(g_pWorldPos, gBPSize);
     } 
 }
 

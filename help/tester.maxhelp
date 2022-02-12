@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 413.0, 132.0, 960.0, 809.0 ],
+		"rect" : [ 34.0, 77.0, 1531.0, 929.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -40,12 +40,48 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-19",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "jit_matrix", "" ],
+					"patching_rect" : [ 1184.0, 360.0, 53.0, 22.0 ],
+					"text" : "jit.gl.text"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-17",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 1107.0, 398.0, 150.0, 20.0 ],
+					"underline" : 1
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-14",
+					"items" : "<empty>",
+					"maxclass" : "umenu",
+					"numinlets" : 1,
+					"numoutlets" : 3,
+					"outlettype" : [ "int", "", "" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 1132.0, 432.0, 100.0, 22.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-10",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 588.0, 231.0, 115.0, 22.0 ],
+					"patching_rect" : [ 1132.0, 243.0, 115.0, 22.0 ],
 					"text" : "prepend load_folder"
 				}
 
@@ -57,8 +93,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 588.0, 198.0, 330.0, 22.0 ],
-					"text" : "\"D:/MyData/My Files/Assets/Textures/PBL/bog/\""
+					"patching_rect" : [ 1186.0, 204.0, 330.0, 22.0 ],
+					"text" : "\"D:/MyData/My Files/Assets/Textures/PBL/Cobblestone/\""
 				}
 
 			}
@@ -69,7 +105,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 602.0, 36.0, 328.0, 155.0 ]
+					"patching_rect" : [ 1132.0, 27.0, 328.0, 155.0 ]
 				}
 
 			}
@@ -80,21 +116,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 298.0, 46.0, 35.0, 22.0 ],
+					"patching_rect" : [ 292.0, 37.0, 35.0, 22.0 ],
 					"text" : "reset"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-1",
-					"items" : "<empty>",
-					"maxclass" : "umenu",
-					"numinlets" : 1,
-					"numoutlets" : 3,
-					"outlettype" : [ "int", "", "" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 667.0, 371.106383085250854, 100.0, 22.0 ]
 				}
 
 			}
@@ -105,7 +128,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 560.0, 629.0, 131.0, 22.0 ],
+					"patching_rect" : [ 858.0, 663.0, 131.0, 22.0 ],
 					"text" : "jit.gl.handle @enable 0"
 				}
 
@@ -117,7 +140,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 106.0, 46.0, 166.0, 22.0 ],
+					"patching_rect" : [ 104.0, 37.0, 166.0, 22.0 ],
 					"text" : "output_textures_to_material"
 				}
 
@@ -129,7 +152,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 729.0, 530.0, 87.0, 22.0 ],
+					"patching_rect" : [ 1027.0, 564.0, 87.0, 22.0 ],
 					"text" : "diffuse_texture"
 				}
 
@@ -141,7 +164,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "jit_matrix", "" ],
-					"patching_rect" : [ 38.0, 619.0, 80.0, 60.0 ],
+					"patching_rect" : [ 46.0, 801.0, 80.0, 60.0 ],
 					"sync" : 1
 				}
 
@@ -153,8 +176,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 106.0, 722.0, 626.0, 22.0 ],
-					"text" : "jit_gl_texture D:/MyData/MyFiles/Assets/Textures/PBL/bog/08_nor.png1214"
+					"patching_rect" : [ 163.0, 824.0, 626.0, 22.0 ],
+					"text" : "jit_gl_texture 08_met_1078"
 				}
 
 			}
@@ -166,7 +189,7 @@
 					"numinlets" : 8,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 729.0, 615.0, 351.0, 36.0 ],
+					"patching_rect" : [ 1027.0, 649.0, 351.0, 36.0 ],
 					"text" : "jit.gl.material @mat_ambient 0.5 0.5 0.5 1 @mat_diffuse 0.8 0.8 0.8 1 @mat_specular 0.2 0.2 0.2 1"
 				}
 
@@ -179,7 +202,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "jit_matrix", "" ],
-					"patching_rect" : [ 729.0, 657.0, 519.0, 36.0 ],
+					"patching_rect" : [ 1027.0, 691.0, 519.0, 36.0 ],
 					"text" : "jit.gl.gridshape @enable 1 @scale 0.4 @auto_material 0 @color 1 1 1 1 @mat_ambient 1 1 1 1 @enable 0"
 				}
 
@@ -191,7 +214,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 38.0, 46.0, 35.0, 22.0 ],
+					"patching_rect" : [ 33.0, 33.0, 35.0, 22.0 ],
 					"text" : "clear"
 				}
 
@@ -212,7 +235,7 @@
 					"numoutlets" : 1,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 38.0, 190.0, 418.0, 351.0 ],
+					"patching_rect" : [ 53.0, 85.0, 541.0, 522.0 ],
 					"varname" : "pbl_bpatcher",
 					"viewvisibility" : 1
 				}
@@ -226,7 +249,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 834.0, 534.0, 150.0, 22.0 ]
+					"patching_rect" : [ 1132.0, 568.0, 150.0, 22.0 ]
 				}
 
 			}
@@ -238,7 +261,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 560.0, 588.0, 150.0, 22.0 ]
+					"patching_rect" : [ 858.0, 622.0, 150.0, 22.0 ]
 				}
 
 			}
@@ -282,7 +305,16 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-10", 0 ],
+					"order" : 1,
+					"source" : [ "obj-3", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-9", 1 ],
+					"order" : 0,
 					"source" : [ "obj-3", 0 ]
 				}
 

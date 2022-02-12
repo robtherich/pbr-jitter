@@ -46,7 +46,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 359.0, 619.0, 92.0, 22.0 ],
+					"patching_rect" : [ 400.5, 692.0, 92.0, 22.0 ],
 					"text" : "prepend drawto"
 				}
 
@@ -59,7 +59,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 359.0, 676.0, 214.0, 22.0 ],
+					"patching_rect" : [ 400.5, 729.0, 214.0, 22.0 ],
 					"text" : "jit.gl.handle @auto_rotate 1 @visible 0"
 				}
 
@@ -85,7 +85,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 470.0, 590.0, 69.0, 22.0 ],
+					"patching_rect" : [ 412.0, 653.0, 69.0, 22.0 ],
 					"text" : "route name"
 				}
 
@@ -98,7 +98,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 470.0, 619.0, 146.0, 22.0 ],
+					"patching_rect" : [ 498.0, 692.0, 146.0, 22.0 ],
 					"text" : "prepend GetPWorldName"
 				}
 
@@ -141,7 +141,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "jit_matrix", "" ],
-					"patching_rect" : [ 128.0, 0.0, 134.0, 170.0 ],
+					"patching_rect" : [ 128.0, 0.0, 452.0, 633.0 ],
 					"sync" : 1,
 					"varname" : "pbl_vis_pworld"
 				}
@@ -164,12 +164,13 @@
 				"box" : 				{
 					"hidden" : 1,
 					"id" : "obj-53",
+					"linecount" : 2,
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 667.0, 619.0, 191.0, 22.0 ],
-					"text" : "ResizeBPatcher, SetPatchID #0"
+					"patching_rect" : [ 667.0, 612.0, 198.0, 36.0 ],
+					"text" : "ResizeBPatcher, SetPatchID #0, InitTexturesLoader"
 				}
 
 			}
@@ -208,7 +209,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 645.0, 649.0, 162.0, 22.0 ],
+					"patching_rect" : [ 645.0, 650.0, 162.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"filename" : "PBL_Material_Visualizer.js",
 						"parameter_enable" : 0
@@ -234,7 +235,7 @@
 					"numoutlets" : 1,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 0.0, 0.0, 128.0, 170.0 ],
+					"patching_rect" : [ 0.0, 0.0, 128.0, 633.0 ],
 					"varname" : "pbl_textures_loader",
 					"viewvisibility" : 1
 				}

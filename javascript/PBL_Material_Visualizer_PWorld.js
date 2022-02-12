@@ -37,33 +37,59 @@ function PWorld(patcher)
         tex_environment: this.textureEmpty.name
     };
 
+    this.mtrTextureInputs = ["diffuse_texture", "normals_texture", "glossmap_texture", "specular_texture", "heightmap_texture", "environment_texture"];
+
     this.SetShapeTextures = function()
     {   
-        this.SetMatToEmpty();
+        this.SetMtrToEmpty();
         
-        this.material.diffuse_texture(gGlobal.textureNames.tex_albedo);
-        this.material.normals_texture(gGlobal.textureNames.tex_normals);
-        this.material.glossmap_texture(gGlobal.textureNames.tex_roughness);
-        this.material.specular_texture(gGlobal.textureNames.tex_metallic);
-        this.material.heightmap_texture(gGlobal.textureNames.tex_height);
-        this.material.environment_texture(gGlobal.textureNames.tex_environment);
+        // TEMPORARY IF STATEMENTS, WAITING TO KNOW WHICH MESSAGES GO TO THE SHADER
+        if (gGlobal.textureNames.tex_albedo != "Undefined")
+        {
+            this.material.diffuse_texture(gGlobal.textureNames.tex_albedo);
+        }
+        if (gGlobal.textureNames.tex_normals != "Undefined")
+        {
+            this.material.normals_texture(gGlobal.textureNames.tex_normals);
+        }
+        if (gGlobal.textureNames.tex_roughness != "Undefined")
+        {
+            this.material.glossmap_texture(gGlobal.textureNames.tex_roughness);
+        }
+        if (gGlobal.textureNames.tex_metallic != "Undefined")
+        {
+            this.material.specular_texture(gGlobal.textureNames.tex_metallic);
+        }
+        if (gGlobal.textureNames.tex_height != "Undefined")
+        {
+            this.material.heightmap_texture(gGlobal.textureNames.tex_height);
+        }
+        if (gGlobal.textureNames.tex_environment != "Undefined")
+        {
+            this.material.environment_texture(gGlobal.textureNames.tex_environment);
+        }
+    
+        var keys = Object.keys(gGlobal.textureNames);
+        for (var key in keys)
+        {
+            print("key "+keys[key] + " __ " + gGlobal.textureNames[keys[key]]);
+        }
     }
 
     this.Reset = function()
     {
-        this.SetMatToEmpty();
+        this.SetMtrToEmpty();
     }
 
-    this.SetMatToEmpty = function()
-    {
-        this.material.diffuse_texture(this.textureEmpty.name);
-        this.material.specular_texture(this.textureEmpty.name);
-        this.material.normals_texture(this.textureEmpty.name);
-        this.material.heightmap_texture(this.textureEmpty.name);
-        this.material.glossmap_texture(this.textureEmpty.name);
+    this.SetMtrToEmpty = function()
+    {   
+        for (var texType in this.mtrTextureInputs)
+        {
+            this.material[this.mtrTextureInputs[texType]](this.textureEmpty.name);
+        }
     }
 
-    this.SetMatToEmpty();
+    this.SetMtrToEmpty();
 
     this.GetPWorldName = function(name)
     {
@@ -84,6 +110,5 @@ function PWorld(patcher)
         this.gridshape.freepeer();
         this.material.freepeer();
         this.light.freepeer();
-        // this.handle.freepeer();
     }
 }

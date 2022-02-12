@@ -87,7 +87,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 679.0, 191.0, 141.0, 22.0 ],
-					"text" : "ResizeBPatcher 120 300"
+					"text" : "ResizeBPatcher 128 300"
 				}
 
 			}
@@ -145,7 +145,7 @@
 					"mode" : 0,
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 0.0, 0.0, 128.0, 272.0 ],
+					"patching_rect" : [ 0.0, 0.0, 128.0, 770.0 ],
 					"proportion" : 0.5,
 					"rounded" : 0,
 					"varname" : "pbl_panel"
@@ -160,7 +160,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 0.0, 0.0, 128.0, 272.0 ],
+					"patching_rect" : [ 0.0, 0.0, 128.0, 770.0 ],
 					"varname" : "pbl_dropfile"
 				}
 

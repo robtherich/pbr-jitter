@@ -1,21 +1,22 @@
-function Sprite(index, patcher, position, spriteSize, filename)
+function Sprite(index, patcher, position, spriteSize, texType)
 {
     this.p = patcher;
-    this.filename = filename;
+    this.filename = null;
+    this.filePath = null;
     this.index = index;
 
     this.position = position.slice();
     this.size = spriteSize.slice();
     this.borderSize = 2;
 
-    this.textureType = "Undefined";
+    this.textureType = texType;
 
     this.menuYSize = 22;
-    this.justGotChanged = false;
+
+    this.fileNamesArray = null;
 
     // MATRIX //
     this.matrix = new JitterMatrix();
-    this.matrix.importmovie(filename);
 
     this.ratio = this.matrix.dim[0] / this.matrix.dim[1];
 
@@ -27,83 +28,35 @@ function Sprite(index, patcher, position, spriteSize, filename)
     this.pwindow.varname = "pbl_pwindow_"+index;
     this.p.script("sendbox", this.pwindow.varname, "patching_rect", 
                   [this.position[0]+this.borderSize, pwindowYPos, this.size[0], pwindowYSize]);
-    this.pwindow.jit_matrix(this.matrix.name);
+    // this.p.script("bringtofront", this.pwindow.varname);
 
     // TEXTURE //
     this.texture = new JitterObject("jit.gl.texture", gGlobal.pworldName);
-    this.texture.name = filename.replace(/\s/g, '')+gGlobal.patchID;
-    this.texture.jit_matrix(this.matrix.name);
-
-    this.ParseTextureType = function()
-    {   
-        if (/diff|col|alb/.test(this.filename)) {
-            gGlobal.textureNames.tex_albedo = this.texture.name;
-            this.textureType = "tex_albedo";
-        }
-        else if (/NOR|nor/.test(this.filename)) 
-        {
-            gGlobal.textureNames.tex_normals = this.texture.name;
-            this.textureType = "tex_normals";
-        }
-        else if (/rough|ROUGH|rou/.test(this.filename)) 
-        {
-            gGlobal.textureNames.tex_roughness = this.texture.name;
-            this.textureType = "tex_roughness";
-        }
-        else if (/AO|ao|occ|Occ/.test(this.filename)) 
-        {
-            gGlobal.textureNames.tex_ao = this.texture.name;
-            this.textureType = "tex_ao";
-        }
-        else if (/ENV|env|Env/.test(this.filename)) 
-        {
-            gGlobal.textureNames.tex_environment = this.texture.name;
-            this.textureType = "tex_environment";
-        }
-        else if (/disp|Hei|hei/.test(this.filename)) 
-        {
-            gGlobal.textureNames.tex_height = this.texture.name;
-            this.textureType = "tex_height";
-        }
-        else if (/SPEC|spec|met/.test(this.filename)) 
-        {
-            gGlobal.textureNames.tex_metallic = this.texture.name;
-            this.textureType = "tex_metallic";
-        }
-        else 
-        {
-            this.textureType = "Undefined";
-        }
-        this.umenu.setsymbol(this.textureType);
-    }
+    // this.texture.name = this.parsedFileName+"_"+gGlobal.patchID;
     
     // UMENU //
     this.umenu = this.p.newdefault(this.position[0]+this.borderSize, this.position[1]+this.borderSize, "umenu");  
     this.umenu.varname = "pbl_umenu_"+index+"_"+gGlobal.patchID;
     this.p.script("bringtofront", this.umenu.varname); 
-    this.umenu.append("Undefined");
+    this.umenu.append(this.textureType);
 
-    var texTypes = Object.keys(gGlobal.textureNames);
-    for (var key in texTypes)
-    {
-        this.umenu.append(texTypes[key]);
-    }
+    // this.ParseTextureType();
 
-    this.ParseTextureType();
-
-    var UmenuCallbback = (function(data) 
-    { 
-        var items = Object.keys(gGlobal.textureNames);
-        this.textureType = items[Math.max(data.value-1, 0)];
-        gGlobal.textureNames[this.textureType] = this.texture.name;
+    var UmenuCallback = (function(data) 
+    {   
+        print(this.fileNamesArray[data.value-1]);
+        this.LoadImage(this.fileNamesArray[data.value-1]);
+        // var items = Object.keys(gGlobal.textureNames);
+        // this.textureType = items[Math.max(data.value-1, 0)];
+        // gGlobal.textureNames[this.textureType] = this.texture.name;
         
-        print("CALLBACK FROM "+this.index, this.textureType)
-        SetUniqueTexType(this.textureType, this.index);
-        outlet(0, "SetShapeTextures");
+        // print("CALLBACK FROM "+this.index, this.textureType)
+        // SetUniqueTexType(this.textureType, this.index);
+        // outlet(0, "SetShapeTextures");
         
     }).bind(this); 
 
-    this.umenuListener = new MaxobjListener(this.umenu, UmenuCallbback);
+    this.umenuListener = new MaxobjListener(this.umenu, UmenuCallback);
 
     // PANEL //
     this.borderPanel = this.p.newdefault(this.position[0], this.position[1], "panel");
@@ -115,6 +68,14 @@ function Sprite(index, patcher, position, spriteSize, filename)
                   [this.position[0], this.position[1], this.size[0]+this.borderSize*2, this.size[1]+this.borderSize*2]);
     this.p.script("sendtoback", this.borderPanel.varname);
 
+    // TEXT // 
+    this.text = this.p.newdefault(this.position[0], this.position[1] + this.size[1] + 5, "comment");
+    this.text.bgcolor(0.2,0.2,0.2,1);
+    this.text.textcolor(0.95,0.95,0.95,1);
+    this.text.varname = "bpl_filename_"+index;
+    this.text.fontsize(10);
+    this.p.script("sendbox", this.text.varname, "patching_rect", [this.position[0], this.position[1] + this.size[1] + 5, this.size[0]-30, 10]);
+
     // BUTTON //
     this.button = this.p.newdefault(this.position[0]+this.borderSize, pwindowYPos, "ubutton");
     this.button.varname = "pbl_button_"+index;
@@ -122,21 +83,57 @@ function Sprite(index, patcher, position, spriteSize, filename)
                   [this.position[0]+this.borderSize, pwindowYPos, this.size[0], pwindowYSize]);
     this.p.script("bringtofront", this.button.varname);
 
-    this.button.filename = filename;
+    this.button.filename = this.filename;
 
     var ButtonCallback = (function(data) { 
         // this.outlet.message("list", data.maxobject.filename);  
-        outlet(0, "jit_gl_texture", this.texture.name);     
+        // outlet(0, "jit_gl_texture", this.texture.name);     
     }).bind(this); 
 
-    this.buttonListener = new MaxobjListener(this.button, ButtonCallback);
+    // this.buttonListener = new MaxobjListener(this.button, ButtonCallback);
 
     // FUNCTIONS //
-    this.SetTypeToUndefined = function()
+    this.SetImagesNamesUmenu = function(imagesPaths)
+    {   
+        this.umenu.clear();
+        this.umenu.append(this.textureType);
+
+        this.fileNamesArray = imagesPaths.slice();
+
+        for (var i=0; i<imagesPaths.length; i++)
+        {
+            this.umenu.append(imagesPaths[i]);
+        }
+    }
+
+    this.LoadImage = function(path)
+    {   
+        this.filePath = path;
+        var parsedFileName = path.replace(/^.*[\\\/]/, '');
+        var parsedFileName = parsedFileName.replace(/\.[^/.]+$/, "");  
+        this.filename = parsedFileName;
+        
+        this.TriggerImage();
+
+        this.text.textjustification(1);
+        this.text.setwithtruncation(this.filename, this.size[0]);
+        this.p.script("sendbox", this.text.varname, "patching_rect", [this.position[0], this.position[1] + this.size[1] + 5, this.size[0], 10]);
+    }
+
+    this.TriggerImage = function()
     {
-        this.textureType = "Undefined";
-        this.umenu.setsymbol(this.textureType);
-        print("set type "+this.index + " " +this.textureType)
+        this.matrix.importmovie(this.filePath);
+        this.pwindow.jit_matrix(this.matrix.name);
+        this.texture.jit_matrix(this.matrix.name);
+        gGlobal.textureNames[this.textureType] = this.texture.name;
+    }
+
+    this.ClearImage = function()
+    {
+        this.matrix.clear();
+        this.pwindow.jit_matrix(this.matrix.name);
+        this.texture.jit_matrix(this.matrix.name);
+        gGlobal.textureNames[this.textureType] = "Undefined";
     }
 
     this.Resize = function(position, size)
