@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 596.0, 161.0, 960.0, 809.0 ],
+		"rect" : [ 413.0, 132.0, 960.0, 809.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -212,7 +212,7 @@
 					"numoutlets" : 1,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 38.0, 190.0, 511.0, 381.0 ],
+					"patching_rect" : [ 38.0, 190.0, 418.0, 351.0 ],
 					"varname" : "pbl_bpatcher",
 					"viewvisibility" : 1
 				}
@@ -349,28 +349,24 @@
 		"dependency_cache" : [ 			{
 				"name" : "PBL_Material_Visualizer.js",
 				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/javascript",
-				"patcherrelativepath" : "../javascript",
 				"type" : "TEXT",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "TexturesLoader.js",
 				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/javascript",
-				"patcherrelativepath" : "../javascript",
 				"type" : "TEXT",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "pbl.material.visualizer.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/patchers",
-				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "pbl.textures.loader.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/patchers",
-				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
