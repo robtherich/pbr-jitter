@@ -6,16 +6,20 @@ include("TexturesLoader_TexturesParser.js");
 
 var gGlobal = new Global("pbl_global");
 
-var g_TexturesParser = new TexturesParser();
-
-var gPanel = null; 
+// var gPanel = null; 
 var gDropfile = null;
 
-var gBPSize = [128,300];
-
+var gBPSize = [150,300];
 var gMaxObjSize = gBPSize.slice();
 
+var g_TexturesParser = new TexturesParser(this.patcher);
+
 // PUBLIC FUNCTIONS ---------------------
+
+function zoom_factor(val)
+{
+    this.patcher.zoomfactor(val);
+}
 
 function clear()
 {
@@ -30,6 +34,7 @@ function reset()
 
 function load_folder(path)
 {   
+    g_TexturesParser.ClearImages();
     g_TexturesParser.ParseFolder(path);
     outlet(0, "SetShapeTextures");
 }
@@ -38,14 +43,15 @@ function load_folder(path)
 function ResizeBPatcher(newSizeX, newSizeY)
 {   
     // print("RESIZE TEXTURE LOADER PATCHER")
-    gBPSize = [gBPSize[0], newSizeY];
+    gBPSize = [newSizeX, newSizeY];
+    // print("TEX LOADER SIZE "+gBPSize)
 
     var pp = this.patcher.parentpatcher;
     var bp = pp.getnamed("pbl_textures_loader");
     pp.script("sendbox", bp.varname, "patching_rect", 
                   [0, 0, gBPSize[0], gBPSize[1]]);
     
-    ResizeMaxObjects(gMaxObjSize[0], gMaxObjSize[1]);
+    ResizeMaxObjects(gBPSize[0], gMaxObjSize[1]);
 }
 
 //--------------------------
@@ -61,39 +67,13 @@ function Init()
 
 //--------------------------------------------
 
-function SetUniqueTexType(texType, index)
-{   
-    // gJustChanged = index;
-    // print("just changed "+gJustChanged)
-    // print("prev changed "+gPrevChanged)
-    // if (gJustChanged != gPrevChanged)
-    // {
-    //     for (var sprite in gSpritesArray)
-    //     {
-    //         var spr = gSpritesArray[sprite];
-    //         if (spr.textureType == texType && spr.index != index)
-    //         {   
-    //             print("spr texture type "+spr.textureType)
-    //             print("tex index "+spr.index + " __ incoming index "+index)
-    //             spr.SetTypeToUndefined();
-    //             gPrevChanged = spr.index;
-    //             break;
-    //         }
-    //     }
-    // }
-    // else 
-    // {
-    //     gPrevChanged = -1;
-    // }
-}
-
 //--------------------------------------------
 
 function SendMaxObjectsBack()
 {   
     if (gDropfile != null)
     {
-        this.patcher.script("sendtoback", gPanel.varname);
+        // this.patcher.script("sendtoback", gPanel.varname);
         this.patcher.script("sendtoback", gDropfile.varname);
     }
     else 
@@ -106,7 +86,7 @@ function ResizeMaxObjects(sizeX, sizeY)
 {   
     if (gDropfile != null)
     {   
-        this.patcher.script("sendbox", gPanel.varname, "patching_rect", [0, 0, sizeX, sizeY]);
+        // this.patcher.script("sendbox", gPanel.varname, "patching_rect", [0, 0, sizeX, sizeY]);
         this.patcher.script("sendbox", gDropfile.varname, "patching_rect", [0, 0, sizeX, sizeY]);
     }
     else 
@@ -117,7 +97,7 @@ function ResizeMaxObjects(sizeX, sizeY)
 
 function GetMaxObjects()
 {
-    gPanel =    this.patcher.getnamed("pbl_panel");
+    // gPanel =    this.patcher.getnamed("pbl_panel");
     gDropfile = this.patcher.getnamed("pbl_dropfile");
 }
 

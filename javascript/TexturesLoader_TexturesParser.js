@@ -1,10 +1,14 @@
-function TexturesParser()
+function TexturesParser(patcher)
 {
     this.fileNamesArray = [];
     this.spritesContainer = {};
+    this.p = patcher;
     
     this.spriteOffset = 30;
-    this.spriteSize = [100, 100];
+    this.spriteSize = [gBPSize[0]-30, gBPSize[0]-30];
+
+    this.picker = null;
+    this.pickerListener = null;
 
     this.folder = null;
 
@@ -66,9 +70,31 @@ function TexturesParser()
             texType = "tex_metallic";
         }
         return texType;
+    }
 
-        // gGlobal.textureNames[this.textureType] = this.texture.name;
-        // this.umenu.setsymbol(this.textureType);
+    var PickerCallback = (function(data) 
+    {   
+        // print(" test "+data.value)
+        var pickedColor = this.picker.getattr("currentcolor");
+        var spriteInstance = data.maxobject.spriteInstance;
+        this.spritesContainer[spriteInstance].SetPickedColor(pickedColor);
+    }).bind(this); 
+
+    this.GetPickerColor = function(spriteInstance)
+    {   
+        if (this.picker == null)
+        {
+            this.picker = this.p.getnamed("pbl_colorpicker");
+        }
+        this.picker.compatibility = 0;
+        this.picker.message("bang");
+        this.picker.spriteInstance = spriteInstance;
+        if (this.pickerListener == null)
+        {   
+            print("assigned picker")
+            this.pickerListener = new MaxobjListener(this.picker, "currentcolor", PickerCallback);
+        }
+        print(this.pickerListener)
     }
 
     this.CreateSprites = function(patcher)
@@ -85,7 +111,7 @@ function TexturesParser()
     }
 
     this.ClearImages = function()
-    {
+    {   
         for (var sprite in this.spritesContainer)
         {
             this.spritesContainer[sprite].ClearImage();
@@ -102,3 +128,4 @@ function TexturesParser()
         this.spritesContainer = {};
     }
 }
+

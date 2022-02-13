@@ -39,6 +39,11 @@ function PWorld(patcher)
 
     this.mtrTextureInputs = ["diffuse_texture", "normals_texture", "glossmap_texture", "specular_texture", "heightmap_texture", "environment_texture"];
 
+    this.SetShape = function()
+    {
+        
+    }
+
     this.SetShapeTextures = function()
     {   
         this.SetMtrToEmpty();
@@ -65,15 +70,15 @@ function PWorld(patcher)
             this.material.heightmap_texture(gGlobal.textureNames.tex_height);
         }
         if (gGlobal.textureNames.tex_environment != "Undefined")
-        {
+        {   
             this.material.environment_texture(gGlobal.textureNames.tex_environment);
         }
     
-        var keys = Object.keys(gGlobal.textureNames);
-        for (var key in keys)
-        {
-            print("key "+keys[key] + " __ " + gGlobal.textureNames[keys[key]]);
-        }
+        // var keys = Object.keys(gGlobal.textureNames);
+        // for (var key in keys)
+        // {
+        //     print("key "+keys[key] + " __ " + gGlobal.textureNames[keys[key]]);
+        // }
     }
 
     this.Reset = function()

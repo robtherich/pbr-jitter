@@ -8,7 +8,7 @@ var gPWorld = new PWorld(this.patcher);
 
 var gTexturesLoaderBP = this.patcher.getnamed("pbl_textures_loader");
 var gBPSize = [300,300];
-var g_pWorldPos = [128, 0];
+var g_pWorldPos = [150, 0];
 
 var tsk = new Task(CheckIfResized, this);
 tsk.interval = 200;
@@ -72,7 +72,7 @@ function InitTexturesLoader()
 // PRIVATE FUNCTIONS ----------------
 function SendResizeToTexLoader()
 {
-    outlet(0, "ResizeBPatcher",gBPSize);
+    outlet(0, "ResizeBPatcher",[g_pWorldPos[0], gBPSize[1]]);
 }
 
 function CheckIfResized()

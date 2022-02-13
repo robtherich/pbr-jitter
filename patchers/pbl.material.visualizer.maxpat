@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 594.0, 220.0, 885.0, 723.0 ],
+		"rect" : [ 449.0, 146.0, 1021.0, 774.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -82,11 +82,11 @@
 					"hidden" : 1,
 					"id" : "obj-12",
 					"maxclass" : "newobj",
-					"numinlets" : 2,
-					"numoutlets" : 2,
-					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 412.0, 653.0, 69.0, 22.0 ],
-					"text" : "route name"
+					"numinlets" : 3,
+					"numoutlets" : 3,
+					"outlettype" : [ "", "", "" ],
+					"patching_rect" : [ 412.0, 653.0, 109.0, 22.0 ],
+					"text" : "route name mouse"
 				}
 
 			}
@@ -141,7 +141,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "jit_matrix", "" ],
-					"patching_rect" : [ 128.0, 0.0, 452.0, 633.0 ],
+					"patching_rect" : [ 150.0, 0.0, 466.0, 526.0 ],
 					"sync" : 1,
 					"varname" : "pbl_vis_pworld"
 				}
@@ -179,11 +179,11 @@
 					"hidden" : 1,
 					"id" : "obj-4",
 					"maxclass" : "newobj",
-					"numinlets" : 4,
-					"numoutlets" : 4,
-					"outlettype" : [ "", "", "", "" ],
-					"patching_rect" : [ 645.0, 535.0, 183.0, 22.0 ],
-					"text" : "routepass clear reset load_folder"
+					"numinlets" : 5,
+					"numoutlets" : 5,
+					"outlettype" : [ "", "", "", "", "" ],
+					"patching_rect" : [ 645.0, 535.0, 253.0, 22.0 ],
+					"text" : "routepass clear reset load_folder zoom_factor"
 				}
 
 			}
@@ -221,7 +221,7 @@
 			}
 , 			{
 				"box" : 				{
-					"bgmode" : 0,
+					"bgmode" : 1,
 					"border" : 0,
 					"clickthrough" : 0,
 					"enablehscroll" : 0,
@@ -235,7 +235,7 @@
 					"numoutlets" : 1,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 0.0, 0.0, 128.0, 633.0 ],
+					"patching_rect" : [ 0.0, 0.0, 150.0, 526.0 ],
 					"varname" : "pbl_textures_loader",
 					"viewvisibility" : 1
 				}
@@ -313,6 +313,14 @@
 					"destination" : [ "obj-4", 0 ],
 					"hidden" : 1,
 					"source" : [ "obj-3", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-1", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-4", 3 ]
 				}
 
 			}

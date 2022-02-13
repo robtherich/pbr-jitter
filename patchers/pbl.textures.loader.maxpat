@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 6.0, -1147.0, 1196.0, 931.0 ],
+		"rect" : [ 42.0, 85.0, 1024.0, 913.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -39,6 +39,33 @@
 		"subpatcher_template" : "Template_Grid",
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
+				"box" : 				{
+					"frozen_box_attributes" : [ "varname" ],
+					"hidden" : 1,
+					"id" : "obj-92",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "list", "bang" ],
+					"patching_rect" : [ 846.0, 157.0, 67.0, 22.0 ],
+					"text" : "colorpicker",
+					"varname" : "pbl_colorpicker"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"hidden" : 1,
+					"id" : "obj-91",
+					"maxclass" : "newobj",
+					"numinlets" : 4,
+					"numoutlets" : 0,
+					"patching_rect" : [ 846.0, 191.0, 118.0, 22.0 ],
+					"text" : "bgcolor 0.4 0.6 0.8 1"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"comment" : "",
 					"hidden" : 1,
@@ -87,7 +114,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 679.0, 191.0, 141.0, 22.0 ],
-					"text" : "ResizeBPatcher 128 300"
+					"text" : "ResizeBPatcher 200 300"
 				}
 
 			}
@@ -132,23 +159,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 639.07894504070282, 46.684208154678345, 269.078945279121399, 36.0 ],
-					"text" : "\"D:/MyData/My Files/Assets/Textures/PBL/Cobblestone/\""
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"angle" : 270.0,
-					"bgcolor" : [ 0.741176470588235, 0.741176470588235, 0.741176470588235, 1.0 ],
-					"id" : "obj-102",
-					"maxclass" : "panel",
-					"mode" : 0,
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 0.0, 0.0, 128.0, 770.0 ],
-					"proportion" : 0.5,
-					"rounded" : 0,
-					"varname" : "pbl_panel"
+					"text" : "\"D:/MyData/My Files/Assets/Textures/PBL/mahogfloor/\""
 				}
 
 			}
@@ -160,7 +171,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 0.0, 0.0, 128.0, 770.0 ],
+					"patching_rect" : [ 433.0, 30.0, 150.0, 1050.0 ],
 					"varname" : "pbl_dropfile"
 				}
 
@@ -232,7 +243,8 @@
 				}
 
 			}
- ]
+ ],
+		"bgcolor" : [ 0.4, 0.6, 0.8, 1.0 ]
 	}
 
 }
