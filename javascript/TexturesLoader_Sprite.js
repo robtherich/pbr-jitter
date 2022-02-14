@@ -15,6 +15,14 @@ function Sprite(index, patcher, position, spriteSize, texType)
     this.menuYSize = 22;
 
     this.fileNamesArray = null;
+    this.isMenuOpen = false;
+
+    // FUNCTIONS
+    this.SetMaxObjPosSize = function(maxObj, pos, size)
+    {   
+        this.p.script("sendbox", maxObj.varname, "patching_rect", [pos[0], pos[1], size[0], size[1]]);
+    }
+    //----------------------------------
 
     // MATRIX //
     this.matrix = new JitterMatrix();
@@ -28,9 +36,35 @@ function Sprite(index, patcher, position, spriteSize, texType)
     // PWINDOW //
     this.pwindow = this.p.newdefault(this.position[0]+this.borderSize, pwindowYPos, "jit.pwindow");
     this.pwindow.varname = "pbl_pwindow_"+index;
-    this.p.script("sendbox", this.pwindow.varname, "patching_rect", 
-                  [this.position[0]+this.borderSize, pwindowYPos, this.size[0], pwindowYSize]);
-    // this.p.script("bringtofront", this.pwindow.varname);
+    this.SetMaxObjPosSize(this.pwindow, [this.position[0]+this.borderSize, pwindowYPos], [this.size[0], pwindowYSize]);
+
+    // DROPFILE // 
+    this.spriteDropfile = this.p.newdefault(this.position[0]+this.borderSize, pwindowYPos, "dropfile");
+    this.spriteDropfile.varname = "pbl_sprite_dropfile_"+index;
+    this.spriteDropfile.bordercolor(0,0,0,0);
+    this.spriteDropfile.types("JPEG", "PNG", "TIFF");
+    this.SetMaxObjPosSize(this.spriteDropfile, [this.position[0]+this.borderSize, pwindowYPos], [this.size[0], pwindowYSize]);
+    this.p.script("bringtofront", this.spriteDropfile.varname);
+
+    this.prependDropfile = this.p.newdefault(this.position[0], pwindowYPos, "prepend");
+    this.prependDropfile.varname = "pbl_sprite_dropfilePrepend_"+index;
+    this.p.script("sendbox", this.prependDropfile.varname, "hidden", 1);
+    this.prependDropfile.set("set");
+
+    this.p.hiddenconnect(this.spriteDropfile,0, this.prependDropfile, 0);
+
+    this.messDropFile = this.p.newdefault(this.position[0], pwindowYPos, "textedit");
+    this.messDropFile.varname = "pbl_sprite_dropfileMessage_"+index;
+    this.p.script("sendbox", this.messDropFile.varname, "hidden", 1);
+
+    this.p.hiddenconnect(this.prependDropfile, 0, this.messDropFile, 0);
+
+    var DropfileCallback = (function(data) { 
+        this.LoadImage(data.value);
+        this.ApplyTexturesToShape();
+    }).bind(this); 
+    this.dropfileListener = new MaxobjListener(this.messDropFile, DropfileCallback);
+    //-------------------------------------------------------------
 
     // TEXTURE //
     this.texture = new JitterObject("jit.gl.texture", gGlobal.pworldName);
@@ -42,8 +76,7 @@ function Sprite(index, patcher, position, spriteSize, texType)
     this.borderPanel.border(this.borderSize);
     this.borderPanel.bgfillcolor(0,0,0,1);
     this.borderPanel.bordercolor(0,0,0,1);
-    this.p.script("sendbox", this.borderPanel.varname, "patching_rect", 
-                  [this.position[0], this.position[1], this.size[0]+this.borderSize*2, this.size[1]+this.borderSize*2]);
+    this.SetMaxObjPosSize(this.borderPanel, [this.position[0], this.position[1]], [this.size[0]+this.borderSize*2, this.size[1]+this.borderSize*2]);
     this.p.script("sendtoback", this.borderPanel.varname);
 
     // TEXT // 
@@ -78,34 +111,32 @@ function Sprite(index, patcher, position, spriteSize, texType)
     this.texTypeButton = this.p.newdefault(this.position[0]+this.borderSize, this.position[1]+this.borderSize, "textbutton");
     this.texTypeButton.varname = "pbl_textbutton_"+index+"_"+gGlobal.patchID;
     this.p.script("bringtofront", this.texTypeButton.varname); 
-    this.p.script("sendbox", this.texTypeButton.varname, "patching_rect", 
-                  [this.position[0]+this.borderSize, this.position[1]+this.borderSize, this.size[0], 20]);
+    this.SetMaxObjPosSize(this.texTypeButton, [this.position[0]+this.borderSize, this.position[1]+this.borderSize], [this.size[0], 20]);
     this.texTypeButton.text(this.textureType);
     this.texTypeButton.textoncolor(1,1,1,1);
 
     var TexTypeButtonCallback = (function(data) { 
-        this.p.script("sendbox", this.umenu.varname, "hidden", 0);
-        // outlet(0, "jit_gl_texture", this.texture.name);     
+        if (this.isMenuOpen)
+        {
+            this.p.script("sendbox", this.umenu.varname, "hidden", 1);
+            this.isMenuOpen = false;
+        }
+        else 
+        {
+            this.p.script("sendbox", this.umenu.varname, "hidden", 0);
+            this.isMenuOpen = true;
+        }
+
     }).bind(this); 
 
     this.texTypeButtonListener = new MaxobjListener(this.texTypeButton, TexTypeButtonCallback);
 
     // UMENU //
-    // this.chooser = this.p.newdefault(this.position[0]+this.borderSize, pwindowYPos, "chooser");  
-    // this.chooser.varname = "pbl_umenu_"+index+"_"+gGlobal.patchID;
-    // this.p.script("bringtofront", this.chooser.varname); 
-    // this.p.script("sendbox", this.chooser.varname, "hidden", 1);
-    // this.p.script("sendbox", this.chooser.varname, "patching_rect", 
-    //               [this.position[0]+this.borderSize, pwindowYPos, this.size[0], pwindowYSize]);
-    // this.chooser.fontsize(10);
-    // this.chooser.textjustification(1);
-
     this.umenu = this.p.newdefault(this.position[0]+this.borderSize, pwindowYPos, "umenu");
     this.umenu.varname = "pbl_umenu_"+index+"_"+gGlobal.patchID;
     this.p.script("bringtofront", this.umenu.varname); 
     this.p.script("sendbox", this.umenu.varname, "hidden", 1);
-    this.p.script("sendbox", this.umenu.varname, "patching_rect", 
-                  [this.position[0]+this.borderSize, pwindowYPos, this.size[0], 10]);
+    // this.SetMaxObjPosSize(this.umenu, [this.position[0]+this.borderSize, pwindowYPos], [this.size[0], 10]);
     this.umenu.append("Use Color");
 
     var UmenuCallback = (function(data) 
@@ -120,17 +151,24 @@ function Sprite(index, patcher, position, spriteSize, texType)
             g_TexturesParser.GetPickerColor(this.textureType);
         }
         
+        this.isMenuOpen = false;
         this.p.script("sendbox", this.umenu.varname, "hidden", 1);
-        outlet(0, "SetShapeTextures");
+        this.ApplyTexturesToShape();
         
     }).bind(this); 
 
     this.chooserListener = new MaxobjListener(this.umenu, UmenuCallback);
 
     // FUNCTIONS //
+    this.ApplyTexturesToShape = function()
+    {
+        outlet(0, "SetShapeTextures");
+    }
+
     this.SetPickedColor = function(color)
     {   
         this.matrix.type = "float32";
+        this.matrix.dim = [1,1];
         this.matrix.setall([color[3], color[0], color[1], color[2]]);
         this.TriggerImage();
         outlet(0, "SetShapeTextures");
@@ -160,9 +198,6 @@ function Sprite(index, patcher, position, spriteSize, texType)
         this.TriggerImage();
 
         this.text.text(this.filename);
-        // this.text.textjustification(1);
-        // this.text.setwithtruncation(this.filename, this.size[0]);
-        // this.p.script("sendbox", this.text.varname, "patching_rect", [this.position[0], this.position[1] + this.size[1] + 5, this.size[0], 10]);
     }
 
     this.GetFileNameFromPath = function(path)
@@ -203,6 +238,7 @@ function Sprite(index, patcher, position, spriteSize, texType)
     {   
         print("cleaning sprite");
         this.p.remove(this.pwindow);
+        // this.p.remove(this.spriteDropfile);
         // this.p.remove(this.button);
         // this.p.remove(this.borderPanel);
         // this.p.remove(this.umenu);

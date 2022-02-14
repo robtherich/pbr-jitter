@@ -28,7 +28,8 @@ function clear()
 }
 
 function reset()
-{
+{   
+    g_TexturesParser.Reset();
     outlet(0, "SetShapeTextures");
 }
 

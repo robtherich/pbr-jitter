@@ -39,9 +39,9 @@ function PWorld(patcher)
 
     this.mtrTextureInputs = ["diffuse_texture", "normals_texture", "glossmap_texture", "specular_texture", "heightmap_texture", "environment_texture"];
 
-    this.SetShape = function()
+    this.SetShape = function(shape)
     {
-        
+        this.gridshape.shape = shape;
     }
 
     this.SetShapeTextures = function()

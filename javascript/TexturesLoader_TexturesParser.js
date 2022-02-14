@@ -12,6 +12,11 @@ function TexturesParser(patcher)
 
     this.folder = null;
 
+    this.Reset = function()
+    {
+        
+    }
+
     this.ParseFolder = function(path)
     {
         this.folder = new Folder(path);
