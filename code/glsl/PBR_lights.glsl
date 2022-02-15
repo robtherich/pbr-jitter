@@ -3,42 +3,42 @@
 //Point light	
 vec3	get_point_light(in PBRLightSourceParameters lig, in material mate, in geometry geom){
 		
-	vec3	ligMinPos 	= lig.position.xyz - geom.pos;
+	vec3	ligMinPos = geom.pos - lig.position.xyz;
 	float	d 		= length(ligMinPos);	
-	float 	atten 		= 1.0 / (lig.constAtten+lig.linAtten*d+lig.quadAtten*d*d);
+	float 	atten 	= 1.0 / (lig.constAtten+lig.linAtten*d+lig.quadAtten*d*d);
 
-	vec3	L 		= normalize(ligMinPos);				//light direction
-	vec3	rad 		= lig.color.rgb * atten;				//radiance
+	vec3	L 		    = normalize(ligMinPos);				//light direction
+	vec3	rad 		= lig.color.rgb * atten;			//radiance
 	bool	compute 	= rad.x+rad.y+rad.z > 0.05;
 	return  compute ? 	( selfShadowing == 1. ? shadow(normalize(jit_in.transTBN * ligMinPos), geom.tanN, geom.uv, mate.height) : 1.) * 
 						getRadiance(geom.V, geom.N, L, rad, geom.pos, mate) :
-						vec3(0.); //get radiance for this light
+						vec3(0.);
 }	
 
 //Directional light
 vec3	get_directional_light(in PBRLightSourceParameters lig, in material mate, in geometry geom){
 	
-        vec3    direction       = normalize(lig.position.xyz);
-	vec3	tanLigDir 	= normalize(jit_in.transTBN * direction);	//light pos in tangent space
+    vec3 direction = -normalize(lig.position.xyz);
+	vec3 tanLigDir = normalize(jit_in.transTBN * direction);	//light pos in tangent space
 	return  ( selfShadowing == 1. ? shadow(tanLigDir, geom.tanN, geom.uv, mate.height) : 1.) * 
-			getRadiance(geom.V, geom.N, direction, lig.color.rgb, geom.pos, mate); //get radiance for this light
+			getRadiance(geom.V, geom.N, direction, lig.color.rgb, geom.pos, mate);
 }
 
 //spot light
 vec3  	get_spot_light(in PBRLightSourceParameters lig, in material mate, in geometry geom){
 
-	vec3	ligMinPos 	= lig.position.xyz - geom.pos;
+	vec3	ligMinPos = geom.pos - lig.position.xyz;
 	float	d 		= length(ligMinPos);	
-	float 	atten 		= 1.0 / (lig.constAtten+lig.linAtten*d+lig.quadAtten*d*d);
+	float 	atten 	= 1.0 / (lig.constAtten+lig.linAtten*d+lig.quadAtten*d*d);
 
-	vec3	L 		= normalize(ligMinPos);				//light direction
-	float 	spotatten 	= dot(-L, lig.spotDir);
-	atten 			= spotatten > lig.spotCosCutoff ? atten * pow(spotatten, lig.spotExponent) : 0.;
-	vec3	rad 		= lig.color.rgb * atten;						//radiance
+	vec3	L 		    = normalize(ligMinPos);				//light direction
+	float 	spotatten   = dot(-L, -lig.spotDir);
+	        atten       = spotatten > lig.spotCosCutoff ? atten * pow(spotatten, lig.spotExponent) : 0.;
+	vec3	rad 		= lig.color.rgb * atten;			//radiance
 	bool	compute 	= rad.x+rad.y+rad.z > 0.05;
 	return  compute ? 	( selfShadowing == 1. ? shadow(normalize(jit_in.transTBN * ligMinPos), geom.tanN, geom.uv, mate.height) : 1.) * 
 						getRadiance(geom.V, geom.N, L, rad, geom.pos, mate) :
-						vec3(0.); //get radiance for this light
+						vec3(0.);
 }
 
 //PBR Image-based lighting
