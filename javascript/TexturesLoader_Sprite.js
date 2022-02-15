@@ -3,6 +3,8 @@ function Sprite(index, patcher, position, spriteSize, texType)
     this.p = patcher;
     this.filename = null;
     this.filePath = null;
+
+    // this.defaultEnv = "panorama_cube_map.png";
  
     this.index = index;
 
@@ -26,6 +28,14 @@ function Sprite(index, patcher, position, spriteSize, texType)
 
     // MATRIX //
     this.matrix = new JitterMatrix();
+    if (this.textureType == "tex_environment")
+    {
+        this.matrix.importmovie("panorama_cube_map.png");
+    }
+    else 
+    {
+        this.matrix.importmovie("default_tex.png");
+    }
     // this.matrix.type = "float32";
 
     this.ratio = this.matrix.dim[0] / this.matrix.dim[1];
@@ -37,6 +47,7 @@ function Sprite(index, patcher, position, spriteSize, texType)
     this.pwindow = this.p.newdefault(this.position[0]+this.borderSize, pwindowYPos, "jit.pwindow");
     this.pwindow.varname = "pbl_pwindow_"+index;
     this.SetMaxObjPosSize(this.pwindow, [this.position[0]+this.borderSize, pwindowYPos], [this.size[0], pwindowYSize]);
+    this.pwindow.jit_matrix(this.matrix.name);
 
     // DROPFILE // 
     this.spriteDropfile = this.p.newdefault(this.position[0]+this.borderSize, pwindowYPos, "dropfile");
@@ -68,6 +79,7 @@ function Sprite(index, patcher, position, spriteSize, texType)
 
     // TEXTURE //
     this.texture = new JitterObject("jit.gl.texture", gGlobal.pworldName);
+    this.texture.defaultimage = "checker";
     // this.texture.name = this.parsedFileName+"_"+gGlobal.patchID;
 
     // PANEL //
@@ -159,7 +171,7 @@ function Sprite(index, patcher, position, spriteSize, texType)
 
     this.chooserListener = new MaxobjListener(this.umenu, UmenuCallback);
 
-    // FUNCTIONS //
+    // FUNCTIONS -----------------------------------------------------
     this.ApplyTexturesToShape = function()
     {
         outlet(0, "SetShapeTextures");
@@ -192,7 +204,6 @@ function Sprite(index, patcher, position, spriteSize, texType)
         this.filePath = path;
         this.filename = this.GetFileNameFromPath(path);
         this.matrix.importmovie(this.filePath);
-        print(this.matrix.type)
         // this.matrix.type = "float32";
         
         this.TriggerImage();
@@ -232,6 +243,11 @@ function Sprite(index, patcher, position, spriteSize, texType)
                   [position[0], position[1], this.size[0], this.size[1]]);
     
         this.pwindow.jit_matrix(this.matrix.name);
+    }
+
+    this.SetDrawto = function(drawto)
+    {
+        this.texture.drawto = drawto;
     }
 
     this.Destroy = function()

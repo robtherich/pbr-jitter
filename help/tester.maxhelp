@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 246.0, 85.0, 1401.0, 913.0 ],
+		"rect" : [ 34.0, 77.0, 1501.0, 929.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -40,12 +40,84 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-34",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 1265.0, 413.0, 133.0, 22.0 ],
+					"text" : "jit_matrix u226009370"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-29",
+					"maxclass" : "jit.pwindow",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "jit_matrix", "" ],
+					"patching_rect" : [ 1157.0, 460.0, 170.0, 133.0 ],
+					"sync" : 1
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-24",
+					"maxclass" : "button",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 1081.0, 384.0, 24.0, 24.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-15",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "jit_gl_texture", "" ],
+					"patching_rect" : [ 1157.0, 416.0, 70.0, 22.0 ],
+					"text" : "jit.gl.texture"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-13",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "jit_matrix", "" ],
+					"patching_rect" : [ 1215.0, 236.0, 71.0, 22.0 ],
+					"text" : "jit.gl.skybox"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-12",
+					"maxclass" : "newobj",
+					"numinlets" : 6,
+					"numoutlets" : 2,
+					"outlettype" : [ "jit_gl_texture", "" ],
+					"patching_rect" : [ 1215.0, 201.0, 83.0, 22.0 ],
+					"text" : "jit.gl.cubemap"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-17",
 					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 707.0, 327.0, 150.0, 62.0 ],
+					"patching_rect" : [ 1085.0, 311.0, 150.0, 62.0 ],
 					"text" : "- add cubemap\n- fix outputs \n- add outputs bg\n- output textures"
 				}
 
@@ -99,7 +171,7 @@
 					"bgfillcolor_proportion" : 0.5,
 					"bgfillcolor_type" : "color",
 					"id" : "obj-14",
-					"items" : [ "albedo", ",", "test", ",", "ciao", ",", "albedo", ",", "test", ",", "ciao", ",", "albedo", ",", "test", ",", "ciao", ",", "albedo", ",", "test", ",", "ciao" ],
+					"items" : "<empty>",
 					"maxclass" : "umenu",
 					"numinlets" : 1,
 					"numoutlets" : 3,
@@ -270,7 +342,7 @@
 					"numoutlets" : 7,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "", "", "", "", "", "", "" ],
-					"patching_rect" : [ 23.0, 139.0, 300.0, 300.0 ],
+					"patching_rect" : [ 23.0, 197.0, 549.0, 516.0 ],
 					"varname" : "pbl_bpatcher",
 					"viewvisibility" : 1
 				}
@@ -348,6 +420,18 @@
 				}
 
 			}
+, 			{
+				"box" : 				{
+					"attr" : "defaultimage",
+					"id" : "obj-35",
+					"maxclass" : "attrui",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 1157.0, 386.0, 150.0, 22.0 ]
+				}
+
+			}
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
@@ -360,6 +444,13 @@
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
 					"source" : [ "obj-11", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-29", 0 ],
+					"source" : [ "obj-15", 0 ]
 				}
 
 			}
@@ -390,6 +481,13 @@
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
 					"source" : [ "obj-22", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-15", 0 ],
+					"source" : [ "obj-24", 0 ]
 				}
 
 			}
@@ -469,6 +567,20 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-29", 0 ],
+					"source" : [ "obj-34", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-15", 0 ],
+					"source" : [ "obj-35", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-14", 0 ],
 					"source" : [ "obj-36", 0 ]
 				}
@@ -512,26 +624,12 @@
  ],
 		"parameters" : 		{
 			"obj-2::obj-22" : [ "live.toggle", "live.toggle", 0 ],
-			"obj-2::obj-23" : [ "live.toggle[15]", "live.toggle[1]", 0 ],
-			"obj-2::obj-24" : [ "live.toggle[7]", "live.toggle[1]", 0 ],
-			"obj-2::obj-25" : [ "live.toggle[18]", "live.toggle[18]", 0 ],
+			"obj-2::obj-24" : [ "live.toggle[9]", "live.toggle[1]", 0 ],
 			"obj-2::obj-26" : [ "live.toggle[10]", "live.toggle[2]", 0 ],
-			"obj-2::obj-27" : [ "live.toggle[16]", "live.toggle[2]", 0 ],
-			"obj-2::obj-28" : [ "live.toggle[12]", "live.toggle[3]", 0 ],
-			"obj-2::obj-30" : [ "live.toggle[13]", "live.toggle[13]", 0 ],
-			"obj-2::obj-31" : [ "live.toggle[3]", "live.toggle[3]", 0 ],
-			"obj-2::obj-32" : [ "live.toggle[14]", "live.toggle[9]", 0 ],
-			"obj-2::obj-33" : [ "live.toggle[22]", "live.toggle[22]", 0 ],
-			"obj-2::obj-34" : [ "live.toggle[11]", "live.toggle[11]", 0 ],
-			"obj-2::obj-35" : [ "live.toggle[8]", "live.toggle[8]", 0 ],
-			"obj-2::obj-37" : [ "live.toggle[19]", "live.toggle[15]", 0 ],
-			"obj-2::obj-39" : [ "live.toggle[23]", "live.toggle[23]", 0 ],
-			"obj-2::obj-40" : [ "live.toggle[20]", "live.toggle[20]", 0 ],
-			"obj-2::obj-42" : [ "live.toggle[21]", "live.toggle[21]", 0 ],
-			"obj-2::obj-43" : [ "live.toggle[24]", "live.toggle[24]", 0 ],
-			"obj-2::obj-45" : [ "live.toggle[25]", "live.toggle[25]", 0 ],
-			"obj-2::obj-47" : [ "live.toggle[26]", "live.toggle[26]", 0 ],
-			"obj-2::obj-49" : [ "live.toggle[27]", "live.toggle[27]", 0 ],
+			"obj-2::obj-28" : [ "live.toggle[15]", "live.toggle[3]", 0 ],
+			"obj-2::obj-30" : [ "live.toggle[16]", "live.toggle[13]", 0 ],
+			"obj-2::obj-32" : [ "live.toggle[17]", "live.toggle[9]", 0 ],
+			"obj-2::obj-34" : [ "live.toggle[6]", "live.toggle[11]", 0 ],
 			"parameterbanks" : 			{
 
 			}
@@ -542,19 +640,9 @@
 					"parameter_shortname" : "live.toggle"
 				}
 ,
-				"obj-2::obj-23" : 				{
-					"parameter_longname" : "live.toggle[15]",
-					"parameter_shortname" : "live.toggle[1]"
-				}
-,
 				"obj-2::obj-24" : 				{
-					"parameter_longname" : "live.toggle[7]",
+					"parameter_longname" : "live.toggle[9]",
 					"parameter_shortname" : "live.toggle[1]"
-				}
-,
-				"obj-2::obj-25" : 				{
-					"parameter_longname" : "live.toggle[18]",
-					"parameter_shortname" : "live.toggle[18]"
 				}
 ,
 				"obj-2::obj-26" : 				{
@@ -562,84 +650,24 @@
 					"parameter_shortname" : "live.toggle[2]"
 				}
 ,
-				"obj-2::obj-27" : 				{
-					"parameter_longname" : "live.toggle[16]",
-					"parameter_shortname" : "live.toggle[2]"
-				}
-,
 				"obj-2::obj-28" : 				{
-					"parameter_longname" : "live.toggle[12]",
+					"parameter_longname" : "live.toggle[15]",
 					"parameter_shortname" : "live.toggle[3]"
 				}
 ,
 				"obj-2::obj-30" : 				{
-					"parameter_longname" : "live.toggle[13]",
+					"parameter_longname" : "live.toggle[16]",
 					"parameter_shortname" : "live.toggle[13]"
 				}
 ,
-				"obj-2::obj-31" : 				{
-					"parameter_longname" : "live.toggle[3]",
-					"parameter_shortname" : "live.toggle[3]"
-				}
-,
 				"obj-2::obj-32" : 				{
-					"parameter_longname" : "live.toggle[14]",
+					"parameter_longname" : "live.toggle[17]",
 					"parameter_shortname" : "live.toggle[9]"
 				}
 ,
-				"obj-2::obj-33" : 				{
-					"parameter_longname" : "live.toggle[22]",
-					"parameter_shortname" : "live.toggle[22]"
-				}
-,
 				"obj-2::obj-34" : 				{
-					"parameter_longname" : "live.toggle[11]",
+					"parameter_longname" : "live.toggle[6]",
 					"parameter_shortname" : "live.toggle[11]"
-				}
-,
-				"obj-2::obj-35" : 				{
-					"parameter_longname" : "live.toggle[8]",
-					"parameter_shortname" : "live.toggle[8]"
-				}
-,
-				"obj-2::obj-37" : 				{
-					"parameter_longname" : "live.toggle[19]",
-					"parameter_shortname" : "live.toggle[15]"
-				}
-,
-				"obj-2::obj-39" : 				{
-					"parameter_longname" : "live.toggle[23]",
-					"parameter_shortname" : "live.toggle[23]"
-				}
-,
-				"obj-2::obj-40" : 				{
-					"parameter_longname" : "live.toggle[20]",
-					"parameter_shortname" : "live.toggle[20]"
-				}
-,
-				"obj-2::obj-42" : 				{
-					"parameter_longname" : "live.toggle[21]",
-					"parameter_shortname" : "live.toggle[21]"
-				}
-,
-				"obj-2::obj-43" : 				{
-					"parameter_longname" : "live.toggle[24]",
-					"parameter_shortname" : "live.toggle[24]"
-				}
-,
-				"obj-2::obj-45" : 				{
-					"parameter_longname" : "live.toggle[25]",
-					"parameter_shortname" : "live.toggle[25]"
-				}
-,
-				"obj-2::obj-47" : 				{
-					"parameter_longname" : "live.toggle[26]",
-					"parameter_shortname" : "live.toggle[26]"
-				}
-,
-				"obj-2::obj-49" : 				{
-					"parameter_longname" : "live.toggle[27]",
-					"parameter_shortname" : "live.toggle[27]"
 				}
 
 			}

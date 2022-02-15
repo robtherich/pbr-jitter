@@ -99,14 +99,14 @@ function TexturesParser(patcher)
             print("assigned picker")
             this.pickerListener = new MaxobjListener(this.picker, "currentcolor", PickerCallback);
         }
-        print(this.pickerListener)
+        // print(this.pickerListener)
     }
 
     this.CreateSprites = function(patcher)
     {
         var position = [4,0];
         var texTypes = Object.keys(gGlobal.textureNames);
-        print(texTypes)
+        // print(texTypes)
         for (var i=0; i<texTypes.length; i++)
         {
             this.spritesContainer[texTypes[i]] = (new Sprite(i, patcher, position, this.spriteSize, texTypes[i]));

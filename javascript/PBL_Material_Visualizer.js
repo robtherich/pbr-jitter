@@ -51,7 +51,7 @@ function SetShapeTextures()
 
 function GetPWorldName(name)
 {
-    gPWorld.GetPWorldName(name);
+    gPWorld.SetDrawTo(name);
     gGlobal.pworldName = this.name;
 }
 

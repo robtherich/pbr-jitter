@@ -1,8 +1,12 @@
+include("PBL_Material_Visualizer_CubeMap.js");
+
 function PWorld(patcher)
 {   
     this.p = patcher;
     this.pworld = this.p.getnamed("pbl_vis_pworld");
     this.name = null;
+
+    this.envMap = new CubeMap(patcher);
 
     this.light = new JitterObject("jit.gl.light");
     this.light.ambient = [1,1,1,1];
@@ -96,12 +100,14 @@ function PWorld(patcher)
 
     this.SetMtrToEmpty();
 
-    this.GetPWorldName = function(name)
+    this.SetDrawTo = function(name)
     {
         this.name = name;
         this.light.drawto = this.name;
         this.gridshape.drawto = this.name;
         this.material.drawto = this.name;
+        this.envMap.SetDrawTo(name);
+        this.envMap.AssignImgToCubeMap(this.material);
     }
 
     this.ResizePWorld = function(position, size)
@@ -115,5 +121,6 @@ function PWorld(patcher)
         this.gridshape.freepeer();
         this.material.freepeer();
         this.light.freepeer();
+        this.envMap.Destroy();
     }
 }

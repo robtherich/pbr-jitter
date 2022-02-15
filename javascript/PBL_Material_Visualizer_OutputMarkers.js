@@ -11,7 +11,7 @@ function OutputMarkers(patcher)
             this.outputMarkers.push(this.p.newdefault(xPos, gBPSize[1]-7, "live.toggle"));
             this.outputMarkers[i].varname = "pbl_output_"+i;
             this.outputMarkers[i].activebgcolor(1,1,1,1);
-            print(xPos)
+            // print("Marker Pos "+xPos)
         }
     }
 
