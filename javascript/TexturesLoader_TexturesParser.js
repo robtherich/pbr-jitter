@@ -33,6 +33,7 @@ function TexturesParser(patcher)
                 if (texType != -1)
                 {
                     this.spritesContainer[texType].LoadImage(path+this.folder.filename);
+                    print(texType)
                 }
             }
             this.folder.next();
@@ -45,7 +46,9 @@ function TexturesParser(patcher)
     }
 
     this.ParseTextureType = function(filename)
-    {   
+    {
+        // this.ClearImages();
+    
         var texType = -1;
         if (/diff|col|alb/.test(filename)) {
             texType = "tex_albedo";

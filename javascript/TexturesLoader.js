@@ -35,7 +35,6 @@ function reset()
 
 function load_folder(path)
 {   
-    g_TexturesParser.ClearImages();
     g_TexturesParser.ParseFolder(path);
     outlet(0, "SetShapeTextures");
 }

@@ -207,6 +207,7 @@ function Sprite(index, patcher, position, spriteSize, texType)
         // this.matrix.type = "float32";
         
         this.TriggerImage();
+        print(this.index)
 
         this.text.text(this.filename);
     }
