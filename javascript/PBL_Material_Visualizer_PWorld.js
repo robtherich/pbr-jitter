@@ -120,10 +120,10 @@ function PWorld(patcher)
         this.envMap.AssignImgToCubeMap(this.material);
     }
 
-    this.ResizePWorld = function(position, size)
+    this.ResizePWorld = function(rect)
     {
         this.p.script("sendbox", this.pworld.varname, "patching_rect", 
-        [position[0], position[1], size[0]-position[0], size[1]]);
+        [rect[0], rect[1], rect[2], rect[3]]);
     }
 
     this.Destroy = function()

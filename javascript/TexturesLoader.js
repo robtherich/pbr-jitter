@@ -9,10 +9,10 @@ var gGlobal = new Global("pbl_global");
 // var gPanel = null; 
 var gDropfile = null;
 
-var gBPSize = [150,300];
+var gBPSize = [600,100];
 var gMaxObjSize = gBPSize.slice();
 
-var g_TexturesParser = new TexturesParser(this.patcher);
+var g_TexturesParser = new TexturesParser(this.patcher, gBPSize[1]);
 
 // PUBLIC FUNCTIONS ---------------------
 
@@ -24,7 +24,7 @@ function zoom_factor(val)
 function clear()
 {
     g_TexturesParser.ClearImages();
-    ResizeBPatcher(gBPSize[0], gBPSize[1]);
+    // ResizeBPatcher(gBPSize[0], gBPSize[1]);
 }
 
 function reset()
@@ -40,18 +40,20 @@ function load_folder(path)
 }
 
 // CALLED BY PATCHER
-function ResizeBPatcher(newSizeX, newSizeY)
+function ResizeBPatcher(posX, posY, bpatcherSizeX, bpatcherSizeY)
 {   
-    // print("RESIZE TEXTURE LOADER PATCHER")
-    gBPSize = [newSizeX, newSizeY];
+    // rect[0] = posX, rect[1] = posY, rect[2] = BP size X, rect[3] = BP size Y
+
+    gBPSize[0] = bpatcherSizeX;
+    // gBPSize[1] = bpatcherSizeY;
+    print("TEX LOADER RECT "+posX, posY, bpatcherSizeX, bpatcherSizeY)
     // print("TEX LOADER SIZE "+gBPSize)
 
     var pp = this.patcher.parentpatcher;
     var bp = pp.getnamed("pbl_textures_loader");
     pp.script("sendbox", bp.varname, "patching_rect", 
-                  [0, 0, gBPSize[0], gBPSize[1]]);
-    
-    ResizeMaxObjects(gBPSize[0], gMaxObjSize[1]);
+                  [posX, posY, gBPSize[0], gBPSize[1]]);
+    ResizeMaxObjects(gMaxObjSize[0], gBPSize[1]);
 }
 
 //--------------------------
@@ -61,7 +63,7 @@ function Init()
 {      
     var allSpritesSize = g_TexturesParser.CreateSprites(this.patcher);
     SendMaxObjectsBack();
-    gMaxObjSize[1] = allSpritesSize;
+    gMaxObjSize[0] = allSpritesSize;
     ResizeMaxObjects(gMaxObjSize[0], gMaxObjSize[1]);
 }
 
@@ -73,7 +75,6 @@ function SendMaxObjectsBack()
 {   
     if (gDropfile != null)
     {
-        // this.patcher.script("sendtoback", gPanel.varname);
         this.patcher.script("sendtoback", gDropfile.varname);
     }
     else 
@@ -86,7 +87,6 @@ function ResizeMaxObjects(sizeX, sizeY)
 {   
     if (gDropfile != null)
     {   
-        // this.patcher.script("sendbox", gPanel.varname, "patching_rect", [0, 0, sizeX, sizeY]);
         this.patcher.script("sendbox", gDropfile.varname, "patching_rect", [0, 0, sizeX, sizeY]);
     }
     else 

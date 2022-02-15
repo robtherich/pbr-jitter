@@ -47,7 +47,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "list", "bang" ],
-					"patching_rect" : [ 846.0, 157.0, 67.0, 22.0 ],
+					"patching_rect" : [ 854.0, 638.0, 67.0, 22.0 ],
 					"text" : "colorpicker",
 					"varname" : "pbl_colorpicker"
 				}
@@ -60,7 +60,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 4,
 					"numoutlets" : 0,
-					"patching_rect" : [ 846.0, 191.0, 118.0, 22.0 ],
+					"patching_rect" : [ 854.0, 672.0, 118.0, 22.0 ],
 					"text" : "bgcolor 0.4 0.6 0.8 1"
 				}
 
@@ -70,11 +70,11 @@
 					"comment" : "",
 					"hidden" : 1,
 					"id" : "obj-1",
-					"index" : 1,
+					"index" : 0,
 					"maxclass" : "outlet",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 501.105262041091919, 187.0, 30.0, 30.0 ]
+					"patching_rect" : [ 509.105262041091919, 668.0, 30.0, 30.0 ]
 				}
 
 			}
@@ -83,38 +83,12 @@
 					"comment" : "",
 					"hidden" : 1,
 					"id" : "obj-103",
-					"index" : 1,
+					"index" : 0,
 					"maxclass" : "inlet",
 					"numinlets" : 0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 501.105262041091919, 43.0, 30.0, 30.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"hidden" : 1,
-					"id" : "obj-100",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 679.0, 157.0, 58.0, 22.0 ],
-					"text" : "loadbang"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"hidden" : 1,
-					"id" : "obj-53",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 679.0, 191.0, 141.0, 22.0 ],
-					"text" : "ResizeBPatcher 200 300"
+					"patching_rect" : [ 509.105262041091919, 524.0, 30.0, 30.0 ]
 				}
 
 			}
@@ -126,7 +100,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 639.07894504070282, 97.789470911026001, 115.0, 22.0 ],
+					"patching_rect" : [ 647.07894504070282, 578.789470911026001, 115.0, 22.0 ],
 					"text" : "prepend load_folder"
 				}
 
@@ -139,7 +113,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 501.105262041091919, 137.105259895324707, 114.0, 22.0 ],
+					"patching_rect" : [ 509.105262041091919, 618.105259895324707, 114.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"filename" : "TexturesLoader.js",
 						"parameter_enable" : 0
@@ -158,64 +132,17 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 639.07894504070282, 46.684208154678345, 269.078945279121399, 36.0 ],
+					"patching_rect" : [ 647.07894504070282, 527.684208154678345, 269.078945279121399, 36.0 ],
 					"text" : "\"D:/MyData/My Files/Assets/Textures/PBL/mahogfloor/\""
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"border" : 0.0,
-					"id" : "obj-3",
-					"maxclass" : "dropfile",
-					"numinlets" : 1,
-					"numoutlets" : 2,
-					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 319.0, 10.0, 150.0, 1050.0 ],
-					"varname" : "pbl_dropfile"
 				}
 
 			}
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-53", 0 ],
-					"hidden" : 1,
-					"source" : [ "obj-100", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-61", 0 ],
 					"hidden" : 1,
 					"source" : [ "obj-103", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-56", 1 ],
-					"hidden" : 1,
-					"order" : 0,
-					"source" : [ "obj-3", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-64", 0 ],
-					"hidden" : 1,
-					"order" : 1,
-					"source" : [ "obj-3", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-61", 0 ],
-					"hidden" : 1,
-					"source" : [ "obj-53", 0 ]
 				}
 
 			}
@@ -244,6 +171,14 @@
 
 			}
  ],
+		"dependency_cache" : [ 			{
+				"name" : "TexturesLoader.js",
+				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/javascript",
+				"type" : "TEXT",
+				"implicit" : 1
+			}
+ ],
+		"autosave" : 0,
 		"bgcolor" : [ 0.4, 0.6, 0.8, 1.0 ]
 	}
 

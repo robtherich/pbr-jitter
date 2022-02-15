@@ -1,11 +1,12 @@
-function TexturesParser(patcher)
+function TexturesParser(patcher, spriteSize)
 {
     this.fileNamesArray = [];
     this.spritesContainer = {};
     this.p = patcher;
     
-    this.spriteOffset = 30;
-    this.spriteSize = [gBPSize[0]-30, gBPSize[0]-30];
+    this.spriteOffset = 10;
+    this.spriteSize = [spriteSize-30, spriteSize-30];
+    this.spriteOffsetFromBPEdge = [4,4];
 
     this.picker = null;
     this.pickerListener = null;
@@ -107,15 +108,16 @@ function TexturesParser(patcher)
 
     this.CreateSprites = function(patcher)
     {
-        var position = [4,0];
+        var position = this.spriteOffsetFromBPEdge.slice();
         var texTypes = Object.keys(gGlobal.textureNames);
         // print(texTypes)
+        print("SpRITE SIZE "+this.spriteSize)
         for (var i=0; i<texTypes.length; i++)
         {
             this.spritesContainer[texTypes[i]] = (new Sprite(i, patcher, position, this.spriteSize, texTypes[i]));
-            position[1] += this.spriteSize[1]+this.spriteOffset;
+            position[0] += this.spriteSize[1]+this.spriteOffset;
         }
-        return position[1];
+        return position[0];
     }
 
     this.ClearImages = function()

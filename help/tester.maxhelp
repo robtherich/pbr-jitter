@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 34.0, 77.0, 1501.0, 929.0 ],
+		"rect" : [ 42.0, 85.0, 1501.0, 913.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -244,11 +244,11 @@
 			}
 , 			{
 				"box" : 				{
-					"bgmode" : 0,
+					"bgmode" : 1,
 					"border" : 0,
 					"clickthrough" : 0,
 					"enablehscroll" : 0,
-					"enablevscroll" : 0,
+					"enablevscroll" : 1,
 					"id" : "obj-2",
 					"lockeddragscroll" : 0,
 					"lockedsize" : 0,
@@ -258,7 +258,7 @@
 					"numoutlets" : 7,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "", "", "", "", "", "", "" ],
-					"patching_rect" : [ 27.0, 214.0, 545.0, 535.0 ],
+					"patching_rect" : [ 27.0, 297.0, 600.0, 300.0 ],
 					"varname" : "pbl_bpatcher",
 					"viewvisibility" : 1
 				}
@@ -430,101 +430,6 @@
 
 			}
  ],
-		"parameters" : 		{
-			"obj-2::obj-22" : [ "live.toggle", "live.toggle", 0 ],
-			"obj-2::obj-23" : [ "live.toggle[13]", "live.toggle[12]", 0 ],
-			"obj-2::obj-24" : [ "live.toggle[5]", "live.toggle[1]", 0 ],
-			"obj-2::obj-26" : [ "live.toggle[7]", "live.toggle[2]", 0 ],
-			"obj-2::obj-27" : [ "live.toggle[15]", "live.toggle[15]", 0 ],
-			"obj-2::obj-28" : [ "live.toggle[8]", "live.toggle[8]", 0 ],
-			"obj-2::obj-30" : [ "live.toggle[9]", "live.toggle[9]", 0 ],
-			"obj-2::obj-31" : [ "live.toggle[16]", "live.toggle[16]", 0 ],
-			"obj-2::obj-32" : [ "live.toggle[10]", "live.toggle[10]", 0 ],
-			"obj-2::obj-34" : [ "live.toggle[11]", "live.toggle[11]", 0 ],
-			"obj-2::obj-35" : [ "live.toggle[17]", "live.toggle[17]", 0 ],
-			"obj-2::obj-37" : [ "live.toggle[18]", "live.toggle[18]", 0 ],
-			"obj-2::obj-40" : [ "live.toggle[19]", "live.toggle[19]", 0 ],
-			"obj-2::obj-42" : [ "live.toggle[20]", "live.toggle[20]", 0 ],
-			"parameterbanks" : 			{
-
-			}
-,
-			"parameter_overrides" : 			{
-				"obj-2::obj-22" : 				{
-					"parameter_longname" : "live.toggle",
-					"parameter_shortname" : "live.toggle"
-				}
-,
-				"obj-2::obj-23" : 				{
-					"parameter_longname" : "live.toggle[13]",
-					"parameter_shortname" : "live.toggle[12]"
-				}
-,
-				"obj-2::obj-24" : 				{
-					"parameter_longname" : "live.toggle[5]",
-					"parameter_shortname" : "live.toggle[1]"
-				}
-,
-				"obj-2::obj-26" : 				{
-					"parameter_longname" : "live.toggle[7]",
-					"parameter_shortname" : "live.toggle[2]"
-				}
-,
-				"obj-2::obj-27" : 				{
-					"parameter_longname" : "live.toggle[15]",
-					"parameter_shortname" : "live.toggle[15]"
-				}
-,
-				"obj-2::obj-28" : 				{
-					"parameter_longname" : "live.toggle[8]",
-					"parameter_shortname" : "live.toggle[8]"
-				}
-,
-				"obj-2::obj-30" : 				{
-					"parameter_longname" : "live.toggle[9]",
-					"parameter_shortname" : "live.toggle[9]"
-				}
-,
-				"obj-2::obj-31" : 				{
-					"parameter_longname" : "live.toggle[16]",
-					"parameter_shortname" : "live.toggle[16]"
-				}
-,
-				"obj-2::obj-32" : 				{
-					"parameter_longname" : "live.toggle[10]",
-					"parameter_shortname" : "live.toggle[10]"
-				}
-,
-				"obj-2::obj-34" : 				{
-					"parameter_longname" : "live.toggle[11]",
-					"parameter_shortname" : "live.toggle[11]"
-				}
-,
-				"obj-2::obj-35" : 				{
-					"parameter_longname" : "live.toggle[17]",
-					"parameter_shortname" : "live.toggle[17]"
-				}
-,
-				"obj-2::obj-37" : 				{
-					"parameter_longname" : "live.toggle[18]",
-					"parameter_shortname" : "live.toggle[18]"
-				}
-,
-				"obj-2::obj-40" : 				{
-					"parameter_longname" : "live.toggle[19]",
-					"parameter_shortname" : "live.toggle[19]"
-				}
-,
-				"obj-2::obj-42" : 				{
-					"parameter_longname" : "live.toggle[20]",
-					"parameter_shortname" : "live.toggle[20]"
-				}
-
-			}
-,
-			"inherited_shortname" : 1
-		}
-,
 		"dependency_cache" : [ 			{
 				"name" : "PBL_Material_Visualizer.js",
 				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/javascript",

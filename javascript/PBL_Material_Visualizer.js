@@ -8,13 +8,14 @@ var gGlobal = new Global("pbl_global");
 var gPWorld = new PWorld(this.patcher);
 
 var gTexturesLoaderBP = this.patcher.getnamed("pbl_textures_loader");
-var gBPSize = [300,300];
-var g_pWorldPos = [150, 0];
+var gBPSize = [600,300];
+var g_pWorldRect = [10, 30, 200, 150];
+var g_TexLoaderBPRect = [10, 170, 600, 100];
 
 var g_dropFile = this.patcher.getnamed("pbl_visualizer_dropfile");
 
-var g_bottomOffset = 10;
-var g_outputMarkers = new OutputMarkers(this.patcher);
+var g_bottomOffset = 0;
+// var g_outputMarkers = new OutputMarkers(this.patcher);
 
 
 var tsk = new Task(CheckIfResized, this);
@@ -58,8 +59,8 @@ function GetPWorldName(name)
 function SetPatchID(id)
 {
     gGlobal.patchID = id;
-    g_outputMarkers.Destroy();
-    g_outputMarkers.InitOutputMarkers();
+    // g_outputMarkers.Destroy();
+    // g_outputMarkers.InitOutputMarkers();
 }
 
 
@@ -74,7 +75,7 @@ function ResizeBPatcher()
     // pp.script("sendbox", bp.varname, "patching_rect", 
     //               [0, 0, gBPSize[0], gBPSize[1]]);
     
-    gPWorld.ResizePWorld(g_pWorldPos, [gBPSize[0], gBPSize[1]-g_bottomOffset]);
+    gPWorld.ResizePWorld(g_pWorldRect);
     print("Mat visualizer patcher pos: "+this.patcher.box.rect);
 }
 
@@ -88,7 +89,7 @@ function InitTexturesLoader()
 // PRIVATE FUNCTIONS ----------------
 function SendResizeToTexLoader()
 {
-    outlet(0, "ResizeBPatcher",[g_pWorldPos[0], gBPSize[1]-g_bottomOffset]);
+    outlet(0, "ResizeBPatcher", [g_TexLoaderBPRect[0], g_TexLoaderBPRect[1], g_TexLoaderBPRect[2], g_TexLoaderBPRect[3]]);
 }
 
 function CheckIfResized()
@@ -101,10 +102,15 @@ function CheckIfResized()
         gBPSize[1] = rect[3];
         gFirstResize = true;
         SendResizeToTexLoader();
-        gPWorld.ResizePWorld(g_pWorldPos, [gBPSize[0], gBPSize[1]-g_bottomOffset]);
-        ResizeDropFile(g_pWorldPos, gBPSize);
-        g_outputMarkers.RepositionMarkers(gBPSize);
+        gPWorld.ResizePWorld(g_pWorldRect);
+        // ResizeDropFile(g_pWorldPos, gBPSize);
+        // g_outputMarkers.RepositionMarkers(gBPSize);
     } 
+}
+
+function CalcPWorldSize()
+{
+    // g_pWorldRect[2]
 }
 
 function ResizeDropFile(pos, size)

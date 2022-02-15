@@ -11,6 +11,7 @@ function Sprite(index, patcher, position, spriteSize, texType)
     this.position = position.slice();
     this.size = spriteSize.slice();
     this.borderSize = 2;
+    this.fontSize = 8;
 
     this.textureType = texType;
 
@@ -112,7 +113,7 @@ function Sprite(index, patcher, position, spriteSize, texType)
     this.text.bgcolor(0.3,0.3,0.3,1);
     this.text.textoncolor(0.92,0.92,0.92,1);
     this.text.varname = "bpl_filename_"+index;
-    // // this.text.fontsize(10);
+    this.text.fontsize(this.fontSize);
     this.text.ignoreclick = (1);
     this.text.truncate(2);
     this.p.script("sendbox", this.text.varname, "patching_rect", [this.position[0]+this.borderSize, this.position[1] + this.size[1] + 5, 
@@ -139,6 +140,7 @@ function Sprite(index, patcher, position, spriteSize, texType)
     // TEXT BUTTON //
     this.texTypeButton = this.p.newdefault(this.position[0]+this.borderSize, this.position[1]+this.borderSize, "textbutton");
     this.texTypeButton.varname = "pbl_textbutton_"+index+"_"+gGlobal.patchID;
+    this.texTypeButton.fontsize(this.fontSize);
     this.p.script("bringtofront", this.texTypeButton.varname); 
     this.SetMaxObjPosSize(this.texTypeButton, [this.position[0]+this.borderSize, this.position[1]+this.borderSize], [this.size[0], 20]);
     this.texTypeButton.text(this.textureType);
