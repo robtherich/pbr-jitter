@@ -4,7 +4,7 @@ function Sprite(index, patcher, position, spriteSize, texType)
     this.filename = null;
     this.filePath = null;
 
-    // this.defaultEnv = "panorama_cube_map.png";
+    this.defaultEnvMapFile = "panorama_cube_map.png";
  
     this.index = index;
 
@@ -24,19 +24,35 @@ function Sprite(index, patcher, position, spriteSize, texType)
     {   
         this.p.script("sendbox", maxObj.varname, "patching_rect", [pos[0], pos[1], size[0], size[1]]);
     }
+
+    this.ImportDefaultImageForMatrix = function()
+    {
+        if (this.textureType == "tex_environment")
+        {
+            this.matrix.importmovie(this.defaultEnvMapFile);
+        }
+        else 
+        {
+            this.matrix.importmovie("default_tex.png");
+        }
+    }
+
+    this.SetDefaultTextForImgName = function()
+    {
+        if (this.textureType == "tex_environment")
+        {
+            this.text.text(this.defaultEnvMapFile);
+        }
+        else
+        {
+            this.text.text("...");
+        }
+    }
     //----------------------------------
 
     // MATRIX //
     this.matrix = new JitterMatrix();
-    if (this.textureType == "tex_environment")
-    {
-        this.matrix.importmovie("panorama_cube_map.png");
-    }
-    else 
-    {
-        this.matrix.importmovie("default_tex.png");
-    }
-    // this.matrix.type = "float32";
+    this.ImportDefaultImageForMatrix();
 
     this.ratio = this.matrix.dim[0] / this.matrix.dim[1];
 
@@ -101,7 +117,8 @@ function Sprite(index, patcher, position, spriteSize, texType)
     this.text.truncate(2);
     this.p.script("sendbox", this.text.varname, "patching_rect", [this.position[0]+this.borderSize, this.position[1] + this.size[1] + 5, 
                                                                   this.size[0], 20]);
-    this.text.text("...");
+    
+    this.SetDefaultTextForImgName();
 
     // BUTTON //
     this.button = this.p.newdefault(this.position[0]+this.borderSize, pwindowYPos, "ubutton");
@@ -144,7 +161,7 @@ function Sprite(index, patcher, position, spriteSize, texType)
     this.texTypeButtonListener = new MaxobjListener(this.texTypeButton, TexTypeButtonCallback);
 
     // UMENU //
-    this.umenu = this.p.newdefault(this.position[0]+this.borderSize, pwindowYPos, "umenu");
+    this.umenu = this.p.newdefault(this.position[0]+this.borderSize, this.position[1]+this.borderSize+this.menuYSize, "umenu");
     this.umenu.varname = "pbl_umenu_"+index+"_"+gGlobal.patchID;
     this.p.script("bringtofront", this.umenu.varname); 
     this.p.script("sendbox", this.umenu.varname, "hidden", 1);
@@ -228,10 +245,12 @@ function Sprite(index, patcher, position, spriteSize, texType)
 
     this.ClearImage = function()
     {
-        this.matrix.clear();
+        // this.matrix.clear();
+        this.ImportDefaultImageForMatrix();
+        this.SetDefaultTextForImgName();
+
         this.pwindow.jit_matrix(this.matrix.name);
         this.texture.jit_matrix(this.matrix.name);
-        this.text.text("...");
         gGlobal.textureNames[this.textureType] = "Undefined";
     }
 

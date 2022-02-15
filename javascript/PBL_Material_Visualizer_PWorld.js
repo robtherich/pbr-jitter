@@ -37,6 +37,7 @@ function PWorld(patcher)
         tex_roughness: this.textureEmpty.name,
         tex_metallic: this.textureEmpty.name,
         tex_ao: this.textureEmpty.name,
+        tex_emission: this.textureEmpty.name,
         tex_height: this.textureEmpty.name,
         tex_environment: this.textureEmpty.name
     };
@@ -68,6 +69,15 @@ function PWorld(patcher)
         if (gGlobal.textureNames.tex_metallic != "Undefined")
         {
             this.material.specular_texture(gGlobal.textureNames.tex_metallic);
+        }
+        if (gGlobal.textureNames.tex_emission != "Undefined")
+        {   
+            this.material.mat_emission = [1,1,1,1];
+            this.material.emission_texture(gGlobal.textureNames.tex_emission);
+        }
+        else
+        {
+            this.material.mat_emission = [0,0,0,1];
         }
         if (gGlobal.textureNames.tex_height != "Undefined")
         {

@@ -63,12 +63,12 @@
 , 			{
 				"box" : 				{
 					"id" : "obj-17",
-					"linecount" : 5,
+					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 872.0, 261.0, 224.0, 75.0 ],
-					"text" : "- add name of env tex on button\n- fix outputs \n- add outputs bg\n- output textures\n- add emission"
+					"patching_rect" : [ 872.0, 261.0, 224.0, 89.0 ],
+					"text" : "- fix outputs \n- add outputs bg\n\n- output textures\n- add emission\n- read exr files"
 				}
 
 			}
@@ -258,7 +258,7 @@
 					"numoutlets" : 7,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "", "", "", "", "", "", "" ],
-					"patching_rect" : [ 27.0, 201.0, 551.0, 537.0 ],
+					"patching_rect" : [ 27.0, 214.0, 545.0, 535.0 ],
 					"varname" : "pbl_bpatcher",
 					"viewvisibility" : 1
 				}
@@ -432,12 +432,19 @@
  ],
 		"parameters" : 		{
 			"obj-2::obj-22" : [ "live.toggle", "live.toggle", 0 ],
+			"obj-2::obj-23" : [ "live.toggle[13]", "live.toggle[12]", 0 ],
 			"obj-2::obj-24" : [ "live.toggle[5]", "live.toggle[1]", 0 ],
 			"obj-2::obj-26" : [ "live.toggle[7]", "live.toggle[2]", 0 ],
+			"obj-2::obj-27" : [ "live.toggle[15]", "live.toggle[15]", 0 ],
 			"obj-2::obj-28" : [ "live.toggle[8]", "live.toggle[8]", 0 ],
 			"obj-2::obj-30" : [ "live.toggle[9]", "live.toggle[9]", 0 ],
+			"obj-2::obj-31" : [ "live.toggle[16]", "live.toggle[16]", 0 ],
 			"obj-2::obj-32" : [ "live.toggle[10]", "live.toggle[10]", 0 ],
 			"obj-2::obj-34" : [ "live.toggle[11]", "live.toggle[11]", 0 ],
+			"obj-2::obj-35" : [ "live.toggle[17]", "live.toggle[17]", 0 ],
+			"obj-2::obj-37" : [ "live.toggle[18]", "live.toggle[18]", 0 ],
+			"obj-2::obj-40" : [ "live.toggle[19]", "live.toggle[19]", 0 ],
+			"obj-2::obj-42" : [ "live.toggle[20]", "live.toggle[20]", 0 ],
 			"parameterbanks" : 			{
 
 			}
@@ -446,6 +453,11 @@
 				"obj-2::obj-22" : 				{
 					"parameter_longname" : "live.toggle",
 					"parameter_shortname" : "live.toggle"
+				}
+,
+				"obj-2::obj-23" : 				{
+					"parameter_longname" : "live.toggle[13]",
+					"parameter_shortname" : "live.toggle[12]"
 				}
 ,
 				"obj-2::obj-24" : 				{
@@ -458,6 +470,11 @@
 					"parameter_shortname" : "live.toggle[2]"
 				}
 ,
+				"obj-2::obj-27" : 				{
+					"parameter_longname" : "live.toggle[15]",
+					"parameter_shortname" : "live.toggle[15]"
+				}
+,
 				"obj-2::obj-28" : 				{
 					"parameter_longname" : "live.toggle[8]",
 					"parameter_shortname" : "live.toggle[8]"
@@ -468,6 +485,11 @@
 					"parameter_shortname" : "live.toggle[9]"
 				}
 ,
+				"obj-2::obj-31" : 				{
+					"parameter_longname" : "live.toggle[16]",
+					"parameter_shortname" : "live.toggle[16]"
+				}
+,
 				"obj-2::obj-32" : 				{
 					"parameter_longname" : "live.toggle[10]",
 					"parameter_shortname" : "live.toggle[10]"
@@ -476,6 +498,26 @@
 				"obj-2::obj-34" : 				{
 					"parameter_longname" : "live.toggle[11]",
 					"parameter_shortname" : "live.toggle[11]"
+				}
+,
+				"obj-2::obj-35" : 				{
+					"parameter_longname" : "live.toggle[17]",
+					"parameter_shortname" : "live.toggle[17]"
+				}
+,
+				"obj-2::obj-37" : 				{
+					"parameter_longname" : "live.toggle[18]",
+					"parameter_shortname" : "live.toggle[18]"
+				}
+,
+				"obj-2::obj-40" : 				{
+					"parameter_longname" : "live.toggle[19]",
+					"parameter_shortname" : "live.toggle[19]"
+				}
+,
+				"obj-2::obj-42" : 				{
+					"parameter_longname" : "live.toggle[20]",
+					"parameter_shortname" : "live.toggle[20]"
 				}
 
 			}

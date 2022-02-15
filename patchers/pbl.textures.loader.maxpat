@@ -171,7 +171,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 433.0, 30.0, 150.0, 1050.0 ],
+					"patching_rect" : [ 319.0, 10.0, 150.0, 1050.0 ],
 					"varname" : "pbl_dropfile"
 				}
 

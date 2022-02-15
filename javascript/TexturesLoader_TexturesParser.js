@@ -94,7 +94,7 @@ function TexturesParser(patcher)
         {
             this.picker = this.p.getnamed("pbl_colorpicker");
         }
-        this.picker.compatibility = 0;
+        this.picker.compatibility = 1;
         this.picker.message("bang");
         this.picker.spriteInstance = spriteInstance;
         if (this.pickerListener == null)

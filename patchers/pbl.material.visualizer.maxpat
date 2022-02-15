@@ -54,7 +54,7 @@
 					"numoutlets" : 1,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 734.0, 107.0, 150.0, 468.0 ],
+					"patching_rect" : [ 0.0, 0.0, 200.0, 300.0 ],
 					"varname" : "pbl_textures_loader",
 					"viewvisibility" : 1
 				}
@@ -78,7 +78,7 @@
 					"comment" : "",
 					"hidden" : 1,
 					"id" : "obj-20",
-					"index" : 7,
+					"index" : 0,
 					"maxclass" : "outlet",
 					"numinlets" : 1,
 					"numoutlets" : 0,
@@ -91,7 +91,7 @@
 					"comment" : "",
 					"hidden" : 1,
 					"id" : "obj-19",
-					"index" : 6,
+					"index" : 0,
 					"maxclass" : "outlet",
 					"numinlets" : 1,
 					"numoutlets" : 0,
@@ -104,7 +104,7 @@
 					"comment" : "",
 					"hidden" : 1,
 					"id" : "obj-18",
-					"index" : 5,
+					"index" : 0,
 					"maxclass" : "outlet",
 					"numinlets" : 1,
 					"numoutlets" : 0,
@@ -117,7 +117,7 @@
 					"comment" : "",
 					"hidden" : 1,
 					"id" : "obj-17",
-					"index" : 4,
+					"index" : 0,
 					"maxclass" : "outlet",
 					"numinlets" : 1,
 					"numoutlets" : 0,
@@ -130,7 +130,7 @@
 					"comment" : "",
 					"hidden" : 1,
 					"id" : "obj-16",
-					"index" : 3,
+					"index" : 0,
 					"maxclass" : "outlet",
 					"numinlets" : 1,
 					"numoutlets" : 0,
@@ -143,7 +143,7 @@
 					"comment" : "",
 					"hidden" : 1,
 					"id" : "obj-15",
-					"index" : 2,
+					"index" : 0,
 					"maxclass" : "outlet",
 					"numinlets" : 1,
 					"numoutlets" : 0,
@@ -209,7 +209,7 @@
 					"comment" : "",
 					"hidden" : 1,
 					"id" : "obj-6",
-					"index" : 1,
+					"index" : 0,
 					"maxclass" : "outlet",
 					"numinlets" : 1,
 					"numoutlets" : 0,
@@ -277,7 +277,6 @@
 					"fsaa" : 1,
 					"id" : "obj-5",
 					"maxclass" : "jit.pworld",
-					"name" : "u685006451",
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "jit_matrix", "" ],
@@ -332,7 +331,7 @@
 					"comment" : "",
 					"hidden" : 1,
 					"id" : "obj-3",
-					"index" : 1,
+					"index" : 0,
 					"maxclass" : "inlet",
 					"numinlets" : 0,
 					"numoutlets" : 1,
@@ -356,6 +355,209 @@
 					}
 ,
 					"text" : "js PBL_Material_Visualizer.js"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"activebgcolor" : [ 1.0, 1.0, 1.0, 1.0 ],
+					"id" : "obj-22",
+					"maxclass" : "live.toggle",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"parameter_enable" : 1,
+					"patching_rect" : [ 0.0, 293.0, 15.0, 15.0 ],
+					"saved_attribute_attributes" : 					{
+						"activebgcolor" : 						{
+							"expression" : ""
+						}
+,
+						"valueof" : 						{
+							"parameter_enum" : [ "off", "on" ],
+							"parameter_longname" : "live.toggle",
+							"parameter_mmax" : 1,
+							"parameter_shortname" : "live.toggle",
+							"parameter_type" : 2
+						}
+
+					}
+,
+					"varname" : "pbl_output_0"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"activebgcolor" : [ 1.0, 1.0, 1.0, 1.0 ],
+					"id" : "obj-24",
+					"maxclass" : "live.toggle",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"parameter_enable" : 1,
+					"patching_rect" : [ 46.0, 293.0, 15.0, 15.0 ],
+					"saved_attribute_attributes" : 					{
+						"activebgcolor" : 						{
+							"expression" : ""
+						}
+,
+						"valueof" : 						{
+							"parameter_enum" : [ "off", "on" ],
+							"parameter_longname" : "live.toggle[1]",
+							"parameter_mmax" : 1,
+							"parameter_shortname" : "live.toggle[1]",
+							"parameter_type" : 2
+						}
+
+					}
+,
+					"varname" : "pbl_output_1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"activebgcolor" : [ 1.0, 1.0, 1.0, 1.0 ],
+					"id" : "obj-26",
+					"maxclass" : "live.toggle",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"parameter_enable" : 1,
+					"patching_rect" : [ 93.0, 293.0, 15.0, 15.0 ],
+					"saved_attribute_attributes" : 					{
+						"activebgcolor" : 						{
+							"expression" : ""
+						}
+,
+						"valueof" : 						{
+							"parameter_enum" : [ "off", "on" ],
+							"parameter_longname" : "live.toggle[2]",
+							"parameter_mmax" : 1,
+							"parameter_shortname" : "live.toggle[2]",
+							"parameter_type" : 2
+						}
+
+					}
+,
+					"varname" : "pbl_output_2"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"activebgcolor" : [ 1.0, 1.0, 1.0, 1.0 ],
+					"id" : "obj-28",
+					"maxclass" : "live.toggle",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"parameter_enable" : 1,
+					"patching_rect" : [ 140.0, 293.0, 15.0, 15.0 ],
+					"saved_attribute_attributes" : 					{
+						"activebgcolor" : 						{
+							"expression" : ""
+						}
+,
+						"valueof" : 						{
+							"parameter_enum" : [ "off", "on" ],
+							"parameter_longname" : "live.toggle[3]",
+							"parameter_mmax" : 1,
+							"parameter_shortname" : "live.toggle[3]",
+							"parameter_type" : 2
+						}
+
+					}
+,
+					"varname" : "pbl_output_3"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"activebgcolor" : [ 1.0, 1.0, 1.0, 1.0 ],
+					"id" : "obj-30",
+					"maxclass" : "live.toggle",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"parameter_enable" : 1,
+					"patching_rect" : [ 186.0, 293.0, 15.0, 15.0 ],
+					"saved_attribute_attributes" : 					{
+						"activebgcolor" : 						{
+							"expression" : ""
+						}
+,
+						"valueof" : 						{
+							"parameter_enum" : [ "off", "on" ],
+							"parameter_longname" : "live.toggle[4]",
+							"parameter_mmax" : 1,
+							"parameter_shortname" : "live.toggle[4]",
+							"parameter_type" : 2
+						}
+
+					}
+,
+					"varname" : "pbl_output_4"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"activebgcolor" : [ 1.0, 1.0, 1.0, 1.0 ],
+					"id" : "obj-32",
+					"maxclass" : "live.toggle",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"parameter_enable" : 1,
+					"patching_rect" : [ 233.0, 293.0, 15.0, 15.0 ],
+					"saved_attribute_attributes" : 					{
+						"activebgcolor" : 						{
+							"expression" : ""
+						}
+,
+						"valueof" : 						{
+							"parameter_enum" : [ "off", "on" ],
+							"parameter_longname" : "live.toggle[5]",
+							"parameter_mmax" : 1,
+							"parameter_shortname" : "live.toggle[5]",
+							"parameter_type" : 2
+						}
+
+					}
+,
+					"varname" : "pbl_output_5"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"activebgcolor" : [ 1.0, 1.0, 1.0, 1.0 ],
+					"id" : "obj-34",
+					"maxclass" : "live.toggle",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"parameter_enable" : 1,
+					"patching_rect" : [ 280.0, 293.0, 15.0, 15.0 ],
+					"saved_attribute_attributes" : 					{
+						"activebgcolor" : 						{
+							"expression" : ""
+						}
+,
+						"valueof" : 						{
+							"parameter_enum" : [ "off", "on" ],
+							"parameter_longname" : "live.toggle[6]",
+							"parameter_mmax" : 1,
+							"parameter_shortname" : "live.toggle[6]",
+							"parameter_type" : 2
+						}
+
+					}
+,
+					"varname" : "pbl_output_6"
 				}
 
 			}
@@ -518,6 +720,7 @@
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
 					"hidden" : 1,
+					"order" : 0,
 					"source" : [ "obj-4", 0 ]
 				}
 
@@ -543,6 +746,15 @@
 					"destination" : [ "obj-38", 0 ],
 					"hidden" : 1,
 					"source" : [ "obj-4", 1 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-38", 0 ],
+					"hidden" : 1,
+					"order" : 1,
+					"source" : [ "obj-4", 0 ]
 				}
 
 			}
@@ -578,7 +790,43 @@
 				}
 
 			}
- ]
+ ],
+		"parameters" : 		{
+			"obj-22" : [ "live.toggle", "live.toggle", 0 ],
+			"obj-24" : [ "live.toggle[1]", "live.toggle[1]", 0 ],
+			"obj-26" : [ "live.toggle[2]", "live.toggle[2]", 0 ],
+			"obj-28" : [ "live.toggle[3]", "live.toggle[3]", 0 ],
+			"obj-30" : [ "live.toggle[4]", "live.toggle[4]", 0 ],
+			"obj-32" : [ "live.toggle[5]", "live.toggle[5]", 0 ],
+			"obj-34" : [ "live.toggle[6]", "live.toggle[6]", 0 ],
+			"parameterbanks" : 			{
+
+			}
+,
+			"inherited_shortname" : 1
+		}
+,
+		"dependency_cache" : [ 			{
+				"name" : "PBL_Material_Visualizer.js",
+				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/javascript",
+				"type" : "TEXT",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "TexturesLoader.js",
+				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/javascript",
+				"type" : "TEXT",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "pbl.textures.loader.maxpat",
+				"bootpath" : "D:/MyData/Lavori/Cycling74/PBR_Utility/pbr-jitter/patchers",
+				"patcherrelativepath" : ".",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+ ],
+		"autosave" : 0
 	}
 
 }
