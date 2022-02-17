@@ -3,42 +3,51 @@
 //Point light	
 vec3	get_point_light(in PBRLightSourceParameters lig, in material mate, in geometry geom){
 		
-	vec3	ligMinPos = geom.pos - lig.position.xyz;
+	vec3	ligMinPos       = lig.position.xyz - geom.pos;
 	float	d 		= length(ligMinPos);	
 	float 	atten 	= 1.0 / (lig.constAtten+lig.linAtten*d+lig.quadAtten*d*d);
 
-	vec3	L 		    = normalize(ligMinPos);				//light direction
+	vec3	L 		= normalize(ligMinPos);				//light direction
 	vec3	rad 		= lig.color.rgb * atten;			//radiance
 	bool	compute 	= rad.x+rad.y+rad.z > 0.05;
-	return  compute ? 	( selfShadowing == 1. ? shadow(normalize(jit_in.transTBN * ligMinPos), geom.tanN, geom.uv, mate.height) : 1.) * 
-						getRadiance(geom.V, geom.N, L, rad, geom.pos, mate) :
-						vec3(0.);
+	return  compute ? 	
+#ifdef JIT_PBR_SHADOW
+                shadow(normalize(jit_in.transTBN * ligMinPos), geom.tanN, geom.uv, mate.height) * 
+#endif
+		getRadiance(geom.V, geom.N, L, rad, geom.pos, mate) :
+		vec3(0.);
 }	
 
 //Directional light
 vec3	get_directional_light(in PBRLightSourceParameters lig, in material mate, in geometry geom){
 	
-    vec3 direction = -normalize(lig.position.xyz);
-	vec3 tanLigDir = normalize(jit_in.transTBN * direction);	//light pos in tangent space
-	return  ( selfShadowing == 1. ? shadow(tanLigDir, geom.tanN, geom.uv, mate.height) : 1.) * 
-			getRadiance(geom.V, geom.N, direction, lig.color.rgb, geom.pos, mate);
+        vec3    direction = normalize(lig.position.xyz);
+        vec3    tanLigDir = normalize(jit_in.transTBN * direction);	//light pos in tangent space
+        return  
+#ifdef JIT_PBR_SHADOW
+                shadow(tanLigDir, geom.tanN, geom.uv, mate.height) * 
+#endif
+                getRadiance(geom.V, geom.N, direction, lig.color.rgb, geom.pos, mate);
 }
 
 //spot light
 vec3  	get_spot_light(in PBRLightSourceParameters lig, in material mate, in geometry geom){
 
-	vec3	ligMinPos = geom.pos - lig.position.xyz;
-	float	d 		= length(ligMinPos);	
+	vec3	ligMinPos = lig.position.xyz - geom.pos;
+	float	d 	= length(ligMinPos);	
 	float 	atten 	= 1.0 / (lig.constAtten+lig.linAtten*d+lig.quadAtten*d*d);
 
-	vec3	L 		    = normalize(ligMinPos);				//light direction
-	float 	spotatten   = dot(-L, -lig.spotDir);
+	vec3	L           = normalize(ligMinPos);				//light direction
+	float 	spotatten   = dot(-L, lig.spotDir);
 	        atten       = spotatten > lig.spotCosCutoff ? atten * pow(spotatten, lig.spotExponent) : 0.;
 	vec3	rad 		= lig.color.rgb * atten;			//radiance
 	bool	compute 	= rad.x+rad.y+rad.z > 0.05;
-	return  compute ? 	( selfShadowing == 1. ? shadow(normalize(jit_in.transTBN * ligMinPos), geom.tanN, geom.uv, mate.height) : 1.) * 
-						getRadiance(geom.V, geom.N, L, rad, geom.pos, mate) :
-						vec3(0.);
+    return  compute ?   
+#ifdef JIT_PBR_SHADOW
+        shadow(normalize(jit_in.transTBN * ligMinPos), geom.tanN, geom.uv, mate.height) * 
+#endif
+        getRadiance(geom.V, geom.N, L, rad, geom.pos, mate) :
+        vec3(0.);
 }
 
 //PBR Image-based lighting
@@ -146,7 +155,12 @@ vec3    getRectLight(in rectlight lig, in material mate, in geometry geom){
     vec3    kD = vec3(1.) - F;//rectLightFresnel;
             kD *= 1. - mate.met;
         
-    float sha = selfShadowing == 1. ? shadow(tanLigDir, geom.tanN, geom.uv, mate.height) : 1.;
+    float sha = 
+#ifdef JIT_PBR_SHADOW 
+        shadow(tanLigDir, geom.tanN, geom.uv, mate.height);
+#else
+        1.;
+#endif
     return  (kD * PI_INV * mate.alb + result*LdotR) * NdotL * lig.ligCol * sha;   
 }
 
@@ -244,8 +258,12 @@ vec3    getRectLightTextured(in rectlight lig, in material mate, in geometry geo
             result      /= 1. + lig.width*lig.height;
     vec3    kD = vec3(1.) - F;//rectLightFresnel;
             kD *= 1. - mate.met;
-    float   sha = selfShadowing == 1. ? shadow(tanLigDir, geom.tanN, geom.uv, mate.height) : 1.;
-
+    float   sha = 
+#ifdef JIT_PBR_SHADOW 
+        shadow(tanLigDir, geom.tanN, geom.uv, mate.height);
+#else 
+        1.;
+#endif
     return  (kD * PI_INV * mate.alb*difCol + result*LdotR*speCol) * NdotL * sha;   
 }
 

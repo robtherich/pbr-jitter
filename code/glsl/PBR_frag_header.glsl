@@ -5,7 +5,7 @@
 uniform vec3 eye;
 uniform sampler2D albedoTex, normalTex, RMOHTex, rectLightTex, integMap, reflectionTex;
 uniform samplerCube irradianceTex;//, reflectionTex;
-uniform float heightScale, triplanarExp, selfShadowing, shadowAmount, worldLocked;
+uniform float heightScale, triplanarExp, shadowAmount, worldLocked;
 uniform vec2 triplanarTexRepeat, parallaxIterations, shadowIterations;
 uniform float roughness, metalness;
 uniform float near, far;
