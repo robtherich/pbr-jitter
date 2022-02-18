@@ -3,7 +3,7 @@
 #define PI_INV 0.3183098861
 
 uniform vec3 eye;
-uniform sampler2D albedoTex, normalTex, RMOHTex, rectLightTex, integMap, reflectionTex;
+uniform sampler2D albedoTex, normalTex, RMOHTex, emissionTex, rectLightTex, integMap, reflectionTex;
 uniform samplerCube irradianceTex;//, reflectionTex;
 uniform float heightScale, triplanarExp, shadowAmount, worldLocked;
 uniform vec2 triplanarTexRepeat, parallaxIterations, shadowIterations;
