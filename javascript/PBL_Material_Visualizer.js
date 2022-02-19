@@ -8,9 +8,9 @@ var gGlobal = new Global("pbl_global");
 var gPWorld = new PWorld(this.patcher);
 
 var gTexturesLoaderBP = this.patcher.getnamed("pbl_textures_loader");
-var gBPSize = [600,300];
-var g_pWorldRect = [10, 30, 200, 150];
-var g_TexLoaderBPRect = [10, 170, 600, 100];
+var gBPSize = [700,300];
+var g_pWorldRect = [10, 10, 200, 150];
+var g_TexLoaderBPRect = [10, 170, 700, 100];
 
 var g_dropFile = this.patcher.getnamed("pbl_visualizer_dropfile");
 
@@ -81,10 +81,10 @@ function ResizeBPatcher()
 
 //------------------------------------
 
-function InitTexturesLoader()
-{
-    outlet(0, "Init");
-}
+// function InitTexturesLoader()
+// {
+//     outlet(0, "Init");
+// }
 
 // PRIVATE FUNCTIONS ----------------
 function SendResizeToTexLoader()

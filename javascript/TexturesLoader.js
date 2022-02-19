@@ -9,10 +9,10 @@ var gGlobal = new Global("pbl_global");
 // var gPanel = null; 
 var gDropfile = null;
 
-var gBPSize = [600,100];
-var gMaxObjSize = gBPSize.slice();
+var gBPSize = [0,0];
+var gMaxObjSize = [0,0];
 
-var g_TexturesParser = new TexturesParser(this.patcher, gBPSize[1]);
+var g_TexturesParser = null;
 
 // PUBLIC FUNCTIONS ---------------------
 
@@ -24,7 +24,6 @@ function zoom_factor(val)
 function clear()
 {
     g_TexturesParser.ClearImages();
-    // ResizeBPatcher(gBPSize[0], gBPSize[1]);
 }
 
 function reset()
@@ -45,9 +44,14 @@ function ResizeBPatcher(posX, posY, bpatcherSizeX, bpatcherSizeY)
     // rect[0] = posX, rect[1] = posY, rect[2] = BP size X, rect[3] = BP size Y
 
     gBPSize[0] = bpatcherSizeX;
-    // gBPSize[1] = bpatcherSizeY;
+    gBPSize[1] = bpatcherSizeY;
     print("TEX LOADER RECT "+posX, posY, bpatcherSizeX, bpatcherSizeY)
-    // print("TEX LOADER SIZE "+gBPSize)
+
+    if (g_TexturesParser == null)
+    {
+        g_TexturesParser = new TexturesParser(this.patcher, bpatcherSizeY);
+        Init();
+    }
 
     var pp = this.patcher.parentpatcher;
     var bp = pp.getnamed("pbl_textures_loader");
@@ -104,7 +108,10 @@ function GetMaxObjects()
 function Destroy()
 {
     print("cleaning");
-    g_TexturesParser.Destroy();
+    if (g_TexturesParser != null)
+    {
+        g_TexturesParser.Destroy();
+    }
 }
 
 function notifydeleted()

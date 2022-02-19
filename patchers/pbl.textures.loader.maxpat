@@ -40,6 +40,19 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"hidden" : 1,
+					"id" : "obj-2",
+					"maxclass" : "dropfile",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "" ],
+					"patching_rect" : [ 674.0, 628.0, 107.0, 70.0 ],
+					"varname" : "pbl_dropfile"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"frozen_box_attributes" : [ "varname" ],
 					"hidden" : 1,
 					"id" : "obj-92",
@@ -143,6 +156,14 @@
 					"destination" : [ "obj-61", 0 ],
 					"hidden" : 1,
 					"source" : [ "obj-103", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-64", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-2", 0 ]
 				}
 
 			}

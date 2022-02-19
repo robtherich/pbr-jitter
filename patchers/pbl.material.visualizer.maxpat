@@ -66,7 +66,7 @@
 					"numoutlets" : 1,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 10.0, 200.0, 600.0, 100.0 ],
+					"patching_rect" : [ 10.0, 170.0, 700.0, 100.0 ],
 					"varname" : "pbl_textures_loader",
 					"viewvisibility" : 1
 				}
@@ -292,7 +292,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "jit_matrix", "" ],
-					"patching_rect" : [ 10.0, 30.0, 200.0, 150.0 ],
+					"patching_rect" : [ 10.0, 10.0, 200.0, 150.0 ],
 					"sync" : 1,
 					"varname" : "pbl_vis_pworld"
 				}
@@ -315,13 +315,12 @@
 				"box" : 				{
 					"hidden" : 1,
 					"id" : "obj-53",
-					"linecount" : 2,
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 666.0, 815.0, 198.0, 36.0 ],
-					"text" : "ResizeBPatcher, SetPatchID #0, InitTexturesLoader"
+					"patching_rect" : [ 666.0, 815.0, 191.0, 22.0 ],
+					"text" : "ResizeBPatcher, SetPatchID #0"
 				}
 
 			}

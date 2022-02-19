@@ -11,11 +11,12 @@ function Sprite(index, patcher, position, spriteSize, texType)
     this.position = position.slice();
     this.size = spriteSize.slice();
     this.borderSize = 2;
-    this.fontSize = 8;
+    this.fontSize = 10;
 
     this.textureType = texType;
 
-    this.menuYSize = 22;
+    this.menuYSize = 14;
+    this.textYSize = this.menuYSize;
 
     this.fileNamesArray = null;
     this.isMenuOpen = false;
@@ -60,38 +61,23 @@ function Sprite(index, patcher, position, spriteSize, texType)
     var pwindowYSize = (this.size[1]-this.menuYSize) / this.ratio;
     var pwindowYPos = this.position[1] + this.menuYSize + this.borderSize+(spriteSize[1]-this.menuYSize - pwindowYSize)/2;
 
-    // PWINDOW //
-    this.pwindow = this.p.newdefault(this.position[0]+this.borderSize, pwindowYPos, "jit.pwindow");
-    this.pwindow.varname = "pbl_pwindow_"+index;
-    this.SetMaxObjPosSize(this.pwindow, [this.position[0]+this.borderSize, pwindowYPos], [this.size[0], pwindowYSize]);
-    this.pwindow.jit_matrix(this.matrix.name);
+    this.PWindowSizedObjs = new PWindowSizedMaxObjects(this.p, [this.position[0]+this.borderSize, pwindowYPos], [this.size[0], pwindowYSize]);
+    this.PWindowSizedObjs.Init(this.matrix.name);
 
     // DROPFILE // 
-    this.spriteDropfile = this.p.newdefault(this.position[0]+this.borderSize, pwindowYPos, "dropfile");
-    this.spriteDropfile.varname = "pbl_sprite_dropfile_"+index;
-    this.spriteDropfile.bordercolor(0,0,0,0);
-    this.spriteDropfile.types("JPEG", "PNG", "TIFF");
-    this.SetMaxObjPosSize(this.spriteDropfile, [this.position[0]+this.borderSize, pwindowYPos], [this.size[0], pwindowYSize]);
-    this.p.script("bringtofront", this.spriteDropfile.varname);
-
-    this.prependDropfile = this.p.newdefault(this.position[0], pwindowYPos, "prepend");
-    this.prependDropfile.varname = "pbl_sprite_dropfilePrepend_"+index;
-    this.p.script("sendbox", this.prependDropfile.varname, "hidden", 1);
-    this.prependDropfile.set("set");
-
-    this.p.hiddenconnect(this.spriteDropfile,0, this.prependDropfile, 0);
-
-    this.messDropFile = this.p.newdefault(this.position[0], pwindowYPos, "textedit");
-    this.messDropFile.varname = "pbl_sprite_dropfileMessage_"+index;
-    this.p.script("sendbox", this.messDropFile.varname, "hidden", 1);
-
-    this.p.hiddenconnect(this.prependDropfile, 0, this.messDropFile, 0);
-
     var DropfileCallback = (function(data) { 
-        this.LoadImage(data.value);
-        this.ApplyTexturesToShape();
+        print(data.value)
+        if (data.value[data.value.length-1] == '/')
+        {
+            g_TexturesParser.ParseFolder(data.value);
+        }
+        else 
+        {   
+            this.LoadImage(data.value);
+            this.ApplyTexturesToShape();
+        }
     }).bind(this); 
-    this.dropfileListener = new MaxobjListener(this.messDropFile, DropfileCallback);
+    this.dropfileListener = new MaxobjListener(this.PWindowSizedObjs.GetTextEditObj(), DropfileCallback);
     //-------------------------------------------------------------
 
     // TEXTURE //
@@ -110,39 +96,33 @@ function Sprite(index, patcher, position, spriteSize, texType)
 
     // TEXT // 
     this.text = this.p.newdefault(this.position[0], this.position[1] + this.size[1] + 5, "textbutton");
-    this.text.bgcolor(0.3,0.3,0.3,1);
-    this.text.textoncolor(0.92,0.92,0.92,1);
+    this.text.bgcolor(0.2,0.2,0.2,1);
+    this.text.textoncolor(1,1,1,1);
     this.text.varname = "bpl_filename_"+index;
     this.text.fontsize(this.fontSize);
     this.text.ignoreclick = (1);
     this.text.truncate(2);
-    this.p.script("sendbox", this.text.varname, "patching_rect", [this.position[0]+this.borderSize, this.position[1] + this.size[1] + 5, 
-                                                                  this.size[0], 20]);
+    this.SetMaxObjPosSize(this.text, [this.position[0]+this.borderSize, this.position[1]+this.size[1] + 5], [this.size[0], this.textYSize]);
     
     this.SetDefaultTextForImgName();
 
     // BUTTON //
-    this.button = this.p.newdefault(this.position[0]+this.borderSize, pwindowYPos, "ubutton");
-    this.button.varname = "pbl_button_"+index;
-    this.p.script("sendbox", this.button.varname, "patching_rect", 
-                  [this.position[0]+this.borderSize, pwindowYPos, this.size[0], pwindowYSize]);
-    this.p.script("bringtofront", this.button.varname);
-
-    this.button.filename = this.filename;
+    // this.button.filename = this.filename;
 
     var ButtonCallback = (function(data) { 
+        print("button pressed")
         // this.outlet.message("list", data.maxobject.filename);  
         // outlet(0, "jit_gl_texture", this.texture.name);     
     }).bind(this); 
 
-    // this.buttonListener = new MaxobjListener(this.button, ButtonCallback);
+    this.buttonListener = new MaxobjListener(this.PWindowSizedObjs.GetButtonObj(), ButtonCallback);
 
     // TEXT BUTTON //
     this.texTypeButton = this.p.newdefault(this.position[0]+this.borderSize, this.position[1]+this.borderSize, "textbutton");
     this.texTypeButton.varname = "pbl_textbutton_"+index+"_"+gGlobal.patchID;
     this.texTypeButton.fontsize(this.fontSize);
     this.p.script("bringtofront", this.texTypeButton.varname); 
-    this.SetMaxObjPosSize(this.texTypeButton, [this.position[0]+this.borderSize, this.position[1]+this.borderSize], [this.size[0], 20]);
+    this.SetMaxObjPosSize(this.texTypeButton, [this.position[0]+this.borderSize, this.position[1]+this.borderSize], [this.size[0], this.textYSize]);
     this.texTypeButton.text(this.textureType);
     this.texTypeButton.textoncolor(1,1,1,1);
 
@@ -174,7 +154,6 @@ function Sprite(index, patcher, position, spriteSize, texType)
     {   
         if (data.value > 0)
         {
-            print(this.fileNamesArray[data.value-1]);
             this.LoadImage(this.fileNamesArray[data.value-1]);
         }
         else if (data.value == 0)
@@ -191,6 +170,11 @@ function Sprite(index, patcher, position, spriteSize, texType)
     this.chooserListener = new MaxobjListener(this.umenu, UmenuCallback);
 
     // FUNCTIONS -----------------------------------------------------
+    this.ResizeObjects = function(sizeX, sizeY)
+    {
+
+    }
+
     this.ApplyTexturesToShape = function()
     {
         outlet(0, "SetShapeTextures");
@@ -226,7 +210,6 @@ function Sprite(index, patcher, position, spriteSize, texType)
         // this.matrix.type = "float32";
         
         this.TriggerImage();
-        print(this.index)
 
         this.text.text(this.filename);
     }
@@ -240,7 +223,8 @@ function Sprite(index, patcher, position, spriteSize, texType)
 
     this.TriggerImage = function()
     {
-        this.pwindow.jit_matrix(this.matrix.name);
+        // this.pwindow.jit_matrix(this.matrix.name);
+        this.PWindowSizedObjs.SendMatrixToPWindow(this.matrix.name);
         this.texture.jit_matrix(this.matrix.name);
         gGlobal.textureNames[this.textureType] = this.texture.name;
     }
@@ -251,20 +235,10 @@ function Sprite(index, patcher, position, spriteSize, texType)
         this.ImportDefaultImageForMatrix();
         this.SetDefaultTextForImgName();
 
-        this.pwindow.jit_matrix(this.matrix.name);
+        // this.pwindow.jit_matrix(this.matrix.name);
+        this.PWindowSizedObjs.SendMatrixToPWindow(this.matrix.name);
         this.texture.jit_matrix(this.matrix.name);
         gGlobal.textureNames[this.textureType] = "Undefined";
-    }
-
-    this.Resize = function(position, size)
-    {
-        this.size = size.slice();
-        this.p.script("sendbox", this.pwindow.varname, "patching_rect", 
-                  [position[0], position[1], this.size[0], this.size[1]]);
-        this.p.script("sendbox", this.button.varname, "patching_rect", 
-                  [position[0], position[1], this.size[0], this.size[1]]);
-    
-        this.pwindow.jit_matrix(this.matrix.name);
     }
 
     this.SetDrawto = function(drawto)
@@ -275,7 +249,7 @@ function Sprite(index, patcher, position, spriteSize, texType)
     this.Destroy = function()
     {   
         print("cleaning sprite");
-        this.p.remove(this.pwindow);
+        this.PWindowSizedObjs.Destroy();
         // this.p.remove(this.spriteDropfile);
         // this.p.remove(this.button);
         // this.p.remove(this.borderPanel);
@@ -285,4 +259,84 @@ function Sprite(index, patcher, position, spriteSize, texType)
         this.matrix.freepeer();
         this.texture.freepeer();
     }
+}
+
+function PWindowSizedMaxObjects(patcher, position, size)
+{   
+    this.p = patcher;
+    this.position = position.slice();
+    this.size = size.slice();
+
+    // this.pwindow = null;
+
+    // FUNCTIONS
+    this.SetMaxObjPosSize = function(maxObj, pos, size)
+    {   
+        this.p.script("sendbox", maxObj.varname, "patching_rect", [pos[0], pos[1], size[0], size[1]]);
+    }
+
+    this.SetRandomVarName = function()
+    {
+        return "pbl_sprite_"+Math.floor(Math.random()*1000);
+    }
+
+    this.CreateNewObject = function(objectType)
+    {   
+        var obj = this.p.newdefault(this.position[0], this.position[1], objectType);
+        obj.varname = this.SetRandomVarName();
+        this.SetMaxObjPosSize(obj, this.position, this.size);
+        return obj;
+    }
+
+    this.SendMatrixToPWindow = function(matrixName)
+    {
+        this.pwindow.jit_matrix(matrixName);
+    }
+
+    this.InitDropFile = function()
+    {
+        this.dropFile.bordercolor(0,0,0,0);
+        this.p.script("bringtofront", this.dropFile.varname);
+
+        this.prependDropfile = this.p.newdefault(this.position[0], this.position[1], "prepend");
+        this.prependDropfile.varname = this.SetRandomVarName();
+        this.p.script("sendbox", this.prependDropfile.varname, "hidden", 1);
+        this.prependDropfile.set("set");
+
+        this.p.hiddenconnect(this.dropFile, 0, this.prependDropfile, 0);
+
+        this.textEdit = this.p.newdefault(this.position[0], this.position[1], "textedit");
+        this.textEdit.varname = this.SetRandomVarName();
+        this.p.script("sendbox", this.textEdit.varname, "hidden", 1);
+
+        this.p.hiddenconnect(this.prependDropfile, 0, this.textEdit, 0);
+    }
+
+    this.GetTextEditObj = function()
+    {
+        return this.textEdit;
+    }
+
+    this.GetButtonObj = function()
+    {
+        return this.button;
+    }
+
+    this.Init = function(matrixName)
+    {
+        this.SendMatrixToPWindow(matrixName);
+        this.InitDropFile();
+        this.p.script("bringtofront", this.button.varname);
+    }
+
+    this.Destroy = function()
+    {
+        this.p.remove(this.pwindow);
+    }
+
+    //---------------------------
+
+    this.pwindow =  this.CreateNewObject("jit.pwindow");
+    this.dropFile = this.CreateNewObject("dropfile");
+    this.button =   this.CreateNewObject("ubutton"); 
 }

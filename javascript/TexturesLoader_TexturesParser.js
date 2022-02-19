@@ -21,20 +21,20 @@ function TexturesParser(patcher, spriteSize)
     this.ParseFolder = function(path)
     {
         this.folder = new Folder(path);
-        this.folder.typelist = ["JPEG", "PNG"];
+        this.folder.typelist = ["JPEG", "PNG", "TIFF"];
 
         this.fileNamesArray = [];
     
         while (!this.folder.end)
         {
             if (this.folder.filename.length > 0)
-            {
+            {   
                 this.fileNamesArray.push(path+this.folder.filename);
                 var texType = this.ParseTextureType(this.folder.filename);
                 if (texType != -1)
                 {
                     this.spritesContainer[texType].LoadImage(path+this.folder.filename);
-                    print(texType)
+                    // print(texType)
                 }
             }
             this.folder.next();

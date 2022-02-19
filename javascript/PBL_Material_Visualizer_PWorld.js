@@ -76,7 +76,8 @@ function PWorld(patcher)
             this.material.emission_texture(gGlobal.textureNames.tex_emission);
         }
         else
-        {
+        {   
+            print("mission nam " +gGlobal.textureNames.tex_emission)
             this.material.mat_emission = [0,0,0,1];
         }
         if (gGlobal.textureNames.tex_height != "Undefined")
