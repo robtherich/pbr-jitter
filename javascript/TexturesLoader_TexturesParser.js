@@ -18,6 +18,18 @@ function TexturesParser(patcher, spriteSize)
         
     }
 
+    this.ResizeSprites = function(sizeX, sizeY)
+    {   
+        this.spriteSize = [sizeY-30, sizeY-30];
+        var position = this.spriteOffsetFromBPEdge.slice();
+
+        for (var sprite in this.spritesContainer)
+        {   
+            this.spritesContainer[sprite].ResizeSpriteObjs(position, this.spriteSize);
+            position[0] += this.spriteSize[1]+this.spriteOffset;
+        }
+    }
+
     this.ParseFolder = function(path)
     {
         this.folder = new Folder(path);
@@ -100,7 +112,6 @@ function TexturesParser(patcher, spriteSize)
         this.picker.spriteInstance = spriteInstance;
         if (this.pickerListener == null)
         {   
-            print("assigned picker")
             this.pickerListener = new MaxobjListener(this.picker, "currentcolor", PickerCallback);
         }
         // print(this.pickerListener)
@@ -114,8 +125,9 @@ function TexturesParser(patcher, spriteSize)
         print("SpRITE SIZE "+this.spriteSize)
         for (var i=0; i<texTypes.length; i++)
         {
-            this.spritesContainer[texTypes[i]] = (new Sprite(i, patcher, position, this.spriteSize, texTypes[i]));
+            this.spritesContainer[texTypes[i]] = (new Sprite(patcher, position, this.spriteSize, texTypes[i]));
             position[0] += this.spriteSize[1]+this.spriteOffset;
+            // print(i)
         }
         return position[0];
     }

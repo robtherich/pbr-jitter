@@ -1,10 +1,12 @@
 include("PBL_Material_Visualizer_CubeMap.js");
 
-function PWorld(patcher)
+function PWorld(patcher, bpSize)
 {   
     this.p = patcher;
     this.pworld = this.p.getnamed("pbl_vis_pworld");
     this.name = null;
+    this.rect = [10, 10, (bpSize[0]/2), (bpSize[1]/3)*2];
+
 
     this.envMap = new CubeMap(patcher);
 
@@ -72,13 +74,15 @@ function PWorld(patcher)
         }
         if (gGlobal.textureNames.tex_emission != "Undefined")
         {   
-            this.material.mat_emission = [1,1,1,1];
-            this.material.emission_texture(gGlobal.textureNames.tex_emission);
-        }
-        else
-        {   
-            print("mission nam " +gGlobal.textureNames.tex_emission)
-            this.material.mat_emission = [0,0,0,1];
+            if (gGlobal.textureNames.tex_emission == this.textureEmpty.name)
+            {
+                this.material.mat_emission = [0,0,0,1];
+            }
+            else 
+            {
+                this.material.mat_emission = [1,1,1,1];
+                this.material.emission_texture(gGlobal.textureNames.tex_emission);
+            }
         }
         if (gGlobal.textureNames.tex_height != "Undefined")
         {
@@ -121,10 +125,10 @@ function PWorld(patcher)
         this.envMap.AssignImgToCubeMap(this.material);
     }
 
-    this.ResizePWorld = function(rect)
-    {
+    this.ResizePWorld = function(newBPSize)
+    {   
         this.p.script("sendbox", this.pworld.varname, "patching_rect", 
-        [rect[0], rect[1], rect[2], rect[3]]);
+        [this.rect[0], this.rect[1], (newBPSize[0]/2), (newBPSize[1]/3)*2]);
     }
 
     this.Destroy = function()

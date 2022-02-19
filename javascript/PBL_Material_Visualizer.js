@@ -5,12 +5,12 @@ include("PBL_Material_Visualizer_OutputMarkers.js");
 
 var gGlobal = new Global("pbl_global");
 
-var gPWorld = new PWorld(this.patcher);
+var gBPSize = [700,400];
+var g_TexLoaderXPos = 10;;
+
+var gPWorld = new PWorld(this.patcher, gBPSize);
 
 var gTexturesLoaderBP = this.patcher.getnamed("pbl_textures_loader");
-var gBPSize = [700,300];
-var g_pWorldRect = [10, 10, 200, 150];
-var g_TexLoaderBPRect = [10, 170, 700, 100];
 
 var g_dropFile = this.patcher.getnamed("pbl_visualizer_dropfile");
 
@@ -59,38 +59,25 @@ function GetPWorldName(name)
 function SetPatchID(id)
 {
     gGlobal.patchID = id;
-    // g_outputMarkers.Destroy();
-    // g_outputMarkers.InitOutputMarkers();
 }
 
 
 
 function ResizeBPatcher()
 {
-    // var pp = this.patcher.parentpatcher;
-    // var bp = pp.getnamed("pbl_material_visualizer");
-
     this.patcher.box.rect = [this.patcher.box.rect[0], this.patcher.box.rect[1], this.patcher.box.rect[0]+gBPSize[0], this.patcher.box.rect[1]+gBPSize[1]]
-    // print("Resizing "+bp.varname)
-    // pp.script("sendbox", bp.varname, "patching_rect", 
-    //               [0, 0, gBPSize[0], gBPSize[1]]);
-    
-    gPWorld.ResizePWorld(g_pWorldRect);
+    gPWorld.ResizePWorld(this.patcher.box.rect);
     print("Mat visualizer patcher pos: "+this.patcher.box.rect);
 }
 
 //------------------------------------
 
-// function InitTexturesLoader()
-// {
-//     outlet(0, "Init");
-// }
-
 // PRIVATE FUNCTIONS ----------------
 function SendResizeToTexLoader()
 {
-    outlet(0, "ResizeBPatcher", [g_TexLoaderBPRect[0], g_TexLoaderBPRect[1], g_TexLoaderBPRect[2], g_TexLoaderBPRect[3]]);
+    outlet(0, "ResizeBPatcher", [g_TexLoaderXPos, gBPSize[0], gBPSize[1]]);
 }
+SendResizeToTexLoader.local = 1;
 
 function CheckIfResized()
 {
@@ -102,16 +89,12 @@ function CheckIfResized()
         gBPSize[1] = rect[3];
         gFirstResize = true;
         SendResizeToTexLoader();
-        gPWorld.ResizePWorld(g_pWorldRect);
+        gPWorld.ResizePWorld(gBPSize);
         // ResizeDropFile(g_pWorldPos, gBPSize);
         // g_outputMarkers.RepositionMarkers(gBPSize);
     } 
 }
-
-function CalcPWorldSize()
-{
-    // g_pWorldRect[2]
-}
+CheckIfResized.local = 1;
 
 function ResizeDropFile(pos, size)
 {

@@ -9,8 +9,8 @@ var gGlobal = new Global("pbl_global");
 // var gPanel = null; 
 var gDropfile = null;
 
-var gBPSize = [0,0];
-var gMaxObjSize = [0,0];
+var g_bpRect = [10,10,0,0];
+var gMaxObjSizeX = 0;
 
 var g_TexturesParser = null;
 
@@ -39,25 +39,31 @@ function load_folder(path)
 }
 
 // CALLED BY PATCHER
-function ResizeBPatcher(posX, posY, bpatcherSizeX, bpatcherSizeY)
+function ResizeBPatcher(posX, bpSizeX, bpSizeY)
 {   
     // rect[0] = posX, rect[1] = posY, rect[2] = BP size X, rect[3] = BP size Y
 
-    gBPSize[0] = bpatcherSizeX;
-    gBPSize[1] = bpatcherSizeY;
-    print("TEX LOADER RECT "+posX, posY, bpatcherSizeX, bpatcherSizeY)
+    g_bpRect[0] = posX;
+    g_bpRect[1] = (bpSizeY/3)*2+20;
+    g_bpRect[2] = bpSizeX;
+    g_bpRect[3] = bpSizeY / 4;
+    // print("TEX LOADER RECT "+posX, posY, bpatcherSizeX, bpatcherSizeY)
 
+    var maxObjSizeX = 0;
     if (g_TexturesParser == null)
     {
-        g_TexturesParser = new TexturesParser(this.patcher, bpatcherSizeY);
-        Init();
+        g_TexturesParser = new TexturesParser(this.patcher, g_bpRect[3]);
+        maxObjSizeX = Init();
+    }
+    else 
+    {
+        g_TexturesParser.ResizeSprites(bpSizeX, g_bpRect[3]);
     }
 
     var pp = this.patcher.parentpatcher;
     var bp = pp.getnamed("pbl_textures_loader");
-    pp.script("sendbox", bp.varname, "patching_rect", 
-                  [posX, posY, gBPSize[0], gBPSize[1]]);
-    ResizeMaxObjects(gMaxObjSize[0], gBPSize[1]);
+    pp.script("sendbox", bp.varname, "patching_rect", g_bpRect.slice());
+    ResizeMaxObjects(maxObjSizeX, g_bpRect[3]);
 }
 
 //--------------------------
@@ -67,8 +73,7 @@ function Init()
 {      
     var allSpritesSize = g_TexturesParser.CreateSprites(this.patcher);
     SendMaxObjectsBack();
-    gMaxObjSize[0] = allSpritesSize;
-    ResizeMaxObjects(gMaxObjSize[0], gMaxObjSize[1]);
+    return allSpritesSize;
 }
 
 //--------------------------------------------
