@@ -56,6 +56,11 @@ function SetPatchID(id)
     gGlobal.patchID = id;
 }
 
+function SetShaderParam(paramName, value)
+{
+    print("ShaderParam "+paramName, value);
+    gPWorld.SendMessageToShader(paramName, value);
+}
 
 
 function ResizeBPatcher()

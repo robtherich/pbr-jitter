@@ -55,7 +55,7 @@
 					"numoutlets" : 1,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 467.0, 87.0, 128.0, 128.0 ],
+					"patching_rect" : [ 350.0, 10.0, 340.0, 266.666666666666686 ],
 					"viewvisibility" : 1
 				}
 
@@ -183,7 +183,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "jit_matrix", "" ],
-					"patching_rect" : [ 10.0, 10.0, 350.0, 266.666666666666686 ],
+					"patching_rect" : [ 10.0, 10.0, 330.0, 266.666666666666686 ],
 					"sync" : 1,
 					"varname" : "pbl_vis_pworld"
 				}
@@ -398,6 +398,14 @@
 					"destination" : [ "obj-2", 0 ],
 					"hidden" : 1,
 					"source" : [ "obj-53", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-2", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-6", 0 ]
 				}
 
 			}

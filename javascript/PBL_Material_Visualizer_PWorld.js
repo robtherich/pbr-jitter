@@ -115,6 +115,11 @@ function PWorld(patcher, bpSize)
 
     this.SetMtrToEmpty();
 
+    this.SendMessageToShader = function(paramName, value)
+    {
+        this.material[paramName] = value;
+    }
+
     this.SetDrawTo = function(name)
     {
         this.name = name;
