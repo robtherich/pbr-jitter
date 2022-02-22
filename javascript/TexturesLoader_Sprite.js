@@ -243,7 +243,7 @@ function PWindowSizedMaxObjects(patcher, position, size)
         this.dropFile.bordercolor(0,0,0,0);
         this.p.script("bringtofront", this.dropFile.varname);
 
-        this.prependDropfile = this.p.newdefault(this.position[0], this.position[1], "prepend");
+        this.prependDropfile = this.p.newdefault(0, 300, "prepend");
         this.prependDropfile.varname = SetRandomVarName();
         this.p.script("sendbox", this.prependDropfile.varname, "hidden", 1);
         this.prependDropfile.set("set");
@@ -252,6 +252,7 @@ function PWindowSizedMaxObjects(patcher, position, size)
 
         this.textEdit = this.p.newdefault(this.position[0], this.position[1], "textedit");
         this.textEdit.varname = SetRandomVarName();
+        this.SetMaxObjPosSize(this.textEdit, [0, 300], [10,10]);
         this.p.script("sendbox", this.textEdit.varname, "hidden", 1);
 
         this.p.hiddenconnect(this.prependDropfile, 0, this.textEdit, 0);
@@ -445,6 +446,7 @@ function SpritePanel(patcher, position, size, borderSize)
     this.p.script("sendtoback", this.borderPanel.varname);
 }
 
+// Global functions -------------------------------
 function GetFileNameFromPath(path)
 {
     var parsedFileName = path.replace(/^.*[\\\/]/, '');

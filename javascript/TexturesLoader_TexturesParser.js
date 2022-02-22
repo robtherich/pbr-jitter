@@ -13,9 +13,16 @@ function TexturesParser(patcher, spriteSize)
 
     this.folder = null;
 
+    this.allSpritesXSize = 0;
+
     this.Reset = function()
     {
         
+    }
+
+    this.IsBPatcherSmallerThanSpritesXSize = function(bpSizeX)
+    {
+        return (bpSizeX <= this.allSpritesXSize);
     }
 
     this.ResizeSprites = function(sizeX, sizeY)
@@ -28,6 +35,13 @@ function TexturesParser(patcher, spriteSize)
             this.spritesContainer[sprite].ResizeSpriteObjs(position, this.spriteSize);
             position[0] += this.spriteSize[1]+this.spriteOffset;
         }
+        this.CalcAllSpritesXSize(position[0]);
+        print(this.allSpritesXSize)
+    }
+
+    this.CalcAllSpritesXSize = function(currentPos)
+    {
+        this.allSpritesXSize = currentPos+this.spriteOffsetFromBPEdge[0]*2+20;
     }
 
     this.ParseFolder = function(path)
@@ -126,10 +140,10 @@ function TexturesParser(patcher, spriteSize)
         for (var i=0; i<texTypes.length; i++)
         {
             this.spritesContainer[texTypes[i]] = (new Sprite(patcher, position, this.spriteSize, texTypes[i]));
-            position[0] += this.spriteSize[1]+this.spriteOffset;
+            position[0] += this.spriteSize[0]+this.spriteOffset;
             // print(i)
         }
-        return position[0];
+        this.CalcAllSpritesXSize(position[0])
     }
 
     this.ClearImages = function()

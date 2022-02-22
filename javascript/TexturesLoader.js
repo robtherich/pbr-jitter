@@ -7,8 +7,6 @@ include("TexturesLoader_TexturesParser.js");
 var gGlobal = new Global("pbl_global");
 
 // var gPanel = null; 
-var gDropfile = null;
-
 var g_bpRect = [10,10,0,0];
 var gMaxObjSizeX = 0;
 
@@ -45,71 +43,41 @@ function ResizeBPatcher(posX, bpSizeX, bpSizeY)
 
     g_bpRect[0] = posX;
     g_bpRect[1] = (bpSizeY/3)*2+20;
-    g_bpRect[2] = bpSizeX;
+    g_bpRect[2] = bpSizeX-20;
     g_bpRect[3] = bpSizeY / 4;
     // print("TEX LOADER RECT "+posX, posY, bpatcherSizeX, bpatcherSizeY)
 
-    var maxObjSizeX = 0;
     if (g_TexturesParser == null)
     {
         g_TexturesParser = new TexturesParser(this.patcher, g_bpRect[3]);
-        maxObjSizeX = Init();
+        g_TexturesParser.CreateSprites(this.patcher);
     }
     else 
     {
         g_TexturesParser.ResizeSprites(bpSizeX, g_bpRect[3]);
+        
     }
 
     var pp = this.patcher.parentpatcher;
     var bp = pp.getnamed("pbl_textures_loader");
-    pp.script("sendbox", bp.varname, "patching_rect", g_bpRect.slice());
-    ResizeMaxObjects(maxObjSizeX, g_bpRect[3]);
+
+    // if (g_TexturesParser.IsBPatcherSmallerThanSpritesXSize(g_bpRect[2]))
+    // {   
+    //     this.patcher.box.rect = [g_bpRect[0], g_bpRect[1], g_bpRect[0]+g_bpRect[2], g_bpRect[1]+g_bpRect[3]+10];
+    //     // pp.script("sendbox", bp.varname, "patching_rect", [g_bpRect[0], g_bpRect[1], g_bpRect[2], g_bpRect[3]+10]);
+    // }
+    // else
+    // {   
+        this.patcher.box.rect = [g_bpRect[0], g_bpRect[1], g_bpRect[0]+g_bpRect[2], g_bpRect[1]+g_bpRect[3]+7];
+        // pp.script("sendbox", bp.varname, "patching_rect", [g_bpRect[0], g_bpRect[1], g_bpRect[2], g_bpRect[3]]);
+    // }
+    print("this patcher rect "+this.patcher.box.rect);
+    print("BPSIZE "+g_bpRect[2]);
 }
 
 //--------------------------
 
 // PRIVATE FUNCTIONS ---------------------
-function Init()
-{      
-    var allSpritesSize = g_TexturesParser.CreateSprites(this.patcher);
-    SendMaxObjectsBack();
-    return allSpritesSize;
-}
-
-//--------------------------------------------
-
-//--------------------------------------------
-
-function SendMaxObjectsBack()
-{   
-    if (gDropfile != null)
-    {
-        this.patcher.script("sendtoback", gDropfile.varname);
-    }
-    else 
-    {
-        GetMaxObjects();
-    }
-}
-
-function ResizeMaxObjects(sizeX, sizeY)
-{   
-    if (gDropfile != null)
-    {   
-        this.patcher.script("sendbox", gDropfile.varname, "patching_rect", [0, 0, sizeX, sizeY]);
-    }
-    else 
-    {
-        GetMaxObjects();
-    }
-}
-
-function GetMaxObjects()
-{
-    // gPanel =    this.patcher.getnamed("pbl_panel");
-    gDropfile = this.patcher.getnamed("pbl_dropfile");
-}
-
 function Destroy()
 {
     print("cleaning");

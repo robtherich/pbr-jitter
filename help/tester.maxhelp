@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 34.0, 77.0, 1520.0, 929.0 ],
+		"rect" : [ 34.0, 77.0, 1512.0, 929.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -40,13 +40,38 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
-					"id" : "obj-17",
-					"linecount" : 2,
+					"id" : "obj-14",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 838.0, 244.0, 224.0, 34.0 ],
-					"text" : "- output textures\n- read exr files"
+					"patching_rect" : [ 1118.0, 387.0, 150.0, 34.0 ],
+					"text" : "Triplanar\n"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bgcolor" : [ 1.0, 1.0, 1.0, 1.0 ],
+					"id" : "obj-12",
+					"maxclass" : "textbutton",
+					"numinlets" : 1,
+					"numoutlets" : 3,
+					"outlettype" : [ "", "", "int" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 1131.5, 428.0, 100.0, 20.0 ],
+					"rounded" : 11.1,
+					"textoncolor" : [ 0.0, 0.0, 0.0, 1.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-17",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 1131.5, 358.0, 45.0, 20.0 ],
+					"text" : "ntex"
 				}
 
 			}
@@ -129,7 +154,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 847.0, 762.0, 131.0, 22.0 ],
+					"patching_rect" : [ 1185.0, 717.0, 131.0, 22.0 ],
 					"text" : "jit.gl.handle @enable 0"
 				}
 
@@ -148,25 +173,13 @@
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-20",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 1016.0, 663.0, 87.0, 22.0 ],
-					"text" : "diffuse_texture"
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"id" : "obj-6",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 8,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 1016.0, 748.0, 351.0, 36.0 ],
+					"patching_rect" : [ 1024.0, 748.0, 351.0, 36.0 ],
 					"text" : "jit.gl.material @mat_ambient 0.5 0.5 0.5 1 @mat_diffuse 0.8 0.8 0.8 1 @mat_specular 0.2 0.2 0.2 1"
 				}
 
@@ -211,21 +224,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"offset" : [ 0.0, 0.0 ],
-					"patching_rect" : [ 27.0, 301.0, 865.0, 415.0 ],
+					"patching_rect" : [ 27.0, 320.0, 716.0, 414.0 ],
 					"varname" : "pbl_bpatcher",
 					"viewvisibility" : 1
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"attr" : "heightmap_mode",
-					"id" : "obj-31",
-					"maxclass" : "attrui",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 1121.0, 667.0, 150.0, 22.0 ]
 				}
 
 			}
@@ -237,7 +238,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 847.0, 721.0, 150.0, 22.0 ]
+					"patching_rect" : [ 1185.0, 676.0, 150.0, 22.0 ]
 				}
 
 			}
@@ -253,13 +254,6 @@
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
 					"source" : [ "obj-11", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-6", 0 ],
-					"source" : [ "obj-20", 0 ]
 				}
 
 			}
@@ -288,13 +282,6 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-6", 0 ],
-					"source" : [ "obj-31", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-4", 0 ],
 					"source" : [ "obj-32", 0 ]
 				}
@@ -303,7 +290,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-32", 0 ],
-					"order" : 1,
+					"order" : 0,
 					"source" : [ "obj-33", 0 ]
 				}
 
@@ -311,7 +298,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-4", 0 ],
-					"order" : 0,
+					"order" : 1,
 					"source" : [ "obj-33", 0 ]
 				}
 
@@ -359,6 +346,12 @@
 				"implicit" : 1
 			}
 , 			{
+				"name" : "PBL_Parameters.js",
+				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/javascript",
+				"type" : "TEXT",
+				"implicit" : 1
+			}
+, 			{
 				"name" : "TexturesLoader.js",
 				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/javascript",
 				"type" : "TEXT",
@@ -366,6 +359,12 @@
 			}
 , 			{
 				"name" : "pbl.material.visualizer.maxpat",
+				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/patchers",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "pbl.parameters.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/patchers",
 				"type" : "JSON",
 				"implicit" : 1

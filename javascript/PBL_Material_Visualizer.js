@@ -6,7 +6,7 @@ include("PBL_Material_Visualizer_OutputMarkers.js");
 var gGlobal = new Global("pbl_global");
 
 var gBPSize = [700,400];
-var g_TexLoaderXPos = 10;;
+var g_TexLoaderXPos = 10;
 
 var gPWorld = new PWorld(this.patcher, gBPSize);
 
@@ -19,7 +19,7 @@ var g_bottomOffset = 0;
 
 
 var tsk = new Task(CheckIfResized, this);
-tsk.interval = 200;
+tsk.interval = 100;
 tsk.repeat();
 
 
@@ -40,11 +40,6 @@ function clear()
 // -------------------------
 
 // FROM MAX ----------------
-function jit_gl_texture(texname)
-{
-    outlet(1, "jit_gl_texture",texname);
-}
-
 function SetShapeTextures()
 {
     gPWorld.SetShapeTextures();
@@ -79,16 +74,23 @@ function SendResizeToTexLoader()
 }
 SendResizeToTexLoader.local = 1;
 
+function SendResizeToParams()
+{
+    outlet(1, "ResizeBPatcher", [gBPSize[0], gBPSize[1]]);
+}
+SendResizeToParams.local = 1;
+
 function CheckIfResized()
 {
     var rect = GetBPatcherRect();
 
-    if (rect[3] != gBPSize[1] || !gFirstResize)
+    if (rect[2] != gBPSize[0] || rect[3] != gBPSize[1] || !gFirstResize)
     {   
         gBPSize[0] = rect[2];
         gBPSize[1] = rect[3];
         gFirstResize = true;
         SendResizeToTexLoader();
+        SendResizeToParams();
         gPWorld.ResizePWorld(gBPSize);
         // ResizeDropFile(g_pWorldPos, gBPSize);
         // g_outputMarkers.RepositionMarkers(gBPSize);

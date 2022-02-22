@@ -5,7 +5,7 @@ function PWorld(patcher, bpSize)
     this.p = patcher;
     this.pworld = this.p.getnamed("pbl_vis_pworld");
     this.name = null;
-    this.rect = [10, 10, (bpSize[0]/2), (bpSize[1]/3)*2];
+    this.rect = [10, 10, (bpSize[0]/2-10), (bpSize[1]/3)*2];
 
 
     this.envMap = new CubeMap(patcher);
@@ -128,7 +128,7 @@ function PWorld(patcher, bpSize)
     this.ResizePWorld = function(newBPSize)
     {   
         this.p.script("sendbox", this.pworld.varname, "patching_rect", 
-        [this.rect[0], this.rect[1], (newBPSize[0]/2), (newBPSize[1]/3)*2]);
+        [this.rect[0], this.rect[1], (newBPSize[0]/2)-20, (newBPSize[1]/3)*2]);
     }
 
     this.Destroy = function()
