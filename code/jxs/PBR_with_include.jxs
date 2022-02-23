@@ -35,7 +35,7 @@
         <param name="albedoTex" type="int" default="0" />
         <param name="normalTex" type="int" default="1" />
         <param name="RMOHTex" type="int" default="2" />
-        <param name="irradianceTex" type="int" default="3" />
+        <param name="environmentTex" type="int" default="3" />
         <param name="reflectionTex" type="int" default="4" />
         <param name="rectLightTex" type="int" default="5" />
 
@@ -74,7 +74,7 @@
                 <bind param="albedoTex" program="fp" />
                 <bind param="normalTex" program="fp" />
                 <bind param="RMOHTex" program="fp" />
-                <bind param="irradianceTex" program="fp" />
+                <bind param="environmentTex" program="fp" />
                 <bind param="reflectionTex" program="fp" />
                 <bind param="rectLightTex" program="fp" />
                 <bind param="integMap" program="fp" />

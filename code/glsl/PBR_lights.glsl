@@ -57,14 +57,17 @@ vec3  	getIBL(in material mate, in geometry geom){
 	vec3 	kS = fresnelSchlickRoughness(NdotV, mate.F0, mate.rou);
 	vec3 	kD = vec3(1.) - kS;
 		kD *= 1. - mate.met;
-	vec3 	irradiance = texture(irradianceTex, geom.N).rgb;
+	vec3 	irradiance = texture(environmentTex, geom.N).rgb;
 	vec3	diffuse = irradiance * mate.alb * kD;
+        vec3 	specular = vec3(0.);
 
+#ifdef JIT_PBR_IBL_REFLECTION
 	float 	lod             	= 0.;//mate.rou*15.; //*** put back a variable lod
 	vec3	ref 			= reflect(-geom.V, geom.N);
 	vec3 	prefilteredColor 	= texture(reflectionTex, dir2uv(ref)).rgb;//*** put back textureLod
 	vec2 	envBRDF          	= texture(integMap, vec2(NdotV, mate.rou)).xy;
- 	vec3 	specular 		= prefilteredColor * (kS * envBRDF.x + envBRDF.y); 
+ 	        specular 		= prefilteredColor * (kS * envBRDF.x + envBRDF.y); 
+#endif
 
 	return 	(diffuse + specular) * mate.occ; 
 }
