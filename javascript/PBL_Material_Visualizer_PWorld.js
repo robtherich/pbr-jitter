@@ -34,14 +34,14 @@ function PWorld(patcher, bpSize)
     // GLOBAL TEXTURE NAMES //
     gGlobal.textureNames = 
     {
-        tex_albedo: this.textureEmpty.name,
-        tex_normals: this.textureEmpty.name,
-        tex_roughness: this.textureEmpty.name,
-        tex_metallic: this.textureEmpty.name,
-        tex_ao: this.textureEmpty.name,
-        tex_emission: this.textureEmpty.name,
-        tex_height: this.textureEmpty.name,
-        tex_environment: this.textureEmpty.name
+        albedo: this.textureEmpty.name,
+        normal: this.textureEmpty.name,
+        roughness: this.textureEmpty.name,
+        metallic: this.textureEmpty.name,
+        ao: this.textureEmpty.name,
+        emission: this.textureEmpty.name,
+        height: this.textureEmpty.name,
+        environment: this.textureEmpty.name
     };
 
     this.mtrTextureInputs = ["diffuse_texture", "normals_texture", "glossmap_texture", "specular_texture", "heightmap_texture", "environment_texture"];

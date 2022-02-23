@@ -10,7 +10,7 @@ function ResizeBPatcher(bpSizeX, bpSizeY)
     var sizeX = (bpSizeX-10)-(bpSizeX/2);
     var sizeY = (bpSizeY/3)*2;
     g_params.SetThisBPSize([sizeX, sizeY]);
-    g_params.RepositionObjects();
+    // g_params.RepositionObjects();
 }
 
 //------------------------------------------
@@ -26,8 +26,8 @@ function Parameters(patcher)
     this.parametersDict = new Dict();
     this.parametersDict.import_json("Parameters.json");
 
-    this.parametersStartingPosition = [10, 30];
-    this.titlePos = [5, 5];
+    this.parametersStartingPosition = new Vector(10, 30);
+    this.titlePos = new Vector(7,2);
 
     this.ParseParamsDict = function()
     {
@@ -37,28 +37,31 @@ function Parameters(patcher)
         if (Array.isArray(paramEntries))
         {   
             var index = 0;
-            var tempPos = this.parametersStartingPosition.slice();
+            
             for (var entry in paramEntries)
             {   
                 var paramClass = this.parametersDict.get(paramEntries[entry]);
                 var paramName = paramEntries[entry];
-                tempPos[1] += index*20;
-                this.CreateParameterBlock(paramName, paramClass, this.parametersStartingPosition);
+
+                var tempPos = this.parametersStartingPosition.getCopy();
+                tempPos.y += index*20;
+                this.CreateParameterBlock(paramName, paramClass, tempPos);
                 index++;
+                print("temp pos "+tempPos.toArray())
             }
         }
         else
         {
             print("single entry")
         }
+        print("TUTTO BENE")
     }
 
     this.CreateParameterBlock = function(name, type, position)
     {   
-        var tempPos = position.slice();
-        var comment = this.objGenerator.CreateAttrNameComment(tempPos, name);
-        tempPos[0] += 50;
-        var uiObj = this.objGenerator.CreateBasicUIObj(type, tempPos, 0);
+        var comment = this.objGenerator.CreateAttrNameComment(position, name);
+        var uiObj = this.objGenerator.CreateBasicUIObj(type, position.addNew([80,0,0]), 0);
+        print(position.addNew([50,0,0]).toArray())
         uiObj.SetAttrName(name);
 
         var UIObjCallback = (function(data)
@@ -76,9 +79,11 @@ function Parameters(patcher)
         this.SetMaxObjPos(this.title, this.titlePos);
 
         for (var obj in this.blocksArray)
-        {
-            this.RepositionBlock(this.blocksArray[obj], [this.parametersStartingPosition[0], 20*obj + this.parametersStartingPosition[1]]);
+        {   
+            var tempPos = this.parametersStartingPosition.addNew([0, 20*obj, 0]);
+            this.RepositionBlock(this.blocksArray[obj], tempPos);
         }
+        print("TUTTO BENE 2")
         // print("params size "+this.paramsWindowSize);
     }
 
@@ -94,14 +99,13 @@ function Parameters(patcher)
 
     this.RepositionBlock = function(block, position)
     {
-        this.SetMaxObjPos(block[0], [position[0], position[1]]);
-        this.SetMaxObjPos(block[1], [position[0]+90, position[1]+1]);
+        this.SetMaxObjPos(block[0], position);
     }
 
     this.SetMaxObjPos = function(maxObj, pos)
-    {   
-        maxObj.message("patching_position", pos);
-        // this.p.script("sendbox", maxObj.varname, "patching_rect", [pos[0], pos[1], maxObj.rect[2], maxObj.rect[3]]);
+    {     
+        var posArr = pos.toArray();
+        maxObj.message("patching_position", posArr);
     }
 
     this.SetThisBPSize = function(size)
@@ -116,7 +120,7 @@ function ObjectsGenerator(patcher)
     this.toggleSize = [17,17];
 
     this.CreateBasicUIObj = function(objClass, position, val) {
-        var argObj = (this.p.newdefault(position[0], position[1], objClass));
+        var argObj = (this.p.newdefault(position.x, position.y, objClass));
         var type = null;
         
         argObj.value = val;
@@ -136,25 +140,23 @@ function ObjectsGenerator(patcher)
             this.attrName = name;
         }
         argObj.message(type, val);
-        // argObj.width = argObj.rect[2]-argObj.rect[0];
         return argObj;
     }
 
     this.CreateAttrNameComment = function(position, attrName) {
-        var attrNameComment = this.p.newobject("comment", position[0], position[1], 121, 15);
-        // var attrNameComment = p.newdefault(position[0], position[1], "comment");
+        var attrNameComment = this.p.newobject("comment", position.x, position.y, 100, 15);
         attrNameComment.bgcolor(0.2,0.2,0.2,0.6);
         attrNameComment.textcolor(1,1,1,1);
         attrNameComment.set(attrName);
         attrNameComment.fontsize(10);
         attrNameComment.varname = this.CreateRandomVarName();
-        // attrNameComment.attrName = attrName;
+        this.SetObjPosSize(attrNameComment, position, [60, 15]);
         return attrNameComment;
     }
 
     this.SetObjPosSize = function(obj, pos, size)
     {
-        this.p.script("sendbox", obj.varname, "patching_rect", [pos[0], pos[1], size[0], size[1]]);
+        this.p.script("sendbox", obj.varname, "patching_rect", [pos.x, pos.y, size[0], size[1]]);
     }
 
     this.CreateRandomVarName = function()

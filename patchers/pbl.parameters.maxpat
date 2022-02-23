@@ -70,7 +70,7 @@
 					"comment" : "",
 					"hidden" : 1,
 					"id" : "obj-1",
-					"index" : 0,
+					"index" : 1,
 					"maxclass" : "outlet",
 					"numinlets" : 1,
 					"numoutlets" : 0,
@@ -83,7 +83,7 @@
 					"comment" : "",
 					"hidden" : 1,
 					"id" : "obj-103",
-					"index" : 0,
+					"index" : 1,
 					"maxclass" : "inlet",
 					"numinlets" : 0,
 					"numoutlets" : 1,
@@ -128,15 +128,6 @@
 
 			}
  ],
-		"dependency_cache" : [ 			{
-				"name" : "PBL_Parameters.js",
-				"bootpath" : "D:/MyData/Lavori/Cycling74/PBR_Utility/pbr-jitter/javascript",
-				"patcherrelativepath" : "../javascript",
-				"type" : "TEXT",
-				"implicit" : 1
-			}
- ],
-		"autosave" : 0,
 		"bgcolor" : [ 0.4, 0.6, 0.8, 1.0 ]
 	}
 

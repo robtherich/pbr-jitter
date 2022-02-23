@@ -1,5 +1,5 @@
 autowatch = 1;
-outlets = 1;
+outlets = 2;
 
 include("TexturesLoader_Sprite.js");
 include("TexturesLoader_TexturesParser.js");

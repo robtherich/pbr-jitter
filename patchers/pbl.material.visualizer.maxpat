@@ -40,6 +40,19 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"comment" : "",
+					"hidden" : 1,
+					"id" : "obj-13",
+					"index" : 1,
+					"maxclass" : "outlet",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 671.0, 449.0, 30.0, 30.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"bgmode" : 1,
 					"border" : 0,
 					"clickthrough" : 0,
@@ -85,9 +98,9 @@
 					"maxclass" : "bpatcher",
 					"name" : "pbl.textures.loader.maxpat",
 					"numinlets" : 1,
-					"numoutlets" : 1,
+					"numoutlets" : 2,
 					"offset" : [ 0.0, 0.0 ],
-					"outlettype" : [ "" ],
+					"outlettype" : [ "", "" ],
 					"patching_rect" : [ 10.0, 286.666666666666686, 680.0, 107.0 ],
 					"varname" : "pbl_textures_loader",
 					"viewvisibility" : 1
@@ -128,7 +141,7 @@
 					"numinlets" : 3,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
-					"patching_rect" : [ 411.0, 856.0, 109.0, 22.0 ],
+					"patching_rect" : [ 399.5, 853.0, 109.0, 22.0 ],
 					"text" : "route name mouse"
 				}
 
@@ -176,7 +189,7 @@
 				"box" : 				{
 					"enable" : 1,
 					"fps" : 30.0,
-					"frozen_box_attributes" : [ "fsaa", "varname" ],
+					"frozen_box_attributes" : [ "varname", "fsaa" ],
 					"fsaa" : 1,
 					"id" : "obj-5",
 					"maxclass" : "jit.pworld",
@@ -324,6 +337,14 @@
 					"destination" : [ "obj-4", 0 ],
 					"hidden" : 1,
 					"source" : [ "obj-3", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-13", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-38", 1 ]
 				}
 
 			}

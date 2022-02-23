@@ -83,8 +83,7 @@ function Sprite(patcher, position, spriteSize, texType)
     // BUTTON //
     var ButtonCallback = (function(data) { 
         print("button pressed")
-        // this.outlet.message("list", data.maxobject.filename);  
-        // outlet(0, "jit_gl_texture", this.texture.name);     
+        outlet(1, this.textureType+"_matrix", this.matrix.name);     
     }).bind(this); 
 
     this.buttonListener = new MaxobjListener(this.PWindowSizedObjs.GetButtonObj(), ButtonCallback);

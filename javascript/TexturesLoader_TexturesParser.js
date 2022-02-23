@@ -78,31 +78,31 @@ function TexturesParser(patcher, spriteSize)
     
         var texType = -1;
         if (/diff|col|alb/.test(filename)) {
-            texType = "tex_albedo";
+            texType = "albedo";
         }
         else if (/NOR|nor/.test(filename)) 
         {
-            texType = "tex_normals";
+            texType = "normal";
         }
         else if (/rough|ROUGH|rou/.test(filename)) 
         {
-            texType = "tex_roughness";
+            texType = "roughness";
         }
         else if (/AO|ao|occ|Occ/.test(filename)) 
         {
-            texType = "tex_ao";
+            texType = "ao";
         }
         else if (/ENV|env|Env/.test(filename)) 
         {
-            texType = "tex_environment";
+            texType = "environment";
         }
         else if (/disp|Hei|hei/.test(filename)) 
         {
-            texType = "tex_height";
+            texType = "height";
         }
         else if (/SPEC|spec|met/.test(filename)) 
         {
-            texType = "tex_metallic";
+            texType = "metallic";
         }
         return texType;
     }
