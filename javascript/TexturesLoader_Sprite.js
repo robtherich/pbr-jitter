@@ -25,7 +25,7 @@ function Sprite(patcher, position, spriteSize, texType)
 
     this.ImportDefaultImageForMatrix = function()
     {
-        if (this.textureType == "tex_environment")
+        if (this.textureType == "environment")
         {
             this.matrix.importmovie(this.defaultEnvMapFile);
         }
@@ -72,7 +72,6 @@ function Sprite(patcher, position, spriteSize, texType)
         else 
         {   
             this.LoadImage(data.value);
-            this.ApplyTexturesToShape();
         }
     }).bind(this); 
     this.dropfileListener = new MaxobjListener(this.PWindowSizedObjs.GetTextEditObj(), DropfileCallback);
@@ -82,8 +81,7 @@ function Sprite(patcher, position, spriteSize, texType)
 
     // BUTTON //
     var ButtonCallback = (function(data) { 
-        print("button pressed")
-        outlet(1, this.textureType+"_matrix", this.matrix.name);     
+        this.OutputMatrix();
     }).bind(this); 
 
     this.buttonListener = new MaxobjListener(this.PWindowSizedObjs.GetButtonObj(), ButtonCallback);
@@ -126,6 +124,11 @@ function Sprite(patcher, position, spriteSize, texType)
 
 
     // FUNCTIONS -----------------------------------------------------
+    this.OutputMatrix = function()
+    {
+        outlet(1, this.textureType+"_matrix", this.matrix.name);    
+    }
+
     this.ResizeSpriteObjs = function(position, sizeArray)
     {   
         this.position = position.slice();
@@ -167,11 +170,22 @@ function Sprite(patcher, position, spriteSize, texType)
     {   
         this.filePath = path;
         this.filename = GetFileNameFromPath(path);
-        this.matrix.importmovie(this.filePath);
+        var ext = GetFileExt(path);
+        if (ext == "exr")
+        {
+            this.matrix = new JitterObject("jit.openexr");
+            this.matrix.read(this.filePath);
+        }
+        else
+        {
+            this.matrix.importmovie(this.filePath);
+        }
         // this.matrix.type = "float32";
         
         this.TriggerImage();
         this.textObj.SetText(this.filename);
+        this.OutputMatrix();
+        // this.ApplyTexturesToShape();
     }
 
     this.TriggerImage = function()
@@ -381,7 +395,7 @@ function TextButton(patcher, position, size, fontSize)
     this.SetDefaultText = function(textType, defaultMapFile)
     {
     
-        if (textType == "tex_environment")
+        if (textType == "environment")
         {
             this.SetText(defaultMapFile);
         }
@@ -453,6 +467,11 @@ function GetFileNameFromPath(path)
     return parsedFileName;
 }
 GetFileNameFromPath.local = 1;
+
+function GetFileExt(path)
+{
+    return path.split('.').pop();
+}
 
 function SetRandomVarName()
 {

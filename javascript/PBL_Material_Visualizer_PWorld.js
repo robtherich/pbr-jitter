@@ -39,8 +39,8 @@ function PWorld(patcher, bpSize)
         roughness: this.textureEmpty.name,
         metallic: this.textureEmpty.name,
         ao: this.textureEmpty.name,
-        emission: this.textureEmpty.name,
         height: this.textureEmpty.name,
+        emission: this.textureEmpty.name,
         environment: this.textureEmpty.name
     };
 
@@ -56,41 +56,41 @@ function PWorld(patcher, bpSize)
         this.SetMtrToEmpty();
         
         // TEMPORARY IF STATEMENTS, WAITING TO KNOW WHICH MESSAGES GO TO THE SHADER
-        if (gGlobal.textureNames.tex_albedo != "Undefined")
+        if (gGlobal.textureNames.albedo != "Undefined")
         {
-            this.material.diffuse_texture(gGlobal.textureNames.tex_albedo);
+            this.material.diffuse_texture(gGlobal.textureNames.albedo);
         }
-        if (gGlobal.textureNames.tex_normals != "Undefined")
+        if (gGlobal.textureNames.normal != "Undefined")
         {
-            this.material.normals_texture(gGlobal.textureNames.tex_normals);
+            this.material.normals_texture(gGlobal.textureNames.normal);
         }
-        if (gGlobal.textureNames.tex_roughness != "Undefined")
+        if (gGlobal.textureNames.roughness != "Undefined")
         {
-            this.material.glossmap_texture(gGlobal.textureNames.tex_roughness);
+            this.material.glossmap_texture(gGlobal.textureNames.roughness);
         }
-        if (gGlobal.textureNames.tex_metallic != "Undefined")
+        if (gGlobal.textureNames.metallic != "Undefined")
         {
-            this.material.specular_texture(gGlobal.textureNames.tex_metallic);
+            this.material.specular_texture(gGlobal.textureNames.metallic);
         }
-        if (gGlobal.textureNames.tex_emission != "Undefined")
+        if (gGlobal.textureNames.emission != "Undefined")
         {   
-            if (gGlobal.textureNames.tex_emission == this.textureEmpty.name)
+            if (gGlobal.textureNames.emission == this.textureEmpty.name)
             {
                 this.material.mat_emission = [0,0,0,1];
             }
             else 
             {
                 this.material.mat_emission = [1,1,1,1];
-                this.material.emission_texture(gGlobal.textureNames.tex_emission);
+                this.material.emission_texture(gGlobal.textureNames.emission);
             }
         }
-        if (gGlobal.textureNames.tex_height != "Undefined")
+        if (gGlobal.textureNames.height != "Undefined")
         {
-            this.material.heightmap_texture(gGlobal.textureNames.tex_height);
+            this.material.heightmap_texture(gGlobal.textureNames.height);
         }
-        if (gGlobal.textureNames.tex_environment != "Undefined")
+        if (gGlobal.textureNames.environment != "Undefined")
         {   
-            this.material.environment_texture(gGlobal.textureNames.tex_environment);
+            this.material.environment_texture(gGlobal.textureNames.environment);
         }
     
         // var keys = Object.keys(gGlobal.textureNames);

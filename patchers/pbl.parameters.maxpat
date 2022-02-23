@@ -40,6 +40,19 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"comment" : "",
+					"hidden" : 1,
+					"id" : "obj-66",
+					"index" : 2,
+					"maxclass" : "outlet",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 595.105262041091919, 669.0, 30.0, 30.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"frozen_box_attributes" : [ "varname" ],
 					"hidden" : 1,
 					"id" : "obj-92",
@@ -98,8 +111,8 @@
 					"id" : "obj-61",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
+					"numoutlets" : 2,
+					"outlettype" : [ "", "" ],
 					"patching_rect" : [ 490.105262041091919, 619.105259895324707, 124.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"filename" : "PBL_Parameters.js",
@@ -124,6 +137,14 @@
 					"destination" : [ "obj-1", 0 ],
 					"hidden" : 1,
 					"source" : [ "obj-61", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-66", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-61", 1 ]
 				}
 
 			}

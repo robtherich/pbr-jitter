@@ -24,8 +24,8 @@ function CubeMap(patcher)
         this.cubeMapObj.panorama_matrix(this.cubeMapMat.name);
         this.skybox.texture = (this.cubeMapObj.name);
 
-        gGlobal.textureNames.tex_environment = this.cubeMapTex.name;
-        material.environment_texture(gGlobal.textureNames.tex_environment);
+        gGlobal.textureNames.environment = this.cubeMapTex.name;
+        material.environment_texture(gGlobal.textureNames.environment);
     }
 
     this.Destroy = function()

@@ -58,7 +58,7 @@ function SetPatchID(id)
 
 function SetShaderParam(paramName, value)
 {
-    print("ShaderParam "+paramName, value);
+    // print("ShaderParam "+paramName, value);
     gPWorld.SendMessageToShader(paramName, value);
 }
 

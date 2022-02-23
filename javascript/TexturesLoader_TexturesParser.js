@@ -20,6 +20,21 @@ function TexturesParser(patcher, spriteSize)
         
     }
 
+    this.CreateSprites = function(patcher)
+    {
+        var position = this.spriteOffsetFromBPEdge.slice();
+        var texTypes = Object.keys(gGlobal.textureNames);
+        // print(texTypes)
+        print("SpRITE SIZE "+this.spriteSize)
+        for (var i=0; i<texTypes.length; i++)
+        {
+            this.spritesContainer[texTypes[i]] = (new Sprite(patcher, position, this.spriteSize, texTypes[i]));
+            position[0] += this.spriteSize[0]+this.spriteOffset;
+            // print(i)
+        }
+        this.CalcAllSpritesXSize(position[0])
+    }
+
     this.IsBPatcherSmallerThanSpritesXSize = function(bpSizeX)
     {
         return (bpSizeX <= this.allSpritesXSize);
@@ -45,30 +60,37 @@ function TexturesParser(patcher, spriteSize)
     }
 
     this.ParseFolder = function(path)
-    {
+    {   
+        this.ClearImages();
+
         this.folder = new Folder(path);
         this.folder.typelist = ["JPEG", "PNG", "TIFF"];
 
         this.fileNamesArray = [];
-    
+
+        var texTypes = Object.keys(gGlobal.textureNames);
+        var nonFoundImageIndex = 0;
         while (!this.folder.end)
         {
             if (this.folder.filename.length > 0)
             {   
                 this.fileNamesArray.push(path+this.folder.filename);
                 var texType = this.ParseTextureType(this.folder.filename);
-                if (texType != -1)
-                {
-                    this.spritesContainer[texType].LoadImage(path+this.folder.filename);
-                    // print(texType)
+                if (texType == -1)
+                {   
+                    texType = texTypes[nonFoundImageIndex];
+                    nonFoundImageIndex++;
                 }
+                this.spritesContainer[texType].LoadImage(path+this.folder.filename);
             }
             this.folder.next();
         }
 
+        this.ApplyTexturesToShape();
         for (var sprite in this.spritesContainer)
         {   
             this.spritesContainer[sprite].SetImagesNamesUmenu(this.fileNamesArray);
+            // this.spritesContainer[sprite].OutputMatrix();
         }
     }
 
@@ -109,10 +131,10 @@ function TexturesParser(patcher, spriteSize)
 
     var PickerCallback = (function(data) 
     {   
-        // print(" test "+data.value)
         var pickedColor = this.picker.getattr("currentcolor");
         var spriteInstance = data.maxobject.spriteInstance;
         this.spritesContainer[spriteInstance].SetPickedColor(pickedColor);
+        this.spritesContainer[spriteInstance].OutputMatrix();
     }).bind(this); 
 
     this.GetPickerColor = function(spriteInstance)
@@ -131,19 +153,9 @@ function TexturesParser(patcher, spriteSize)
         // print(this.pickerListener)
     }
 
-    this.CreateSprites = function(patcher)
+    this.ApplyTexturesToShape = function()
     {
-        var position = this.spriteOffsetFromBPEdge.slice();
-        var texTypes = Object.keys(gGlobal.textureNames);
-        // print(texTypes)
-        print("SpRITE SIZE "+this.spriteSize)
-        for (var i=0; i<texTypes.length; i++)
-        {
-            this.spritesContainer[texTypes[i]] = (new Sprite(patcher, position, this.spriteSize, texTypes[i]));
-            position[0] += this.spriteSize[0]+this.spriteOffset;
-            // print(i)
-        }
-        this.CalcAllSpritesXSize(position[0])
+        outlet(0, "SetShapeTextures");
     }
 
     this.ClearImages = function()

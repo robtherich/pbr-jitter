@@ -1,4 +1,5 @@
 autowatch = 1;
+outlets = 2;
 
 var g_params = new Parameters(this.patcher);
 
@@ -47,27 +48,26 @@ function Parameters(patcher)
                 tempPos.y += index*20;
                 this.CreateParameterBlock(paramName, paramClass, tempPos);
                 index++;
-                print("temp pos "+tempPos.toArray())
             }
         }
         else
         {
             print("single entry")
         }
-        print("TUTTO BENE")
     }
 
     this.CreateParameterBlock = function(name, type, position)
     {   
         var comment = this.objGenerator.CreateAttrNameComment(position, name);
-        var uiObj = this.objGenerator.CreateBasicUIObj(type, position.addNew([80,0,0]), 0);
-        print(position.addNew([50,0,0]).toArray())
+        var uiObj = this.objGenerator.CreateBasicUIObj(type, position.addNew([65,0,0]), 0);
+        // print(position.addNew([50,0,0]).toArray())
         uiObj.SetAttrName(name);
 
         var UIObjCallback = (function(data)
         {
             // print(data.maxobject.attrName, data.value);
             outlet(0, "SetShaderParam", data.maxobject.attrName, data.value);
+            outlet(1, data.maxobject.attrName, data.value);
         }).bind(this);
         var objListener = MaxobjListener(uiObj, UIObjCallback);
 
@@ -83,7 +83,6 @@ function Parameters(patcher)
             var tempPos = this.parametersStartingPosition.addNew([0, 20*obj, 0]);
             this.RepositionBlock(this.blocksArray[obj], tempPos);
         }
-        print("TUTTO BENE 2")
         // print("params size "+this.paramsWindowSize);
     }
 

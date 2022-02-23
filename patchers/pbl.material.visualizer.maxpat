@@ -47,7 +47,7 @@
 					"maxclass" : "outlet",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 671.0, 449.0, 30.0, 30.0 ]
+					"patching_rect" : [ 710.0, 408.0, 30.0, 30.0 ]
 				}
 
 			}
@@ -57,7 +57,7 @@
 					"border" : 0,
 					"clickthrough" : 0,
 					"enablehscroll" : 0,
-					"enablevscroll" : 0,
+					"enablevscroll" : 1,
 					"frozen_box_attributes" : [ "name" ],
 					"id" : "obj-6",
 					"lockeddragscroll" : 0,
@@ -65,9 +65,9 @@
 					"maxclass" : "bpatcher",
 					"name" : "pbl.parameters.maxpat",
 					"numinlets" : 1,
-					"numoutlets" : 1,
+					"numoutlets" : 2,
 					"offset" : [ 0.0, 0.0 ],
-					"outlettype" : [ "" ],
+					"outlettype" : [ "", "" ],
 					"patching_rect" : [ 350.0, 10.0, 340.0, 266.666666666666686 ],
 					"viewvisibility" : 1
 				}
@@ -419,6 +419,14 @@
 					"destination" : [ "obj-2", 0 ],
 					"hidden" : 1,
 					"source" : [ "obj-53", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-13", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-6", 1 ]
 				}
 
 			}
