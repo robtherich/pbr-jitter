@@ -4,37 +4,22 @@ function Sprite(patcher, position, spriteSize, texType)
     this.filename = null;
     this.filePath = null;
 
-    this.defaultEnvMapFile = "panorama_cube_map.png";
- 
     this.position = position.slice();
     this.size = spriteSize.slice();
     this.borderSize = 2;
     this.fontSize = 10;
+    this.spriteType = texType;
 
-    this.textureType = texType;
-
-    this.movieLoader = new MovieLoader();
+    this.movieLoader = new MovieLoader(texType);
+    this.movieLoader.ImportDefaultImage();
 
     this.menuYSize = 14;
 
     this.fileNamesArray = null;
-
     // FUNCTIONS
     this.SetMaxObjPosSize = function(maxObj, pos, size)
     {   
         this.p.script("sendbox", maxObj.varname, "patching_rect", [pos[0], pos[1], size[0], size[1]]);
-    }
-
-    this.ImportDefaultImageForMatrix = function()
-    {
-        if (this.textureType == "environment")
-        {
-            this.matrix.importmovie(this.defaultEnvMapFile);
-        }
-        else 
-        {
-            this.matrix.importmovie("default_tex.png");
-        }
     }
 
     this.CalculatePWindowYPos = function()
@@ -48,26 +33,18 @@ function Sprite(patcher, position, spriteSize, texType)
     }
     //----------------------------------
 
-    // MATRIX //
-    this.matrix = new JitterMatrix();
-    this.ImportDefaultImageForMatrix();
-
-    // TEXTURE //
-    this.texture = new JitterObject("jit.gl.texture", gGlobal.pworldName);
-    this.texture.defaultimage = "checker";
-
-    this.ratio = this.matrix.dim[0] / this.matrix.dim[1];
 
     this.CalculatePWindowYSize();
     this.CalculatePWindowYPos();
 
     // MAX OBJECTS --------------------------------------------
     this.PWindowSizedObjs = new PWindowSizedMaxObjects(this.p, [this.position[0]+this.borderSize, this.pwindowYPos], [this.size[0], this.pwindowYSize]);
-    this.PWindowSizedObjs.Init(this.matrix.name);
+    this.PWindowSizedObjs.Init(this.movieLoader.GetMatrix());
+
 
     // DROPFILE // 
     var DropfileCallback = (function(data) { 
-        outlet(0, "SetIsLoading");
+        // outlet(0, "SetIsLoading");
         if (data.value[data.value.length-1] == '/')
         {
             g_TexturesParser.ParseFolder(data.value);
@@ -75,9 +52,13 @@ function Sprite(patcher, position, spriteSize, texType)
         else 
         {   
             this.LoadImage(data.value);
+            this.ApplyTexturesToShape();
         }
     }).bind(this); 
-    this.dropfileListener = new MaxobjListener(this.PWindowSizedObjs.GetTextEditObj(), DropfileCallback);
+    // var addMovie = this.PWindowSizedObjs.GetTextEditObj();
+    // addMovie.movieLoader = this.movieLoader;
+    var textEditObj = this.PWindowSizedObjs.GetTextEditObj();
+    this.dropfileListener = new MaxobjListener(textEditObj, DropfileCallback);
 
     // PANEL //
     this.borderPanelObj = new SpritePanel(this.p, this.position, [this.size[0]+this.borderSize*2, this.size[1]+this.borderSize*2+this.menuYSize], this.borderSize);
@@ -91,7 +72,7 @@ function Sprite(patcher, position, spriteSize, texType)
 
     // TEXT BUTTON //
     this.textButtonObj = new TextButton(this.p, [this.position[0]+this.borderSize, this.position[1]+this.borderSize], [this.size[0], this.menuYSize], this.fontSize);
-    this.textButtonObj.SetText(this.textureType);
+    this.textButtonObj.SetText(this.spriteType);
     this.textButtonObj.SetBGColor([0,0,0,1]);
 
     var TexTypeButtonCallback = (function(data) { 
@@ -103,7 +84,7 @@ function Sprite(patcher, position, spriteSize, texType)
     // TEXT // 
     this.textObj = new TextButton(this.p, [this.position[0]+this.borderSize, this.pwindowYPos+this.pwindowYSize], [this.size[0], this.menuYSize], this.fontSize);
     this.textObj.SetIgnoreClick(true);
-    this.textObj.SetDefaultText(this.textureType, this.defaultEnvMapFile);
+    this.textObj.SetDefaultText(this.spriteType, this.defaultEnvMapFile);
 
     // UMENU //
     this.umenuObj = new SpriteUmenu(this.p, [this.position[0]+this.borderSize, this.position[1]+this.borderSize+this.menuYSize], this.menuYSize);
@@ -116,7 +97,7 @@ function Sprite(patcher, position, spriteSize, texType)
         }
         else if (data.value == 0)
         {
-            g_TexturesParser.GetPickerColor(this.textureType);
+            g_TexturesParser.GetPickerColor(this.spriteType);
         }
         
         this.umenuObj.Hide();
@@ -129,7 +110,7 @@ function Sprite(patcher, position, spriteSize, texType)
     // FUNCTIONS -----------------------------------------------------
     this.OutputMatrix = function()
     {
-        outlet(1, this.textureType+"_matrix", this.matrix.name);    
+        outlet(1, this.spriteType+"_matrix", this.movieLoader.GetMatrix());    
     }
 
     this.ResizeSpriteObjs = function(position, sizeArray)
@@ -153,10 +134,8 @@ function Sprite(patcher, position, spriteSize, texType)
 
     this.SetPickedColor = function(color)
     {   
-        this.matrix.type = "float32";
-        this.matrix.dim = [1,1];
-        this.matrix.setall([color[3], color[0], color[1], color[2]]);
-        this.TriggerImage();
+        this.movieLoader.SetColor(color);
+        this.PWindowSizedObjs.SendMatrixToPWindow(this.movieLoader.GetMatrix());
         outlet(0, "SetShapeTextures");
     }
 
@@ -173,40 +152,20 @@ function Sprite(patcher, position, spriteSize, texType)
     {   
         this.filePath = path;
         this.filename = GetFileNameFromPath(path);
-        var ext = GetFileExt(path);
-
-        if (ext == "exr")
-        {
-            this.matrix = new JitterObject("jit.openexr");
-            this.matrix.read(this.filePath);
-        }
-        else
-        {   
-            this.movieLoader.LoadImage(path);
-            // this.matrix.importmovie(this.filePath);
-        }
-        // this.matrix.type = "float32";
         
-        this.TriggerImage();
+        this.movieLoader.LoadImage(path);
+        
+        this.PWindowSizedObjs.SendMatrixToPWindow(this.movieLoader.GetMatrix());
         this.textObj.SetText(this.filename);
         this.OutputMatrix();
-        // this.ApplyTexturesToShape();
-    }
-
-    this.TriggerImage = function()
-    {
-        this.PWindowSizedObjs.SendMatrixToPWindow(this.matrix.name);
-        this.texture.jit_matrix(this.matrix.name);
-        gGlobal.textureNames[this.textureType] = this.texture.name;
     }
 
     this.ClearImage = function()
     {
-        this.ImportDefaultImageForMatrix();
-        this.textObj.SetDefaultText(this.textureType, this.defaultEnvMapFile);
-        this.PWindowSizedObjs.SendMatrixToPWindow(this.matrix.name);
-        this.texture.jit_matrix(this.matrix.name);
-        gGlobal.textureNames[this.textureType] = "Undefined";
+        this.movieLoader.ImportDefaultImage();
+        this.textObj.SetDefaultText(this.spriteType, this.defaultEnvMapFile);
+        this.PWindowSizedObjs.SendMatrixToPWindow(this.movieLoader.GetMatrix());
+        gGlobal.textureNames[this.spriteType] = "Undefined";
     }
 
     this.SetDrawto = function(drawto)
@@ -218,33 +177,135 @@ function Sprite(patcher, position, spriteSize, texType)
     {   
         FF_Utils.Print("cleaning sprite");
         this.PWindowSizedObjs.Destroy();
-
-        this.matrix.freepeer();
-        this.texture.freepeer();
         this.movieLoader.Destroy();
     }
 }
 
-function MovieLoader()
-{
+// function DropfileCallback(data) { 
+//     // outlet(0, "SetIsLoading");
+//     if (data.value[data.value.length-1] == '/')
+//     {
+//         g_TexturesParser.ParseFolder(data.value);
+//     }
+//     else 
+//     {   
+//         FF_Utils.Print("in callback "+data.value)
+//         data.maxobject.movieLoader.LoadImage(data.value);
+//     }
+// }; 
+
+//--------------------------------------------------------
+
+function LoadCallback(event)
+{   
+    FF_Utils.Print("EVENT "+event.eventname);
+    if (event.eventname == "read")
+    {
+        FF_Utils.Print("IS LOADED");
+    }
+}
+LoadCallback.local = 1;
+
+function MovieLoader(texType)
+{   
+    this.defaultEnvMapFile = gGlobal.default_env_img;
+
     this.movie = new JitterObject("jit.movie");
+    this.movie.engine = "viddll";
+
+    this.exr = new JitterObject("jit.openexr");
+
+    this.matrix = new JitterMatrix(4, "float32", 320, 240);
+
+    this.texture = new JitterObject("jit.gl.texture", gGlobal.pworldName);
+    this.texture.defaultimage = "black";
+
+    this.textureType = texType;
+
+    this.loader = null;
+
+    this.movieRegname = this.movie.getregisteredname();
+    // FF_Utils.Print(this.movieRegname);
+
+    this.movListener = new JitterListener(this.movieRegname, LoadCallback);
 
     this.LoadImage = function(path)
     {   
-        FF_Utils.Print("movie load image")
-        this.movie.asyncread(path);
+        var ext = GetFileExt(path);
+
+        if (ext == "exr")
+        {
+            this.LoadEXR(path);
+        }
+        else
+        {   
+            this.LoadStandard(path);
+        }
+
+        // FF_Utils.Print("movie load image")
+        this.loader.read(path);
+        this.GetNewFrame();
+        this.AssignTextureNameToGlobal();
     }
 
-    var LoadCallback = (function(event)
-    {
-        FF_Utils.Print(event.eventname);
-    }).bind(this);
+    this.ImportDefaultImage = function()
+    {   
+        this.loader = this.movie;
+        if (this.textureType == "environment")
+        {   
+            this.LoadImage(this.defaultEnvMapFile);
+        }
+        else if (this.textureType != "emission")
+        {   
+            this.LoadImage("default_tex.png");
+        }
+        this.texture.jit_matrix(this.matrix.name);
+    }
 
-    this.listener = new JitterListener(this.movie, LoadCallback);
+    this.LoadEXR = function(path)
+    {   
+        FF_Utils.Print("IMPORTED EXR")
+        this.loader = this.exr;
+        this.loader.read(path);
+        this.loader.outputfile = 1;
+    }
+
+    this.LoadStandard = function(path)
+    {   
+        this.loader = this.movie;
+        this.loader.read(path);
+    }
+
+    this.GetNewFrame = function()
+    {
+        this.loader.matrixcalc(this.matrix, this.matrix);
+        this.texture.jit_matrix(this.matrix.name);
+    }
+
+    this.AssignTextureNameToGlobal = function()
+    {   
+        gGlobal.textureNames[this.textureType] = this.texture.name;
+    }
+
+    this.SetColor = function(color)
+    {
+        this.matrix.type = "float32";
+        this.matrix.dim = [1,1];
+        this.matrix.setall([color[3], color[0], color[1], color[2]]);
+        this.texture.jit_matrix(this.matrix.name);
+    }
+
+    this.GetMatrix = function()
+    {
+        return this.matrix.name;
+    }
 
     this.Destroy = function()
     {
         this.movie.freepeer();
+        this.matrix.freepeer();
+        this.texture.freepeer();
+        this.exr.freepeer();
     }
 }
 
@@ -498,8 +559,9 @@ function GetFileNameFromPath(path)
 GetFileNameFromPath.local = 1;
 
 function GetFileExt(path)
-{
-    return path.split('.').pop();
+{   
+    var tmp = path.slice();
+    return tmp.split('.').pop();
 }
 
 function SetRandomVarName()

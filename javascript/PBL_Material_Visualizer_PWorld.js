@@ -88,15 +88,7 @@ function PWorld(patcher, bpSize)
         }
         if (gGlobal.textureNames.emission != "Undefined")
         {   
-            if (gGlobal.textureNames.emission == this.textureEmpty.name)
-            {
-                this.material.mat_emission = [0,0,0,1];
-            }
-            else 
-            {
-                this.material.mat_emission = [1,1,1,1];
-                this.material.emission_texture(gGlobal.textureNames.emission);
-            }
+            this.material.emission_texture(gGlobal.textureNames.emission);
         }
         if (gGlobal.textureNames.height != "Undefined")
         {
@@ -104,6 +96,7 @@ function PWorld(patcher, bpSize)
         }
         if (gGlobal.textureNames.environment != "Undefined")
         {   
+            this.envMap.AssignTexToSkybox();
             this.material.environment_texture(gGlobal.textureNames.environment);
         }
     
@@ -141,7 +134,7 @@ function PWorld(patcher, bpSize)
         this.gridshape.drawto = this.name;
         this.material.drawto = this.name;
         this.envMap.SetDrawTo(name);
-        this.envMap.AssignImgToCubeMap(this.material);
+        // this.envMap.AssignImgToCubeMap(this.material);
     }
 
     this.SetIsLoading = function()

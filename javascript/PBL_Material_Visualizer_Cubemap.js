@@ -1,5 +1,7 @@
 function CubeMap(patcher)
 {
+    gGlobal.default_env_img = "panorama_cube_map.png";
+
     this.p = patcher;
 
     this.cubeMapObj = new JitterObject("jit.gl.cubemap");
@@ -9,7 +11,8 @@ function CubeMap(patcher)
 
     this.cubeMapTex = new JitterObject("jit.gl.texture");
     this.cubeMapMat = new JitterMatrix();
-    this.cubeMapMat.importmovie("panorama_cube_map.png");
+    this.cubeMapMat.importmovie(gGlobal.default_env_img);
+
 
     this.SetDrawTo = function(drawto)
     {
@@ -18,15 +21,28 @@ function CubeMap(patcher)
         this.skybox.drawto = (drawto);
     }
 
-    this.AssignImgToCubeMap = function(material)
+    this.AssignTexToSkybox = function()
+    {   
+        // this.cubeMapMat.type="float32";
+        // this.cubeMapMat.planecount = 4;
+        this.cubeMapMat.jit_gl_texture(gGlobal.textureNames.environment);
+        FF_Utils.Print("mat name")
+        FF_Utils.Print(this.cubeMapMat.name)
+        this.cubeMapObj.panorama_matrix(this.cubeMapMat.name);
+        FF_Utils.Print(gGlobal.textureNames.environment)
+        this.skybox.texture = (this.cubeMapObj.name);
+    }
+
+    this.InitCubeMap = function()
     {
         this.cubeMapTex.jit_matrix(this.cubeMapMat.name);
         this.cubeMapObj.panorama_matrix(this.cubeMapMat.name);
         this.skybox.texture = (this.cubeMapObj.name);
 
         gGlobal.textureNames.environment = this.cubeMapTex.name;
-        material.environment_texture(gGlobal.textureNames.environment);
     }
+
+    this.InitCubeMap();
 
     this.Destroy = function()
     {
