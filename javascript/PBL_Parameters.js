@@ -1,13 +1,19 @@
 autowatch = 1;
 outlets = 2;
 
+var isParsed = 0;
 var g_params = new Parameters(this.patcher);
-
-g_params.ParseParamsDict();
+var g_BPRect = [0,0,0,0];
 
 function ResizeBPatcher(bpSizeX, bpSizeY)
-{
-    this.patcher.box.rect = [(bpSizeX/2), 10,  (bpSizeX-10), 10+(bpSizeY/3)*2];
+{   
+    if (!isParsed)
+    {
+        isParsed = g_params.ParseParamsDict();
+    }
+    g_BPRect = [(bpSizeX/2), 10, (bpSizeX-10), 10+(bpSizeY/3)*2];
+    FF_Utils.Print(g_BPRect);
+    this.patcher.box.rect = g_BPRect.slice();
     var sizeX = (bpSizeX-10)-(bpSizeX/2);
     var sizeY = (bpSizeY/3)*2;
     g_params.SetThisBPSize([sizeX, sizeY]);
@@ -27,8 +33,8 @@ function Parameters(patcher)
     this.parametersDict = new Dict();
     this.parametersDict.import_json("Parameters.json");
 
-    this.parametersStartingPosition = new Vector(10, 30);
-    this.titlePos = new Vector(7,2);
+    this.parametersStartingPosition = new FF_Vector(10, 30);
+    this.titlePos = new FF_Vector(7,2);
 
     this.ParseParamsDict = function()
     {
@@ -52,8 +58,9 @@ function Parameters(patcher)
         }
         else
         {
-            print("single entry")
+            FF_Utils.Print("single entry")
         }
+        return 1;
     }
 
     this.CreateParameterBlock = function(name, type, position)
@@ -88,12 +95,7 @@ function Parameters(patcher)
 
     this.CreateTitle = function()
     {
-        this.title = this.objGenerator.CreateAttrNameComment(this.titlePos, "Shader Parameters");
-        this.title.bgcolor(1,1,1,0);
-        this.title.textcolor(1,1,1,1);
-        // this.title.textjustification(1);
-        this.title.fontsize(15);
-        this.title.fontface("bold");
+        this.title = this.objGenerator.CreateTitle(this.titlePos);
     }
 
     this.RepositionBlock = function(block, position)
@@ -151,6 +153,18 @@ function ObjectsGenerator(patcher)
         attrNameComment.varname = this.CreateRandomVarName();
         this.SetObjPosSize(attrNameComment, position, [60, 15]);
         return attrNameComment;
+    }
+
+    this.CreateTitle = function(position)
+    {
+        var title = this.p.newobject("comment", position.x, position.y, 200, 15);
+        title.bgcolor(1,1,1,0);
+        title.textcolor(1,1,1,1);
+        // this.title.textjustification(1);
+        title.set("Shader Parameters");
+        title.fontsize(15);
+        title.fontface("bold");
+        return title;
     }
 
     this.SetObjPosSize = function(obj, pos, size)

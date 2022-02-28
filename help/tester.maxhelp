@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 34.0, 77.0, 1515.0, 929.0 ],
+		"rect" : [ 34.0, 77.0, 1399.0, 929.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -40,12 +40,25 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-14",
+					"linecount" : 2,
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 817.0, 753.0, 50.0, 36.0 ],
+					"text" : "triplanar 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-12",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "jit_matrix", "" ],
-					"patching_rect" : [ 941.0, 574.0, 64.0, 22.0 ],
+					"patching_rect" : [ 948.0, 586.0, 64.0, 22.0 ],
 					"text" : "jit.openexr"
 				}
 
@@ -69,8 +82,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 1035.25, 664.0, 210.0, 22.0 ],
-					"text" : "jit.gl.light @type point @position 2 2 0"
+					"patching_rect" : [ 1022.0, 664.0, 210.0, 22.0 ],
+					"text" : "jit.gl.light @type point @position 2 2 2"
 				}
 
 			}
@@ -326,7 +339,7 @@
 					"numoutlets" : 3,
 					"outlettype" : [ "jit_matrix", "bang", "" ],
 					"patching_rect" : [ 1041.0, 822.0, 377.0, 22.0 ],
-					"text" : "jit.world @enable 1 @floating 1 @size 320 240 @erase_color 0 0 0 1"
+					"text" : "jit.world @enable 1 @floating 1 @size 160 120 @erase_color 0 0 0 1"
 				}
 
 			}
@@ -374,7 +387,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 610.0, 231.0, 115.0, 22.0 ],
+					"patching_rect" : [ 609.734691679477692, 218.0, 115.0, 22.0 ],
 					"text" : "prepend load_folder"
 				}
 
@@ -386,7 +399,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 639.0, 197.0, 330.0, 22.0 ],
+					"patching_rect" : [ 638.734691679477692, 184.0, 330.0, 22.0 ],
 					"text" : "\"D:/MyData/My Files/Assets/Textures/PBL/Cobblestone/\""
 				}
 
@@ -398,7 +411,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 610.0, 28.0, 328.0, 155.0 ]
+					"patching_rect" : [ 609.734691679477692, 15.0, 328.0, 155.0 ]
 				}
 
 			}
@@ -466,7 +479,7 @@
 					"numoutlets" : 1,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 27.0, 265.0, 700.0, 400.0 ],
+					"patching_rect" : [ 37.0, 263.0, 737.0, 427.0 ],
 					"varname" : "pbl_bpatcher",
 					"viewvisibility" : 1
 				}
@@ -504,6 +517,15 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-1", 0 ],
+					"order" : 1,
+					"source" : [ "obj-20", 8 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-14", 1 ],
+					"order" : 0,
 					"source" : [ "obj-20", 8 ]
 				}
 

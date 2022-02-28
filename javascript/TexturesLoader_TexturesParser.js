@@ -24,13 +24,12 @@ function TexturesParser(patcher, spriteSize)
     {
         var position = this.spriteOffsetFromBPEdge.slice();
         var texTypes = Object.keys(gGlobal.textureNames);
-        // print(texTypes)
-        print("SpRITE SIZE "+this.spriteSize)
+
+        FF_Utils.Print("SpRITE SIZE "+this.spriteSize)
         for (var i=0; i<texTypes.length; i++)
         {
             this.spritesContainer[texTypes[i]] = (new Sprite(patcher, position, this.spriteSize, texTypes[i]));
             position[0] += this.spriteSize[0]+this.spriteOffset;
-            // print(i)
         }
         this.CalcAllSpritesXSize(position[0])
     }
@@ -51,7 +50,7 @@ function TexturesParser(patcher, spriteSize)
             position[0] += this.spriteSize[1]+this.spriteOffset;
         }
         this.CalcAllSpritesXSize(position[0]);
-        print(this.allSpritesXSize)
+        FF_Utils.Print(this.allSpritesXSize)
     }
 
     this.CalcAllSpritesXSize = function(currentPos)
@@ -150,7 +149,6 @@ function TexturesParser(patcher, spriteSize)
         {   
             this.pickerListener = new MaxobjListener(this.picker, "currentcolor", PickerCallback);
         }
-        // print(this.pickerListener)
     }
 
     this.ApplyTexturesToShape = function()

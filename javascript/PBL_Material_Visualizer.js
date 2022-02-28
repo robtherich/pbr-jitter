@@ -62,12 +62,16 @@ function SetShaderParam(paramName, value)
     gPWorld.SendMessageToShader(paramName, value);
 }
 
+function SetIsLoading()
+{
+    gPWorld.SetIsLoading();
+}
 
 function ResizeBPatcher()
 {
     this.patcher.box.rect = [this.patcher.box.rect[0], this.patcher.box.rect[1], this.patcher.box.rect[0]+gBPSize[0], this.patcher.box.rect[1]+gBPSize[1]]
     gPWorld.ResizePWorld(this.patcher.box.rect);
-    print("Mat visualizer patcher pos: "+this.patcher.box.rect);
+    FF_Utils.Print("Mat visualizer patcher pos: "+this.patcher.box.rect);
 }
 
 //------------------------------------

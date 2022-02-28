@@ -45,7 +45,6 @@ function ResizeBPatcher(posX, bpSizeX, bpSizeY)
     g_bpRect[1] = (bpSizeY/3)*2+20;
     g_bpRect[2] = bpSizeX-20;
     g_bpRect[3] = bpSizeY / 4;
-    // print("TEX LOADER RECT "+posX, posY, bpatcherSizeX, bpatcherSizeY)
 
     if (g_TexturesParser == null)
     {
@@ -68,11 +67,11 @@ function ResizeBPatcher(posX, bpSizeX, bpSizeY)
     // }
     // else
     // {   
-        this.patcher.box.rect = [g_bpRect[0], g_bpRect[1], g_bpRect[0]+g_bpRect[2], g_bpRect[1]+g_bpRect[3]+7];
+    this.patcher.box.rect = [g_bpRect[0], g_bpRect[1], g_bpRect[0]+g_bpRect[2], g_bpRect[1]+g_bpRect[3]+7];
         // pp.script("sendbox", bp.varname, "patching_rect", [g_bpRect[0], g_bpRect[1], g_bpRect[2], g_bpRect[3]]);
     // }
-    print("this patcher rect "+this.patcher.box.rect);
-    print("BPSIZE "+g_bpRect[2]);
+    FF_Utils.Print("this patcher rect "+this.patcher.box.rect);
+    FF_Utils.Print("BPSIZE "+g_bpRect[2]);
 }
 
 //--------------------------
@@ -80,7 +79,7 @@ function ResizeBPatcher(posX, bpSizeX, bpSizeY)
 // PRIVATE FUNCTIONS ---------------------
 function Destroy()
 {
-    print("cleaning");
+    FF_Utils.Print("cleaning");
     if (g_TexturesParser != null)
     {
         g_TexturesParser.Destroy();

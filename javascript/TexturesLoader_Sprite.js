@@ -13,6 +13,8 @@ function Sprite(patcher, position, spriteSize, texType)
 
     this.textureType = texType;
 
+    this.movieLoader = new MovieLoader();
+
     this.menuYSize = 14;
 
     this.fileNamesArray = null;
@@ -65,6 +67,7 @@ function Sprite(patcher, position, spriteSize, texType)
 
     // DROPFILE // 
     var DropfileCallback = (function(data) { 
+        outlet(0, "SetIsLoading");
         if (data.value[data.value.length-1] == '/')
         {
             g_TexturesParser.ParseFolder(data.value);
@@ -171,14 +174,16 @@ function Sprite(patcher, position, spriteSize, texType)
         this.filePath = path;
         this.filename = GetFileNameFromPath(path);
         var ext = GetFileExt(path);
+
         if (ext == "exr")
         {
             this.matrix = new JitterObject("jit.openexr");
             this.matrix.read(this.filePath);
         }
         else
-        {
-            this.matrix.importmovie(this.filePath);
+        {   
+            this.movieLoader.LoadImage(path);
+            // this.matrix.importmovie(this.filePath);
         }
         // this.matrix.type = "float32";
         
@@ -211,11 +216,35 @@ function Sprite(patcher, position, spriteSize, texType)
 
     this.Destroy = function()
     {   
-        print("cleaning sprite");
+        FF_Utils.Print("cleaning sprite");
         this.PWindowSizedObjs.Destroy();
 
         this.matrix.freepeer();
         this.texture.freepeer();
+        this.movieLoader.Destroy();
+    }
+}
+
+function MovieLoader()
+{
+    this.movie = new JitterObject("jit.movie");
+
+    this.LoadImage = function(path)
+    {   
+        FF_Utils.Print("movie load image")
+        this.movie.asyncread(path);
+    }
+
+    var LoadCallback = (function(event)
+    {
+        FF_Utils.Print(event.eventname);
+    }).bind(this);
+
+    this.listener = new JitterListener(this.movie, LoadCallback);
+
+    this.Destroy = function()
+    {
+        this.movie.freepeer();
     }
 }
 

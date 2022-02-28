@@ -7,6 +7,20 @@ function PWorld(patcher, bpSize)
     this.name = null;
     this.rect = [10, 10, (bpSize[0]/2-10), (bpSize[1]/3)*2];
 
+    this.glText = new JitterObject("jit.gl.text");
+    this.glText.depth_enable = 0;
+    this.glText.layer = 11;
+    this.glText.enable = 0;
+    this.glText.fontsize = 40;
+    this.glText.color = [1,1,1,1];
+    this.glText.aling = 1;
+    this.glText.position = [-0.5,0,0];
+
+    this.vp = new JitterObject("jit.gl.videoplane");
+    this.vp.transform_reset = 2;
+    this.vp.depth_enable = 0;
+    this.vp.layer = 10;
+    this.vp.enable = 0;
 
     this.envMap = new CubeMap(patcher);
 
@@ -130,6 +144,13 @@ function PWorld(patcher, bpSize)
         this.envMap.AssignImgToCubeMap(this.material);
     }
 
+    this.SetIsLoading = function()
+    {   
+        this.vp.enable = 1;
+        this.glText.enable = 1;
+        this.glText.text("Loading");
+    }
+
     this.ResizePWorld = function(newBPSize)
     {   
         this.p.script("sendbox", this.pworld.varname, "patching_rect", 
@@ -142,5 +163,7 @@ function PWorld(patcher, bpSize)
         this.material.freepeer();
         this.light.freepeer();
         this.envMap.Destroy();
+        this.vp.freepeer();
+        this.glText.freepeer();
     }
 }
