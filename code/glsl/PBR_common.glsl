@@ -41,7 +41,7 @@ vec4 biplanar( sampler2D tex )
     // make local support
     w = clamp( (w-0.5773)/(1.0-0.5773), 0.0, 1.0 );
     // shape transition
-    w = pow( w, vec2(biplanarExp/8.0) );
+    //w = pow( w, vec2(biplanarExp/8.0) );
     // blend and return
     return (x*w.x + y*w.y) / (w.x + w.y);
 }
