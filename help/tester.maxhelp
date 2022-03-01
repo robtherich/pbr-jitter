@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 34.0, 77.0, 1536.0, 929.0 ],
+		"rect" : [ 2594.0, 792.0, 1610.0, 969.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -40,13 +40,13 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
-					"id" : "obj-48",
+					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
-					"numoutlets" : 2,
-					"outlettype" : [ "jit_matrix", "" ],
-					"patching_rect" : [ 1058.0, 410.0, 53.0, 22.0 ],
-					"text" : "jit.matrix"
+					"numoutlets" : 3,
+					"outlettype" : [ "jit_matrix", "bang", "" ],
+					"patching_rect" : [ 1177.0, 830.0, 361.0, 22.0 ],
+					"text" : "jit.world testWorld @enable 1 @size 200 100 @fsaa 1 @floating 1"
 				}
 
 			}
@@ -57,7 +57,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "jit_matrix", "" ],
-					"patching_rect" : [ 1287.609691679477692, 228.0, 165.0, 183.0 ],
+					"patching_rect" : [ 1268.609691679477692, 170.0, 149.0, 133.0 ],
 					"sync" : 1
 				}
 
@@ -69,8 +69,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 1287.609691679477692, 171.0, 133.0, 22.0 ],
-					"text" : "jit_matrix u102004272"
+					"patching_rect" : [ 1268.609691679477692, 123.0, 127.0, 22.0 ],
+					"text" : "jit_matrix u615002774"
 				}
 
 			}
@@ -81,7 +81,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "jit_matrix", "" ],
-					"patching_rect" : [ 1123.609691679477692, 228.0, 147.0, 133.0 ],
+					"patching_rect" : [ 1104.609691679477692, 170.0, 147.0, 133.0 ],
 					"sync" : 1
 				}
 
@@ -93,44 +93,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 1123.609691679477692, 181.0, 147.0, 22.0 ],
-					"text" : "jit_gl_texture u288012184"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-36",
-					"maxclass" : "button",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 870.734691679477692, 491.0, 24.0, 24.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-32",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 2,
-					"outlettype" : [ "jit_matrix", "" ],
-					"patching_rect" : [ 870.734691679477692, 580.0, 71.0, 22.0 ],
-					"text" : "jit.gl.skybox"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-27",
-					"maxclass" : "newobj",
-					"numinlets" : 6,
-					"numoutlets" : 2,
-					"outlettype" : [ "jit_gl_texture", "" ],
-					"patching_rect" : [ 870.734691679477692, 539.0, 83.0, 22.0 ],
-					"text" : "jit.gl.cubemap"
+					"patching_rect" : [ 1104.609691679477692, 93.0, 147.0, 22.0 ],
+					"text" : "jit_gl_texture u560003041"
 				}
 
 			}
@@ -172,30 +136,6 @@
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-16",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 2,
-					"outlettype" : [ "jit_matrix", "" ],
-					"patching_rect" : [ 1041.0, 363.0, 53.0, 22.0 ],
-					"text" : "jit.movie"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-15",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 3,
-					"outlettype" : [ "jit_matrix", "", "" ],
-					"patching_rect" : [ 1041.0, 284.0, 75.0, 22.0 ],
-					"text" : "jit.polymovie"
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"id" : "obj-14",
 					"linecount" : 2,
 					"maxclass" : "message",
@@ -204,18 +144,6 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 817.0, 753.0, 50.0, 36.0 ],
 					"text" : "triplanar 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-12",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 2,
-					"outlettype" : [ "jit_matrix", "" ],
-					"patching_rect" : [ 973.0, 586.0, 64.0, 22.0 ],
-					"text" : "jit.openexr"
 				}
 
 			}
@@ -489,18 +417,6 @@
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-7",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 3,
-					"outlettype" : [ "jit_matrix", "bang", "" ],
-					"patching_rect" : [ 1022.0, 795.387551367282867, 377.0, 22.0 ],
-					"text" : "jit.world @enable 1 @floating 1 @size 160 120 @erase_color 0 0 0 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"id" : "obj-1",
 					"maxclass" : "newobj",
 					"numinlets" : 8,
@@ -543,7 +459,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 609.734691679477692, 218.0, 115.0, 22.0 ],
+					"patching_rect" : [ 613.734691679477692, 208.0, 115.0, 22.0 ],
 					"text" : "prepend load_folder"
 				}
 
@@ -635,7 +551,7 @@
 					"numoutlets" : 1,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 32.0, 258.0, 700.0, 400.0 ],
+					"patching_rect" : [ 27.0, 239.0, 700.0, 400.0 ],
 					"varname" : "pbl_bpatcher",
 					"viewvisibility" : 1
 				}
@@ -806,13 +722,6 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-32", 0 ],
-					"source" : [ "obj-27", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-1", 4 ],
 					"source" : [ "obj-28", 0 ]
 				}
@@ -851,15 +760,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-1", 7 ],
-					"order" : 2,
-					"source" : [ "obj-31", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-27", 0 ],
-					"order" : 0,
+					"order" : 1,
 					"source" : [ "obj-31", 0 ]
 				}
 
@@ -867,7 +768,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-6", 0 ],
-					"order" : 1,
+					"order" : 0,
 					"source" : [ "obj-31", 0 ]
 				}
 
@@ -883,13 +784,6 @@
 				"patchline" : 				{
 					"destination" : [ "obj-43", 0 ],
 					"source" : [ "obj-34", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-27", 0 ],
-					"source" : [ "obj-36", 0 ]
 				}
 
 			}
@@ -993,18 +887,6 @@
 , 			{
 				"name" : "TexturesLoader.js",
 				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/javascript",
-				"type" : "TEXT",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "jit.polymovie.maxpat",
-				"bootpath" : "C74:/packages/Jitter Tools/patchers",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "jitpolymovie.js",
-				"bootpath" : "C74:/packages/Jitter Tools/javascript",
 				"type" : "TEXT",
 				"implicit" : 1
 			}

@@ -154,7 +154,7 @@ function Sprite(patcher, position, spriteSize, texType)
         this.filename = GetFileNameFromPath(path);
         
         this.movieLoader.LoadImage(path);
-        
+
         this.PWindowSizedObjs.SendMatrixToPWindow(this.movieLoader.GetMatrix());
         this.textObj.SetText(this.filename);
         this.OutputMatrix();
@@ -196,15 +196,16 @@ function Sprite(patcher, position, spriteSize, texType)
 
 //--------------------------------------------------------
 
-function LoadCallback(event)
-{   
-    FF_Utils.Print("EVENT "+event.eventname);
-    if (event.eventname == "read")
-    {
-        FF_Utils.Print("IS LOADED");
-    }
-}
-LoadCallback.local = 1;
+// function LoadCallback(event)
+// {   
+//     FF_Utils.Print("EVENT "+event.eventname);
+//     if (event.eventname == "read")
+//     {
+//         // FF_Utils.Print("IS LOADED");
+//         // event.subjectname.
+//     }
+// }
+// LoadCallback.local = 1;
 
 function MovieLoader(texType)
 {   
@@ -227,6 +228,16 @@ function MovieLoader(texType)
     this.movieRegname = this.movie.getregisteredname();
     // FF_Utils.Print(this.movieRegname);
 
+    var LoadCallback = (function(event)
+    {   
+        FF_Utils.Print("EVENT "+event.eventname);
+        if (event.eventname == "read")
+        {
+            // FF_Utils.Print("IS LOADED");
+            // event.subjectname.
+        }
+    }).bind(this);
+
     this.movListener = new JitterListener(this.movieRegname, LoadCallback);
 
     this.LoadImage = function(path)
@@ -242,8 +253,6 @@ function MovieLoader(texType)
             this.LoadStandard(path);
         }
 
-        // FF_Utils.Print("movie load image")
-        this.loader.read(path);
         this.GetNewFrame();
         this.AssignTextureNameToGlobal();
     }
@@ -264,7 +273,6 @@ function MovieLoader(texType)
 
     this.LoadEXR = function(path)
     {   
-        FF_Utils.Print("IMPORTED EXR")
         this.loader = this.exr;
         this.loader.read(path);
         this.loader.outputfile = 1;
@@ -277,7 +285,13 @@ function MovieLoader(texType)
     }
 
     this.GetNewFrame = function()
-    {
+    {   
+        this.matrix.freepeer();
+        this.matrix = new JitterMatrix(4, "float32", 320, 240);
+        if (this.loader === this.exr)
+        {   
+            this.matrix.planemap = [1,2,3,0];
+        }
         this.loader.matrixcalc(this.matrix, this.matrix);
         this.texture.jit_matrix(this.matrix.name);
     }
