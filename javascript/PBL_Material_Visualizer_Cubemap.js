@@ -10,7 +10,7 @@ function CubeMap(patcher)
 
     this.cubeMapTex = new JitterObject("jit.gl.texture");
     this.cubeMapMat = new JitterMatrix();
-    this.cubeMapMat.importmovie(gGlobal.default_env_img);
+    
 
     this.drawto = null;
 
@@ -33,30 +33,14 @@ function CubeMap(patcher)
 
     this.AssignTexToSkybox = function()
     {   
-        var tempTex = new JitterObject("jit.gl.texture", this.drawto);
-        tempTex.jit_gl_texture(gGlobal.textureNames.environment);
-        
-        // this.cubeMapMat.freepeer();
-
-        // this.cubeMapMat = new JitterMatrix(4, "float32", 1, 1);
-        // this.cubeMapMat.dim = [tempTex.dim[0], tempTex.dim[1]];
-
-        this.cubeMapMat.jit_gl_texture(tempTex.name);
-
-        FF_Utils.Print("mat name")
-        FF_Utils.Print(this.cubeMapMat.name)
-        FF_Utils.Print("tex name")
-        FF_Utils.Print(gGlobal.textureNames.environment)
-        FF_Utils.Print("tex dim "+tempTex.dim)
-        FF_Utils.Print("mat dim "+this.cubeMapMat.dim)
-
+        this.cubeMapMat.frommatrix(gGlobal.textureNames.environment);
         this.cubeMapObj.panorama_matrix(this.cubeMapMat.name);
         this.skybox.texture = (this.cubeMapObj.name);
-        tempTex.freepeer();
     }
 
     this.InitCubeMap = function()
     {   
+        this.cubeMapMat.importmovie(gGlobal.default_env_img);
         this.cubeMapTex.jit_matrix(this.cubeMapMat.name);
         this.cubeMapObj.panorama_matrix(this.cubeMapMat.name);
         this.skybox.texture = (this.cubeMapObj.name);

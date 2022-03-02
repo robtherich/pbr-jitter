@@ -31,7 +31,8 @@ function TexturesParser(patcher, spriteSize)
             this.spritesContainer[texTypes[i]] = (new Sprite(patcher, position, this.spriteSize, texTypes[i]));
             position[0] += this.spriteSize[0]+this.spriteOffset;
         }
-        this.CalcAllSpritesXSize(position[0])
+        this.CalcAllSpritesXSize(position[0]);
+        this.ApplyTexturesToShape();
     }
 
     this.IsBPatcherSmallerThanSpritesXSize = function(bpSizeX)

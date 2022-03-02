@@ -11,7 +11,7 @@ function ResizeBPatcher(bpSizeX, bpSizeY)
     {
         isParsed = g_params.ParseParamsDict();
     }
-    g_BPRect = [(bpSizeX/2), 10, (bpSizeX-10), 10+(bpSizeY/3)*2];
+    g_BPRect = [((bpSizeX/3)*2), 10, (bpSizeX-10), 10+(bpSizeY/3)*2];
     FF_Utils.Print(g_BPRect);
     this.patcher.box.rect = g_BPRect.slice();
     var sizeX = (bpSizeX-10)-(bpSizeX/2);

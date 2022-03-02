@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 375.0, 92.0, 943.0, 871.0 ],
+		"rect" : [ 375.0, 92.0, 1125.0, 920.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -40,6 +40,32 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"hidden" : 1,
+					"id" : "obj-15",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "" ],
+					"patching_rect" : [ 90.0, 890.0, 265.0, 22.0 ],
+					"text" : "jit.anim.drive @ui_listen 1 @ease 0.1 @speed 7"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"hidden" : 1,
+					"id" : "obj-14",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "jit_gl_texture", "" ],
+					"patching_rect" : [ 90.0, 927.0, 275.0, 22.0 ],
+					"text" : "jit.gl.camera @tripod 1 @locklook 1 @lookat 0 0 0"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"comment" : "",
 					"hidden" : 1,
 					"id" : "obj-13",
@@ -68,7 +94,7 @@
 					"numoutlets" : 2,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 350.0, 10.0, 340.0, 266.666666666666686 ],
+					"patching_rect" : [ 466.666666666666686, 10.0, 223.333333333333314, 266.666666666666686 ],
 					"viewvisibility" : 1
 				}
 
@@ -189,14 +215,14 @@
 				"box" : 				{
 					"enable" : 1,
 					"fps" : 30.0,
-					"frozen_box_attributes" : [ "varname", "fsaa" ],
+					"frozen_box_attributes" : [ "fsaa", "varname" ],
 					"fsaa" : 1,
 					"id" : "obj-5",
 					"maxclass" : "jit.pworld",
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "jit_matrix", "" ],
-					"patching_rect" : [ 10.0, 10.0, 330.0, 266.666666666666686 ],
+					"patching_rect" : [ 10.0, 10.0, 446.666666666666686, 266.666666666666686 ],
 					"sync" : 1,
 					"varname" : "pbl_vis_pworld"
 				}
@@ -276,8 +302,18 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
+					"destination" : [ "obj-14", 0 ],
+					"hidden" : 1,
+					"order" : 1,
+					"source" : [ "obj-10", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-9", 0 ],
 					"hidden" : 1,
+					"order" : 0,
 					"source" : [ "obj-10", 0 ]
 				}
 
@@ -313,6 +349,14 @@
 					"hidden" : 1,
 					"order" : 0,
 					"source" : [ "obj-12", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-14", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-15", 0 ]
 				}
 
 			}

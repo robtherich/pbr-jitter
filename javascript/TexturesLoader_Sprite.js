@@ -84,7 +84,7 @@ function Sprite(patcher, position, spriteSize, texType)
     // TEXT // 
     this.textObj = new TextButton(this.p, [this.position[0]+this.borderSize, this.pwindowYPos+this.pwindowYSize], [this.size[0], this.menuYSize], this.fontSize);
     this.textObj.SetIgnoreClick(true);
-    this.textObj.SetDefaultText(this.spriteType, this.defaultEnvMapFile);
+    this.textObj.SetDefaultText(this.spriteType);
 
     // UMENU //
     this.umenuObj = new SpriteUmenu(this.p, [this.position[0]+this.borderSize, this.position[1]+this.borderSize+this.menuYSize], this.menuYSize);
@@ -163,7 +163,7 @@ function Sprite(patcher, position, spriteSize, texType)
     this.ClearImage = function()
     {
         this.movieLoader.ImportDefaultImage();
-        this.textObj.SetDefaultText(this.spriteType, this.defaultEnvMapFile);
+        this.textObj.SetDefaultText(this.spriteType);
         this.PWindowSizedObjs.SendMatrixToPWindow(this.movieLoader.GetMatrix());
         gGlobal.textureNames[this.spriteType] = "Undefined";
     }
@@ -180,19 +180,6 @@ function Sprite(patcher, position, spriteSize, texType)
         this.movieLoader.Destroy();
     }
 }
-
-// function DropfileCallback(data) { 
-//     // outlet(0, "SetIsLoading");
-//     if (data.value[data.value.length-1] == '/')
-//     {
-//         g_TexturesParser.ParseFolder(data.value);
-//     }
-//     else 
-//     {   
-//         FF_Utils.Print("in callback "+data.value)
-//         data.maxobject.movieLoader.LoadImage(data.value);
-//     }
-// }; 
 
 //--------------------------------------------------------
 
@@ -238,7 +225,7 @@ function MovieLoader(texType)
         }
     }).bind(this);
 
-    this.movListener = new JitterListener(this.movieRegname, LoadCallback);
+    // this.movListener = new JitterListener(this.movieRegname, LoadCallback);
 
     this.LoadImage = function(path)
     {   
@@ -262,7 +249,7 @@ function MovieLoader(texType)
         this.loader = this.movie;
         if (this.textureType == "environment")
         {   
-            this.LoadImage(this.defaultEnvMapFile);
+            this.LoadImage(gGlobal.default_env_img);
         }
         else if (this.textureType != "emission")
         {   
@@ -286,25 +273,33 @@ function MovieLoader(texType)
 
     this.GetNewFrame = function()
     {   
-        this.matrix.freepeer();
-        this.matrix = new JitterMatrix(4, "float32", 320, 240);
+        // this.matrix.freepeer();
+        var tempMat = new JitterMatrix(4, "float32", 320, 240);
+        // tempMat.dim = [this.loader.dim[0], this.loader.dim[1]];
+        this.matrix.planemap = [0,1,2,3];
         if (this.loader === this.exr)
         {   
-            this.matrix.planemap = [1,2,3,0];
+            // tempMat.planemap = [2,3,1,0];
+            this.matrix.planemap = [0,3,1,2];
         }
-        this.loader.matrixcalc(this.matrix, this.matrix);
+        this.loader.matrixcalc(tempMat, tempMat);
+ 
+        this.matrix.dim = [tempMat.dim[0], tempMat.dim[1]];
+        this.matrix.frommatrix(tempMat);
         this.texture.jit_matrix(this.matrix.name);
+        tempMat.freepeer();
     }
 
     this.AssignTextureNameToGlobal = function()
     {   
-        gGlobal.textureNames[this.textureType] = this.texture.name;
+        gGlobal.textureNames[this.textureType] = this.matrix.name;
     }
 
     this.SetColor = function(color)
     {
         this.matrix.type = "float32";
         this.matrix.dim = [1,1];
+        this.matrix.planemap = [0,1,2,3];
         this.matrix.setall([color[3], color[0], color[1], color[2]]);
         this.texture.jit_matrix(this.matrix.name);
     }
@@ -496,12 +491,12 @@ function TextButton(patcher, position, size, fontSize)
         this.text.bgcolor(color);
     }
 
-    this.SetDefaultText = function(textType, defaultMapFile)
+    this.SetDefaultText = function(textType)
     {
     
         if (textType == "environment")
         {
-            this.SetText(defaultMapFile);
+            this.SetText(gGlobal.default_env_img);
         }
         else
         {

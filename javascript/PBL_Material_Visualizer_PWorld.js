@@ -5,7 +5,8 @@ function PWorld(patcher, bpSize)
     this.p = patcher;
     this.pworld = this.p.getnamed("pbl_vis_pworld");
     this.name = null;
-    this.rect = [10, 10, (bpSize[0]/2-10), (bpSize[1]/3)*2];
+
+    this.patcherPos = [10, 10];
 
     this.glText = new JitterObject("jit.gl.text");
     this.glText.depth_enable = 0;
@@ -68,6 +69,7 @@ function PWorld(patcher, bpSize)
     this.SetShapeTextures = function()
     {   
         this.SetMtrToEmpty();
+        FF_Utils.Print("Set shapes")
         
         // TEMPORARY IF STATEMENTS, WAITING TO KNOW WHICH MESSAGES GO TO THE SHADER
         if (gGlobal.textureNames.albedo != "Undefined")
@@ -97,6 +99,11 @@ function PWorld(patcher, bpSize)
         if (gGlobal.textureNames.environment != "Undefined")
         {   
             this.envMap.AssignTexToSkybox();
+            this.material.environment_texture(gGlobal.textureNames.environment);
+        }
+        else
+        {
+            this.envMap.InitCubeMap();
             this.material.environment_texture(gGlobal.textureNames.environment);
         }
     
@@ -144,10 +151,16 @@ function PWorld(patcher, bpSize)
         this.glText.text("Loading");
     }
 
+    this.CalcWorldSize = function(newSize)
+    {
+        return [((newSize[0]/3)*2)-20, (newSize[1]/3)*2];
+    }
+
     this.ResizePWorld = function(newBPSize)
     {   
+        var newSize = this.CalcWorldSize(newBPSize);
         this.p.script("sendbox", this.pworld.varname, "patching_rect", 
-        [this.rect[0], this.rect[1], (newBPSize[0]/2)-20, (newBPSize[1]/3)*2]);
+        [this.patcherPos[0], this.patcherPos[1], newSize[0], newSize[1]]);
     }
 
     this.Destroy = function()
