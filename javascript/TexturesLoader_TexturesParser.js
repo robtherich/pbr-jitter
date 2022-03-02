@@ -25,7 +25,6 @@ function TexturesParser(patcher, spriteSize)
         var position = this.spriteOffsetFromBPEdge.slice();
         var texTypes = Object.keys(gGlobal.textureNames);
 
-        FF_Utils.Print("SpRITE SIZE "+this.spriteSize)
         for (var i=0; i<texTypes.length; i++)
         {
             this.spritesContainer[texTypes[i]] = (new Sprite(patcher, position, this.spriteSize, texTypes[i]));
@@ -40,18 +39,20 @@ function TexturesParser(patcher, spriteSize)
         return (bpSizeX <= this.allSpritesXSize);
     }
 
-    this.ResizeSprites = function(sizeX, sizeY)
+    this.ResizeSprites = function(bpSizeX, sizeY)
     {   
-        this.spriteSize = [sizeY-30, sizeY-30];
+        var xSize = Math.max(60, (bpSizeX-this.spriteOffset*8-30)/8);
+        this.spriteSize = [xSize, sizeY-30];
+        FF_Utils.Print("BPSIZE "+bpSizeX);
+
         var position = this.spriteOffsetFromBPEdge.slice();
 
         for (var sprite in this.spritesContainer)
         {   
             this.spritesContainer[sprite].ResizeSpriteObjs(position, this.spriteSize);
-            position[0] += this.spriteSize[1]+this.spriteOffset;
+            position[0] += this.spriteSize[0]+this.spriteOffset;
         }
         this.CalcAllSpritesXSize(position[0]);
-        FF_Utils.Print(this.allSpritesXSize)
     }
 
     this.CalcAllSpritesXSize = function(currentPos)

@@ -53,7 +53,7 @@ function ResizeBPatcher(posX, bpSizeX, bpSizeY)
     }
     else 
     {
-        g_TexturesParser.ResizeSprites(bpSizeX, g_bpRect[3]);
+        g_TexturesParser.ResizeSprites(g_bpRect[2], g_bpRect[3]);
         
     }
 
@@ -71,7 +71,6 @@ function ResizeBPatcher(posX, bpSizeX, bpSizeY)
         // pp.script("sendbox", bp.varname, "patching_rect", [g_bpRect[0], g_bpRect[1], g_bpRect[2], g_bpRect[3]]);
     // }
     FF_Utils.Print("this patcher rect "+this.patcher.box.rect);
-    FF_Utils.Print("BPSIZE "+g_bpRect[2]);
 }
 
 //--------------------------

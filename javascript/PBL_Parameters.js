@@ -12,7 +12,6 @@ function ResizeBPatcher(bpSizeX, bpSizeY)
         isParsed = g_params.ParseParamsDict();
     }
     g_BPRect = [((bpSizeX/3)*2), 10, (bpSizeX-10), 10+(bpSizeY/3)*2];
-    FF_Utils.Print(g_BPRect);
     this.patcher.box.rect = g_BPRect.slice();
     var sizeX = (bpSizeX-10)-(bpSizeX/2);
     var sizeY = (bpSizeY/3)*2;
@@ -47,12 +46,14 @@ function Parameters(patcher)
             
             for (var entry in paramEntries)
             {   
-                var paramClass = this.parametersDict.get(paramEntries[entry]);
                 var paramName = paramEntries[entry];
+
+                var defaultVal = this.parametersDict.get(paramName)[1];
+                var paramClass = this.parametersDict.get(paramName)[0];
 
                 var tempPos = this.parametersStartingPosition.getCopy();
                 tempPos.y += index*20;
-                this.CreateParameterBlock(paramName, paramClass, tempPos);
+                this.CreateParameterBlock(paramName, paramClass, tempPos, defaultVal);
                 index++;
             }
         }
@@ -63,10 +64,10 @@ function Parameters(patcher)
         return 1;
     }
 
-    this.CreateParameterBlock = function(name, type, position)
+    this.CreateParameterBlock = function(name, type, position, value)
     {   
         var comment = this.objGenerator.CreateAttrNameComment(position, name);
-        var uiObj = this.objGenerator.CreateBasicUIObj(type, position.addNew([65,0,0]), 0);
+        var uiObj = this.objGenerator.CreateBasicUIObj(type, position.addNew([65,0,0]), value);
         // print(position.addNew([50,0,0]).toArray())
         uiObj.SetAttrName(name);
 

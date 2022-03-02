@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 2594.0, 806.0, 1598.0, 969.0 ],
+		"rect" : [ 2594.0, 806.0, 1663.0, 969.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -39,6 +39,24 @@
 		"subpatcher_template" : "Template_Grid",
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-12",
+					"maxclass" : "newobj",
+					"numinlets" : 2,
+					"numoutlets" : 4,
+					"outlettype" : [ "dictionary", "", "", "" ],
+					"patching_rect" : [ 876.0, 467.0, 50.5, 22.0 ],
+					"saved_object_attributes" : 					{
+						"embed" : 0,
+						"parameter_enable" : 0,
+						"parameter_mappable" : 0
+					}
+,
+					"text" : "dict"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-73",
 					"maxclass" : "message",
@@ -274,8 +292,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 817.0, 753.0, 50.0, 36.0 ],
-					"text" : "parallax 0"
+					"patching_rect" : [ 817.0, 753.0, 55.0, 36.0 ],
+					"text" : "triplanar 1"
 				}
 
 			}
@@ -286,7 +304,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "jit_matrix", "" ],
-					"patching_rect" : [ 713.609691679477692, 848.0, 371.0, 181.0 ],
+					"patching_rect" : [ 684.0, 850.0, 121.0, 68.753604352474213 ],
 					"sync" : 1
 				}
 
@@ -683,7 +701,7 @@
 					"numoutlets" : 1,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 24.0, 267.0, 700.0, 400.0 ],
+					"patching_rect" : [ 20.0, 267.0, 735.0, 399.0 ],
 					"varname" : "pbl_bpatcher",
 					"viewvisibility" : 1
 				}

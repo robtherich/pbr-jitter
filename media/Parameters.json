@@ -1,8 +1,8 @@
 {
-    "triplanar": "toggle",
-    "parallax":  "flonum",
-    "gamma":     "flonum",
-    "shadow":    "toggle",
-    "roughness": "flonum",
-    "enable":    "toggle"
+    "triplanar": ["toggle", 1],
+    "parallax":  ["flonum", 0],
+    "gamma":     ["flonum", 0],
+    "shadow":    ["toggle", 1],
+    "roughness": ["flonum", 0.5],
+    "enable":    ["toggle", 1]
 }
