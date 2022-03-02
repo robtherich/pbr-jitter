@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 2594.0, 806.0, 1663.0, 969.0 ],
+		"rect" : [ 2594.0, 806.0, 1601.0, 969.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -701,7 +701,7 @@
 					"numoutlets" : 1,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 20.0, 267.0, 735.0, 399.0 ],
+					"patching_rect" : [ 24.0, 267.0, 700.0, 400.0 ],
 					"varname" : "pbl_bpatcher",
 					"viewvisibility" : 1
 				}

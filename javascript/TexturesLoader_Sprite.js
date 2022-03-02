@@ -1,5 +1,7 @@
 function Sprite(patcher, position, spriteSize, texType)
-{
+{   
+    this.useAsync = false;
+
     this.p = patcher;
     this.filename = null;
     this.filePath = null;
@@ -10,7 +12,7 @@ function Sprite(patcher, position, spriteSize, texType)
     this.fontSize = 10;
     this.spriteType = texType;
 
-    this.movieLoader = new MovieLoader(texType);
+    this.movieLoader = new MovieLoader(texType, this.useAsync);
     this.movieLoader.ImportDefaultImage();
 
     this.menuYSize = 14;
@@ -183,19 +185,10 @@ function Sprite(patcher, position, spriteSize, texType)
 
 //--------------------------------------------------------
 
-// function LoadCallback(event)
-// {   
-//     FF_Utils.Print("EVENT "+event.eventname);
-//     if (event.eventname == "read")
-//     {
-//         // FF_Utils.Print("IS LOADED");
-//         // event.subjectname.
-//     }
-// }
-// LoadCallback.local = 1;
-
-function MovieLoader(texType)
+function MovieLoader(texType, useAsync)
 {   
+    this.useAsync = useAsync;
+
     this.defaultEnvMapFile = gGlobal.default_env_img;
 
     this.movie = new JitterObject("jit.movie");
@@ -225,7 +218,7 @@ function MovieLoader(texType)
         }
     }).bind(this);
 
-    // this.movListener = new JitterListener(this.movieRegname, LoadCallback);
+    this.movListener = new JitterListener(this.movieRegname, LoadCallback);
 
     this.LoadImage = function(path)
     {   
@@ -268,7 +261,10 @@ function MovieLoader(texType)
     this.LoadStandard = function(path)
     {   
         this.loader = this.movie;
-        this.loader.read(path);
+        if (this.useAsync)
+            this.loader.asyncread(path);
+        else
+            this.loader.read(path);
     }
 
     this.GetNewFrame = function()
