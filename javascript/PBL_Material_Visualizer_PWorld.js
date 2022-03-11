@@ -50,11 +50,11 @@ function PWorld(patcher)
     gGlobal.textureNames = 
     {
         albedo: this.textureEmpty.name,
-        normal: this.textureEmpty.name,
+        normals: this.textureEmpty.name,
         roughness: this.textureEmpty.name,
         metallic: this.textureEmpty.name,
-        ao: this.textureEmpty.name,
-        height: this.textureEmpty.name,
+        ambient: this.textureEmpty.name,
+        heightmap: this.textureEmpty.name,
         emission: this.textureEmpty.name,
         environment: this.textureEmpty.name
     };
@@ -62,10 +62,10 @@ function PWorld(patcher)
     this.link_mtrClassicInputs_texTypes = 
     {
         diffuse_texture: "albedo",
-        normals_texture: "normal",
+        normals_texture: "normals",
         glossmap_texture: "roughness",
         specular_texture: "metallic",
-        heightmap_texture: "height",
+        heightmap_texture: "heightmap",
         emission_texture: "emission",
         environment_texture: "environment"
     }

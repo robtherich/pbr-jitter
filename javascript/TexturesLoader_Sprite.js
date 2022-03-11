@@ -155,6 +155,7 @@ function Sprite(patcher, position, spriteSize, texType)
         gGlobal.textureNames[this.spriteType] = this.matrix.name;
         this.ApplyTexturesToShape();
         this.OutputMatrix();
+        this.PWindowSizedObjs.SendMatrixToPWindow(this.matrix.name);
     }
 
     this.SetImagesNamesUmenu = function(imagesPaths)

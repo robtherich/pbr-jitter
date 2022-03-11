@@ -74,23 +74,47 @@ function TexturesParser(patcher, spriteSize)
 
         var texTypes = Object.keys(gGlobal.textureNames);
         var nonFoundImageIndex = 0;
+        var texTypesFound = [];
+
         while (!this.folder.end)
         {
             if (this.folder.filename.length > 0)
             {   
                 this.FileNames_PushNewFile(path+this.folder.filename);
-                this.movieLoaderArray.push(new MovieLoader(path+this.folder.filename));
             
                 var texType = this.ParseTextureType(this.folder.filename);
-                if (texType == -1)
-                {   
-                    texType = texTypes[nonFoundImageIndex];
-                    nonFoundImageIndex++;
+                this.movieLoaderArray.push(new MovieLoader(path+this.folder.filename, texType));
+
+                // if (texType == -1)
+                // {   
+                //     texType = texTypes[nonFoundImageIndex];
+                //     nonFoundImageIndex++;
+                // }
+                if (texType != -1)
+                {
+                    texTypesFound.push(texType);
                 }
-                var matName = this.movieLoaderArray[this.movieLoaderArray.length-1].GetMatrix();
-                this.spritesContainer[texType].AssignMatrix(matName,path+this.folder.filename);
+                // var matName = this.movieLoaderArray[this.movieLoaderArray.length-1].GetMatrix();
+                // this.spritesContainer[texType].AssignMatrix(matName,path+this.folder.filename);
             }
             this.folder.next();
+        }
+
+        // If some textures were parsed, check for the correspondent matrix 
+        for (var i=0; i<texTypesFound.length; i++)
+        {   
+            var texTypeFound = texTypesFound[i];
+            for (var j=0; j<this.movieLoaderArray.length; j++)
+            {
+                if (this.movieLoaderArray[j].textureType == texTypeFound)
+                {   
+                    FF_Utils.Print("Matrix found ", texTypeFound)
+                    var matName = this.movieLoaderArray[j].GetMatrix();
+                    var imgPath = this.movieLoaderArray[j].GetImagePath();
+                    this.spritesContainer[texTypeFound].AssignMatrix(matName,imgPath);
+                    break;
+                }
+            }
         }
 
         this.ApplyTexturesToShape();
@@ -107,7 +131,7 @@ function TexturesParser(patcher, spriteSize)
         }
         else if (/NOR|nor/.test(filename)) 
         {
-            texType = "normal";
+            texType = "normals";
         }
         else if (/rough|ROUGH|rou/.test(filename)) 
         {
@@ -115,7 +139,7 @@ function TexturesParser(patcher, spriteSize)
         }
         else if (/AO|ao|occ|Occ/.test(filename)) 
         {
-            texType = "ao";
+            texType = "ambient";
         }
         else if (/ENV|env|Env/.test(filename)) 
         {
@@ -123,11 +147,15 @@ function TexturesParser(patcher, spriteSize)
         }
         else if (/disp|Hei|hei/.test(filename)) 
         {
-            texType = "height";
+            texType = "heightmap";
         }
         else if (/SPEC|spec|met/.test(filename)) 
         {
             texType = "metallic";
+        }
+        else if (/EMIS|emis/.test(filename)) 
+        {
+            texType = "emission";
         }
         return texType;
     }
@@ -146,7 +174,6 @@ function TexturesParser(patcher, spriteSize)
         FF_Utils.Print("Index ", index)
         return this.movieLoaderArray[index].GetMatrix();
     }
-
     
     var PickerCallback = (function(data) 
     {   
@@ -223,7 +250,7 @@ function TexturesParser(patcher, spriteSize)
 }
 
 // MOVIE LOADER --------------------------------------------------------------------
-function MovieLoader(filePath)
+function MovieLoader(filePath, texType)
 {   
     this.useAsync = 0;
 
@@ -231,6 +258,7 @@ function MovieLoader(filePath)
 
     this.movie = new JitterObject("jit.movie");
     this.movie.engine = "viddll";
+    this.imgPath = null;
 
     this.exr = new JitterObject("jit.openexr");
 
@@ -239,7 +267,7 @@ function MovieLoader(filePath)
     this.texture = new JitterObject("jit.gl.texture", gGlobal.pworldName);
     this.texture.defaultimage = "black";
 
-    this.textureType = -1;
+    this.textureType = texType;
 
     this.loader = null;
 
@@ -260,6 +288,7 @@ function MovieLoader(filePath)
 
     this.LoadImage = function(path)
     {   
+        this.imgPath = path;
         var ext = GetFileExt(path);
 
         if (ext == "exr")
@@ -313,6 +342,11 @@ function MovieLoader(filePath)
             this.loader.asyncread(path);
         else
             this.loader.read(path);
+    }
+    
+    this.GetImagePath = function()
+    {
+        return this.imgPath;
     }
 
     this.GetNewFrame = function()
