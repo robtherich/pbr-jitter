@@ -1,0 +1,50 @@
+<jittershader name="ibl.rect2cube.jxs">
+	<description>Convert equirectangular panorama to cubemap faces</description>
+	<param name="rect" type="int" default="0" />
+	<param name="MVP" type="mat4" state="MODELVIEW_PROJECTION_MATRIX" />
+	<param name="pos" type="vec3" state="POSITION" />
+	<language name="glsl" version="1.5">
+		<bind param="rect" program="fp" />
+		<bind param="MVP" program="vp" />
+		<bind param="pos" program="vp" />
+		<program name="vp" type="vertex"  >
+			<![CDATA[
+#version 330 core
+
+in vec3 pos;
+out vec3 WorldPos;
+
+uniform mat4 MVP;
+
+void main(void) {
+	gl_Position = MVP*vec4(pos, 1.);
+	WorldPos = pos;
+}
+			]]>
+		</program>
+		<program name="fp" type="fragment"  >
+			<![CDATA[
+#version 330 core
+out vec4 FragColor;
+in vec3 WorldPos;
+
+uniform sampler2D equirectangularMap;
+
+const vec2 invAtan = vec2(0.1591, 0.3183);
+vec2 SampleSphericalMap(vec3 v) {
+	vec2 uv = vec2(atan(v.z, v.x), asin(v.y));
+	uv *= invAtan;
+	uv += 0.5;
+	return uv;
+}
+
+void main() {		
+	vec2 uv = SampleSphericalMap(normalize(WorldPos));
+	vec3 color = texture(equirectangularMap, uv).rgb;
+	FragColor = vec4(color, 1.0);
+}
+
+			]]>
+		</program>
+	</language>
+</jittershader>

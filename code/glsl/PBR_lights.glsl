@@ -62,9 +62,9 @@ vec3  	getIBL(in material mate, in geometry geom){
         vec3 	specular = vec3(0.);
 
 #ifdef JIT_PBR_IBL_REFLECTION
-	float 	lod             	= 0.;//mate.rou*15.; //*** put back a variable lod
+        const   float MAX_REFLECTION_LOD = 4.0;
 	vec3	ref 			= reflect(-geom.V, geom.N);
-	vec3 	prefilteredColor 	= texture(reflectionTex, dir2uv(ref)).rgb;//*** put back textureLod
+	vec3 	prefilteredColor 	= textureLod(reflectionTex, ref, mate.rou * MAX_REFLECTION_LOD).rgb;
 	vec2 	envBRDF          	= texture(integMap, vec2(NdotV, mate.rou)).xy;
  	        specular 		= prefilteredColor * (kS * envBRDF.x + envBRDF.y); 
 #endif
