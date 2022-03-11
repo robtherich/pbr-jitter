@@ -1,0 +1,72 @@
+<jittershader name="ibl.irradiance.jxs">
+	<description>Generate irradiance map from environment tex</description>
+	<param name="env" type="int" default="0" />
+	<param name="MVP" type="mat4" state="MODELVIEW_PROJECTION_MATRIX" />
+	<param name="pos" type="vec3" state="POSITION" />
+	<language name="glsl" version="1.5">
+		<bind param="env" program="fp" />
+		<bind param="MVP" program="vp" />
+		<bind param="pos" program="vp" />
+		<program name="vp" type="vertex"  >
+			<![CDATA[
+#version 330 core
+
+in vec3 pos;
+out jit_PerVertex {
+	vec3 pos;
+} jit_out;
+
+uniform mat4 MVP;
+
+void main(void) {
+	gl_Position = MVP * vec4(pos, 1.);
+	jit_out.pos = pos;
+}
+			]]>
+		</program>
+		<program name="fp" type="fragment"  >
+		<![CDATA[
+
+#version 330 core
+#define PI 3.14159265
+	
+in jit_PerVertex {
+	vec3 pos;
+} jit_in;
+
+layout (location = 0) out vec4 outColor;
+
+uniform samplerCube env;
+
+vec4 getIrradiance(vec3 pos){
+	vec3 dir = normalize(pos);
+	vec3 irradiance = vec3(0.0);  
+
+	vec3 up = vec3(0.0, 1.0, 0.0);
+	vec3 right = normalize(cross(up, dir));
+	up = normalize(cross(dir, right));
+
+	//float sampleDelta = 0.004;
+	float sampleDelta = 0.025; // make param?
+	float nrSamples = 0.0; 
+	for(float phi = 0.0; phi < (2.0 * PI); phi += sampleDelta){
+	    for(float theta = 0.0; theta < (0.5 * PI); theta += sampleDelta){
+	        // spherical to cartesian (in tangent space)
+	        vec3 tangentSample = vec3(sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta));
+	        // tangent space to world
+	        vec3 sampleVec = tangentSample.x * right + tangentSample.y * up + tangentSample.z * dir;
+	        irradiance += texture(env, sampleVec).rgb * cos(theta) * sin(theta);
+	        nrSamples += 1.;
+	    }
+	}
+	return vec4( PI * irradiance * (1.0 / float(nrSamples)), 1.);
+}
+
+void main(void) {
+	outColor = getIrradiance(jit_in.pos);
+	//outColor = texture(env, normalize(jit_in.pos));
+}
+			]]>
+		</program>
+	</language>
+</jittershader>

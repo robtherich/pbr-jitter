@@ -2509,6 +2509,7 @@
 										"style" : "",
 										"subpatcher_template" : "",
 										"assistshowspatchername" : 0,
+										"visible" : 1,
 										"boxes" : [ 											{
 												"box" : 												{
 													"id" : "obj-3",
@@ -2660,8 +2661,8 @@
 													"numinlets" : 1,
 													"numoutlets" : 7,
 													"outlettype" : [ "jit_gl_texture", "jit_gl_texture", "jit_gl_texture", "jit_gl_texture", "jit_gl_texture", "jit_gl_texture", "" ],
-													"patching_rect" : [ 157.200000000000273, 390.855670103092734, 335.799999999999955, 22.0 ],
-													"text" : "jit.gl.slab @file rect2cube.jxs @outputs 6 @inputs 1"
+													"patching_rect" : [ 157.200000000000273, 390.855670103092734, 298.0, 22.0 ],
+													"text" : "jit.gl.slab @file ibl.rect2cube.jxs @outputs 6 @inputs 1"
 												}
 
 											}
@@ -2696,8 +2697,8 @@
 													"numinlets" : 1,
 													"numoutlets" : 7,
 													"outlettype" : [ "jit_gl_texture", "jit_gl_texture", "jit_gl_texture", "jit_gl_texture", "jit_gl_texture", "jit_gl_texture", "" ],
-													"patching_rect" : [ 85.833333333334167, 604.855670103092734, 305.0, 22.0 ],
-													"text" : "jit.gl.slab @file rect2cube.jxs @outputs 6 @inputs 1"
+													"patching_rect" : [ 85.833333333334167, 604.855670103092734, 298.0, 22.0 ],
+													"text" : "jit.gl.slab @file ibl.rect2cube.jxs @outputs 6 @inputs 1"
 												}
 
 											}
