@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 375.0, 92.0, 1125.0, 920.0 ],
+		"rect" : [ 375.0, 92.0, 900.0, 920.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -39,6 +39,22 @@
 		"subpatcher_template" : "Template_Grid",
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
+				"box" : 				{
+					"bgcolor" : [ 0.4, 0.6, 0.8, 1.0 ],
+					"fontface" : 1,
+					"fontsize" : 15.0,
+					"id" : "obj-17",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 466.666666666666686, 10.0, 223.333333333333314, 24.0 ],
+					"text" : "Shader Parameters",
+					"textcolor" : [ 1.0, 1.0, 1.0, 1.0 ],
+					"textjustification" : 1
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"hidden" : 1,
 					"id" : "obj-15",
@@ -94,7 +110,7 @@
 					"numoutlets" : 2,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 466.666666666666686, 10.0, 223.333333333333314, 266.666666666666686 ],
+					"patching_rect" : [ 466.666666666666686, 50.0, 223.333333333333314, 226.666666666666686 ],
 					"viewvisibility" : 1
 				}
 

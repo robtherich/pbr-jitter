@@ -11,7 +11,7 @@ function ResizeBPatcher(bpSizeX, bpSizeY)
     {
         isParsed = g_params.ParseParamsDict();
     }
-    g_BPRect = [((bpSizeX/3)*2), 10, (bpSizeX-10), 10+(bpSizeY/3)*2];
+    g_BPRect = [((bpSizeX/3)*2), 40, (bpSizeX-10), 10+(bpSizeY/3)*2];
     this.patcher.box.rect = g_BPRect.slice();
     var sizeX = (bpSizeX-10)-(bpSizeX/2);
     var sizeY = (bpSizeY/3)*2;
@@ -32,12 +32,12 @@ function Parameters(patcher)
     this.parametersDict = new Dict();
     this.parametersDict.import_json("Parameters.json");
 
-    this.parametersStartingPosition = new FF_Vector(10, 30);
+    this.parametersStartingPosition = new FF_Vector(10, 5);
     this.titlePos = new FF_Vector(7,2);
 
     this.ParseParamsDict = function()
     {
-        this.CreateTitle();
+        // this.CreateTitle();
 
         var paramEntries = this.parametersDict.getkeys();
         if (Array.isArray(paramEntries))

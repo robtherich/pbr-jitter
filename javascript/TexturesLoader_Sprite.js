@@ -127,7 +127,7 @@ function Sprite(patcher, position, spriteSize, texType)
     // FUNCTIONS -----------------------------------------------------
     this.OutputMatrix = function()
     {
-        outlet(1, this.spriteType+"_matrix", this.matrix.name);    
+        outlet(1, this.spriteType+"_texture", this.matrix.name);    
     }
 
     this.ResizeSpriteObjs = function(position, sizeArray)
@@ -185,18 +185,6 @@ function Sprite(patcher, position, spriteSize, texType)
         this.matrix.setall([color[3], color[0], color[1], color[2]]);
     }
 
-    // this.LoadImage = function(path)
-    // {   
-    //     this.filePath = path;
-    //     this.filename = GetFileNameFromPath(path);
-        
-    //     this.movieLoader.LoadImage(path);
-
-    //     this.PWindowSizedObjs.SendMatrixToPWindow(this.movieLoader.GetMatrix());
-    //     this.textObj.SetText(this.filename);
-    //     this.OutputMatrix();
-    // }
-
     this.ClearImage = function()
     {
         // this.movieLoader.ImportDefaultImage();
@@ -219,140 +207,6 @@ function Sprite(patcher, position, spriteSize, texType)
 }
 
 //--------------------------------------------------------
-
-// function MovieLoader(texType, useAsync)
-// {   
-//     this.useAsync = useAsync;
-
-//     this.defaultEnvMapFile = gGlobal.default_env_img;
-
-//     this.movie = new JitterObject("jit.movie");
-//     this.movie.engine = "viddll";
-
-//     this.exr = new JitterObject("jit.openexr");
-
-//     this.matrix = new JitterMatrix(4, "float32", 320, 240);
-
-//     this.texture = new JitterObject("jit.gl.texture", gGlobal.pworldName);
-//     this.texture.defaultimage = "black";
-
-//     this.textureType = texType;
-
-//     this.loader = null;
-
-//     this.movieRegname = this.movie.getregisteredname();
-//     // FF_Utils.Print(this.movieRegname);
-
-//     var LoadCallback = (function(event)
-//     {   
-//         FF_Utils.Print("EVENT "+event.eventname);
-//         if (event.eventname == "read")
-//         {
-//             // FF_Utils.Print("IS LOADED");
-//             // event.subjectname.
-//         }
-//     }).bind(this);
-
-//     this.movListener = new JitterListener(this.movieRegname, LoadCallback);
-
-//     this.LoadImage = function(path)
-//     {   
-//         var ext = GetFileExt(path);
-
-//         if (ext == "exr")
-//         {
-//             this.LoadEXR(path);
-//         }
-//         else
-//         {   
-//             this.LoadStandard(path);
-//         }
-
-//         this.GetNewFrame();
-//         this.AssignTextureNameToGlobal();
-//     }
-
-//     this.ImportDefaultImage = function()
-//     {   
-//         this.loader = this.movie;
-//         if (this.textureType == "environment")
-//         {   
-//             this.LoadImage(gGlobal.default_env_img);
-//         }
-//         else if (this.textureType != "emission")
-//         {   
-//             this.LoadImage("default_tex.png");
-//         }
-//         else 
-//         {
-//             gGlobal.textureNames[this.spriteType] = "Undefined";
-//         }
-//         this.texture.jit_matrix(this.matrix.name);
-//     }
-
-//     this.LoadEXR = function(path)
-//     {   
-//         this.loader = this.exr;
-//         this.loader.read(path);
-//         this.loader.outputfile = 1;
-//     }
-
-//     this.LoadStandard = function(path)
-//     {   
-//         this.loader = this.movie;
-//         if (this.useAsync)
-//             this.loader.asyncread(path);
-//         else
-//             this.loader.read(path);
-//     }
-
-//     this.GetNewFrame = function()
-//     {   
-//         // this.matrix.freepeer();
-//         var tempMat = new JitterMatrix(4, "float32", 320, 240);
-//         // tempMat.dim = [this.loader.dim[0], this.loader.dim[1]];
-//         this.matrix.planemap = [0,1,2,3];
-//         if (this.loader === this.exr)
-//         {   
-//             // tempMat.planemap = [2,3,1,0];
-//             this.matrix.planemap = [0,3,1,2];
-//         }
-//         this.loader.matrixcalc(tempMat, tempMat);
- 
-//         this.matrix.dim = [tempMat.dim[0], tempMat.dim[1]];
-//         this.matrix.frommatrix(tempMat);
-//         this.texture.jit_matrix(this.matrix.name);
-//         tempMat.freepeer();
-//     }
-
-//     this.AssignTextureNameToGlobal = function()
-//     {   
-//         gGlobal.textureNames[this.textureType] = this.matrix.name;
-//     }
-
-//     this.SetColor = function(color)
-//     {
-//         this.matrix.type = "float32";
-//         this.matrix.dim = [1,1];
-//         this.matrix.planemap = [0,1,2,3];
-//         this.matrix.setall([color[3], color[0], color[1], color[2]]);
-//         this.texture.dim = [1,1];
-//         this.texture.jit_matrix(this.matrix.name);
-//     }
-
-//     this.GetMatrix = function()
-//     {
-//         return this.matrix.name;
-//     }
-
-//     this.Destroy = function()
-//     {
-//         this.movie.freepeer();
-//         this.matrix.freepeer();
-//         this.texture.freepeer();
-//         this.exr.freepeer();
-//     }
-// }
 
 function PWindowSizedMaxObjects(patcher, position, size)
 {   

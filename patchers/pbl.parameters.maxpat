@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 44.0, 85.0, 1022.0, 913.0 ],
+		"rect" : [ 1306.0, 313.0, 1022.0, 913.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -43,11 +43,11 @@
 					"comment" : "",
 					"hidden" : 1,
 					"id" : "obj-66",
-					"index" : 2,
+					"index" : 0,
 					"maxclass" : "outlet",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 595.105262041091919, 669.0, 30.0, 30.0 ]
+					"patching_rect" : [ 144.105262041091919, 179.0, 30.0, 30.0 ]
 				}
 
 			}
@@ -60,7 +60,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "list", "bang" ],
-					"patching_rect" : [ 835.0, 639.0, 67.0, 22.0 ],
+					"patching_rect" : [ 384.0, 149.0, 67.0, 22.0 ],
 					"text" : "colorpicker",
 					"varname" : "pbl_colorpicker"
 				}
@@ -73,7 +73,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 4,
 					"numoutlets" : 0,
-					"patching_rect" : [ 835.0, 673.0, 118.0, 22.0 ],
+					"patching_rect" : [ 384.0, 183.0, 118.0, 22.0 ],
 					"text" : "bgcolor 0.4 0.6 0.8 1"
 				}
 
@@ -83,11 +83,11 @@
 					"comment" : "",
 					"hidden" : 1,
 					"id" : "obj-1",
-					"index" : 1,
+					"index" : 0,
 					"maxclass" : "outlet",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 490.105262041091919, 669.0, 30.0, 30.0 ]
+					"patching_rect" : [ 39.105262041091919, 179.0, 30.0, 30.0 ]
 				}
 
 			}
@@ -96,12 +96,12 @@
 					"comment" : "",
 					"hidden" : 1,
 					"id" : "obj-103",
-					"index" : 1,
+					"index" : 0,
 					"maxclass" : "inlet",
 					"numinlets" : 0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 490.105262041091919, 525.0, 30.0, 30.0 ]
+					"patching_rect" : [ 39.105262041091919, 35.0, 30.0, 30.0 ]
 				}
 
 			}
@@ -113,7 +113,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 490.105262041091919, 619.105259895324707, 124.0, 22.0 ],
+					"patching_rect" : [ 39.105262041091919, 129.105259895324707, 124.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"filename" : "PBL_Parameters.js",
 						"parameter_enable" : 0
@@ -149,6 +149,14 @@
 
 			}
  ],
+		"dependency_cache" : [ 			{
+				"name" : "PBL_Parameters.js",
+				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/javascript",
+				"type" : "TEXT",
+				"implicit" : 1
+			}
+ ],
+		"autosave" : 0,
 		"bgcolor" : [ 0.4, 0.6, 0.8, 1.0 ]
 	}
 
