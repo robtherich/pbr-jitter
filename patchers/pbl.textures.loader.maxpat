@@ -40,10 +40,22 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"hidden" : 1,
+					"id" : "obj-4",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 327.0, 582.105259895324707, 78.0, 20.0 ],
+					"text" : "has varname"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"comment" : "",
 					"hidden" : 1,
 					"id" : "obj-2",
-					"index" : 2,
+					"index" : 0,
 					"maxclass" : "outlet",
 					"numinlets" : 1,
 					"numoutlets" : 0,
@@ -53,6 +65,7 @@
 			}
 , 			{
 				"box" : 				{
+					"color" : [ 1.0, 0.0, 0.0, 1.0 ],
 					"frozen_box_attributes" : [ "varname" ],
 					"hidden" : 1,
 					"id" : "obj-92",
@@ -60,7 +73,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "list", "bang" ],
-					"patching_rect" : [ 381.0, 602.0, 67.0, 22.0 ],
+					"patching_rect" : [ 251.0, 582.105259895324707, 67.0, 22.0 ],
 					"text" : "colorpicker",
 					"varname" : "pbl_colorpicker"
 				}
@@ -73,7 +86,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 4,
 					"numoutlets" : 0,
-					"patching_rect" : [ 381.0, 636.0, 118.0, 22.0 ],
+					"patching_rect" : [ 251.0, 614.0, 118.0, 22.0 ],
 					"text" : "bgcolor 0.4 0.6 0.8 1"
 				}
 
@@ -83,7 +96,7 @@
 					"comment" : "",
 					"hidden" : 1,
 					"id" : "obj-1",
-					"index" : 1,
+					"index" : 0,
 					"maxclass" : "outlet",
 					"numinlets" : 1,
 					"numoutlets" : 0,
@@ -96,25 +109,12 @@
 					"comment" : "",
 					"hidden" : 1,
 					"id" : "obj-103",
-					"index" : 1,
+					"index" : 0,
 					"maxclass" : "inlet",
 					"numinlets" : 0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 36.105262041091919, 488.0, 30.0, 30.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"hidden" : 1,
-					"id" : "obj-64",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 174.07894504070282, 542.789470911026001, 115.0, 22.0 ],
-					"text" : "prepend load_folder"
 				}
 
 			}
@@ -136,34 +136,12 @@
 				}
 
 			}
-, 			{
-				"box" : 				{
-					"hidden" : 1,
-					"id" : "obj-56",
-					"linecount" : 2,
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 174.07894504070282, 491.684208154678345, 269.078945279121399, 36.0 ],
-					"text" : "\"D:/MyData/My Files/Assets/Textures/PBL/mahogfloor/\""
-				}
-
-			}
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
 					"destination" : [ "obj-61", 0 ],
 					"hidden" : 1,
 					"source" : [ "obj-103", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-64", 0 ],
-					"hidden" : 1,
-					"source" : [ "obj-56", 0 ]
 				}
 
 			}
@@ -183,15 +161,15 @@
 				}
 
 			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-61", 0 ],
-					"hidden" : 1,
-					"source" : [ "obj-64", 0 ]
-				}
-
+ ],
+		"dependency_cache" : [ 			{
+				"name" : "TexturesLoader.js",
+				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/javascript",
+				"type" : "TEXT",
+				"implicit" : 1
 			}
  ],
+		"autosave" : 0,
 		"bgcolor" : [ 0.4, 0.6, 0.8, 1.0 ]
 	}
 

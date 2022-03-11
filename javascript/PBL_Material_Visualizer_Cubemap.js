@@ -10,7 +10,6 @@ function CubeMap(patcher)
 
     this.cubeMapTex = new JitterObject("jit.gl.texture");
     this.cubeMapMat = new JitterMatrix();
-    
 
     this.drawto = null;
 

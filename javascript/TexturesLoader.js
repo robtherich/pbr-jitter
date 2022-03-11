@@ -27,13 +27,11 @@ function clear()
 function reset()
 {   
     g_TexturesParser.Reset();
-    outlet(0, "SetShapeTextures");
 }
 
 function load_folder(path)
 {   
     g_TexturesParser.ParseFolder(path);
-    outlet(0, "SetShapeTextures");
 }
 
 // CALLED BY PATCHER
@@ -57,16 +55,9 @@ function ResizeBPatcher(posX, bpSizeX, bpSizeY)
         
     }
 
-    var pp = this.patcher.parentpatcher;
-    var bp = pp.getnamed("pbl_textures_loader");
+    // var pp = this.patcher.parentpatcher;
+    // var bp = pp.getnamed("pbl_textures_loader");
 
-    // if (g_TexturesParser.IsBPatcherSmallerThanSpritesXSize(g_bpRect[2]))
-    // {   
-    //     this.patcher.box.rect = [g_bpRect[0], g_bpRect[1], g_bpRect[0]+g_bpRect[2], g_bpRect[1]+g_bpRect[3]+10];
-    //     // pp.script("sendbox", bp.varname, "patching_rect", [g_bpRect[0], g_bpRect[1], g_bpRect[2], g_bpRect[3]+10]);
-    // }
-    // else
-    // {   
     this.patcher.box.rect = [g_bpRect[0], g_bpRect[1], g_bpRect[0]+g_bpRect[2], g_bpRect[1]+g_bpRect[3]+7];
         // pp.script("sendbox", bp.varname, "patching_rect", [g_bpRect[0], g_bpRect[1], g_bpRect[2], g_bpRect[3]]);
     // }

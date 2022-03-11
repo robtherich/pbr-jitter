@@ -1,6 +1,6 @@
 include("PBL_Material_Visualizer_CubeMap.js");
 
-function PWorld(patcher, bpSize)
+function PWorld(patcher)
 {   
     this.p = patcher;
     this.pworld = this.p.getnamed("pbl_vis_pworld");
@@ -59,59 +59,44 @@ function PWorld(patcher, bpSize)
         environment: this.textureEmpty.name
     };
 
-    this.mtrTextureInputs = ["diffuse_texture", "normals_texture", "glossmap_texture", "specular_texture", "heightmap_texture", "environment_texture"];
-
-    this.SetShape = function(shape)
+    this.link_mtrClassicInputs_texTypes = 
     {
-        this.gridshape.shape = shape;
+        diffuse_texture: "albedo",
+        normals_texture: "normal",
+        glossmap_texture: "roughness",
+        specular_texture: "metallic",
+        heightmap_texture: "height",
+        emission_texture: "emission",
+        environment_texture: "environment"
     }
 
-    this.SetShapeTextures = function()
-    {   
+    this.PWorld_SetAllMtrTextures = function()
+    {
         this.SetMtrToEmpty();
-        FF_Utils.Print("Set shapes")
-        
-        // TEMPORARY IF STATEMENTS, WAITING TO KNOW WHICH MESSAGES GO TO THE SHADER
-        if (gGlobal.textureNames.albedo != "Undefined")
-        {
-            this.material.diffuse_texture(gGlobal.textureNames.albedo);
-        }
-        if (gGlobal.textureNames.normal != "Undefined")
-        {
-            this.material.normals_texture(gGlobal.textureNames.normal);
-        }
-        if (gGlobal.textureNames.roughness != "Undefined")
-        {
-            this.material.glossmap_texture(gGlobal.textureNames.roughness);
-        }
-        if (gGlobal.textureNames.metallic != "Undefined")
-        {
-            this.material.specular_texture(gGlobal.textureNames.metallic);
-        }
-        if (gGlobal.textureNames.emission != "Undefined")
+        var mtrTexInputs = Object.keys(this.link_mtrClassicInputs_texTypes);
+        for (var key in mtrTexInputs)
         {   
-            this.material.emission_texture(gGlobal.textureNames.emission);
+            var inputType = mtrTexInputs[key];
+            var texType = this.link_mtrClassicInputs_texTypes[inputType];
+            this.material[inputType](gGlobal.textureNames[texType]);
+            FF_Utils.Print("tex type ", texType)
+            FF_Utils.Print(gGlobal.textureNames[texType]);
         }
-        if (gGlobal.textureNames.height != "Undefined")
-        {
-            this.material.heightmap_texture(gGlobal.textureNames.height);
-        }
-        if (gGlobal.textureNames.environment != "Undefined")
+        this.envMap.AssignTexToSkybox();
+    }
+
+    this.PWorld_SetMtrTexture = function(texType)
+    {   
+        FF_Utils.Print("textype", texType);
+
+        var inputType = getKeyByValue(this.link_mtrClassicInputs_texTypes, texType);
+        FF_Utils.Print("input type", inputType);
+        this.material[inputType](gGlobal.textureNames[texType]);
+        
+        if (texType = "Environment")
         {   
             this.envMap.AssignTexToSkybox();
-            this.material.environment_texture(gGlobal.textureNames.environment);
         }
-        else
-        {
-            this.envMap.InitCubeMap();
-            this.material.environment_texture(gGlobal.textureNames.environment);
-        }
-    
-        // var keys = Object.keys(gGlobal.textureNames);
-        // for (var key in keys)
-        // {
-        //     print("key "+keys[key] + " __ " + gGlobal.textureNames[keys[key]]);
-        // }
     }
 
     this.Reset = function()
@@ -121,13 +106,18 @@ function PWorld(patcher, bpSize)
 
     this.SetMtrToEmpty = function()
     {   
-        for (var texType in this.mtrTextureInputs)
-        {
-            this.material[this.mtrTextureInputs[texType]](this.textureEmpty.name);
+        var mtrTexInputs = Object.keys(this.link_mtrClassicInputs_texTypes);
+        for (var key in mtrTexInputs)
+        {   
+            var inputType = mtrTexInputs[key];
+            this.material[inputType](this.textureEmpty.name);
         }
     }
 
-    this.SetMtrToEmpty();
+    this.SetDemoShape = function(shape)
+    {
+        this.gridshape.shape = shape;
+    }
 
     this.SendMessageToShader = function(paramName, value)
     {
@@ -171,5 +161,14 @@ function PWorld(patcher, bpSize)
         this.envMap.Destroy();
         this.vp.freepeer();
         this.glText.freepeer();
+    }
+}
+
+function getKeyByValue(object, value) {
+    for (var prop in object) {
+        if (object.hasOwnProperty(prop)) {
+            if (object[prop] === value)
+            return prop;
+        }
     }
 }

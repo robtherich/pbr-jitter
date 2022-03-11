@@ -8,7 +8,7 @@ var gGlobal = new Global("pbl_global");
 var gBPSize = [700,400];
 var g_TexLoaderXPos = 10;
 
-var gPWorld = new PWorld(this.patcher, gBPSize);
+var gPWorld = new PWorld(this.patcher);
 
 var gTexturesLoaderBP = this.patcher.getnamed("pbl_textures_loader");
 
@@ -29,7 +29,7 @@ var gFirstResize = false;
 
 function shape(shape)
 {
-    gPWorld.SetShape(shape);
+    gPWorld.SetDemoShape(shape);
 }
 
 function clear()
@@ -40,9 +40,14 @@ function clear()
 // -------------------------
 
 // FROM MAX ----------------
-function SetShapeTextures()
+function SetMtrTexture(texType)
 {
-    gPWorld.SetShapeTextures();
+    gPWorld.PWorld_SetMtrTexture(texType);
+}
+
+function SetAllMtrTextures()
+{
+    gPWorld.PWorld_SetAllMtrTextures();
 }
 
 function GetPWorldName(name)

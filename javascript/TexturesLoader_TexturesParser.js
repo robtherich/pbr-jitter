@@ -15,6 +15,9 @@ function TexturesParser(patcher, spriteSize)
 
     this.allSpritesXSize = 0;
 
+    this.movieLoaderArray = [];
+
+
     this.Reset = function()
     {
         
@@ -67,7 +70,7 @@ function TexturesParser(patcher, spriteSize)
         this.folder = new Folder(path);
         this.folder.typelist = ["JPEG", "PNG", "TIFF"];
 
-        this.fileNamesArray = [];
+        // this.fileNamesArray = [];
 
         var texTypes = Object.keys(gGlobal.textureNames);
         var nonFoundImageIndex = 0;
@@ -75,24 +78,23 @@ function TexturesParser(patcher, spriteSize)
         {
             if (this.folder.filename.length > 0)
             {   
-                this.fileNamesArray.push(path+this.folder.filename);
+                this.FileNames_PushNewFile(path+this.folder.filename);
+                this.movieLoaderArray.push(new MovieLoader(path+this.folder.filename));
+            
                 var texType = this.ParseTextureType(this.folder.filename);
                 if (texType == -1)
                 {   
                     texType = texTypes[nonFoundImageIndex];
                     nonFoundImageIndex++;
                 }
-                this.spritesContainer[texType].LoadImage(path+this.folder.filename);
+                var matName = this.movieLoaderArray[this.movieLoaderArray.length-1].GetMatrix();
+                this.spritesContainer[texType].AssignMatrix(matName,path+this.folder.filename);
             }
             this.folder.next();
         }
 
         this.ApplyTexturesToShape();
-        for (var sprite in this.spritesContainer)
-        {   
-            this.spritesContainer[sprite].SetImagesNamesUmenu(this.fileNamesArray);
-            // this.spritesContainer[sprite].OutputMatrix();
-        }
+        this.FillSpriteUmenus();
     }
 
     this.ParseTextureType = function(filename)
@@ -130,12 +132,27 @@ function TexturesParser(patcher, spriteSize)
         return texType;
     }
 
+    this.AddImageFromDropFile = function(path, spriteType)
+    {
+        this.movieLoaderArray.push(new MovieLoader(path));
+        var matName = this.movieLoaderArray[this.movieLoaderArray.length-1].GetMatrix();
+        this.spritesContainer[spriteType].AssignMatrix(matName,path);
+        g_TexturesParser.FileNames_PushNewFile(path);
+        g_TexturesParser.FillSpriteUmenus();
+    }
+
+    this.GetMatrixFromIndex = function(index)
+    {   
+        FF_Utils.Print("Index ", index)
+        return this.movieLoaderArray[index].GetMatrix();
+    }
+
+    
     var PickerCallback = (function(data) 
     {   
         var pickedColor = this.picker.getattr("currentcolor");
         var spriteInstance = data.maxobject.spriteInstance;
         this.spritesContainer[spriteInstance].SetPickedColor(pickedColor);
-        this.spritesContainer[spriteInstance].OutputMatrix();
     }).bind(this); 
 
     this.GetPickerColor = function(spriteInstance)
@@ -153,9 +170,32 @@ function TexturesParser(patcher, spriteSize)
         }
     }
 
+    this.FillSpriteUmenus = function()
+    {
+        for (var sprite in this.spritesContainer)
+        {   
+            this.spritesContainer[sprite].SetImagesNamesUmenu(this.fileNamesArray);
+        }
+    }
+
+    this.FileNames_PushNewFile = function(fileName)
+    {
+        this.fileNamesArray.push(fileName);
+    }
+
+    this.FileNames_GetFile = function(index)
+    {
+        return this.fileNamesArray[index];
+    }
+
+    this.FileNames_ClearArray = function()
+    {
+        this.fileNamesArray = [];
+    }
+
     this.ApplyTexturesToShape = function()
     {
-        outlet(0, "SetShapeTextures");
+        outlet(0, "SetAllMtrTextures");
     }
 
     this.ClearImages = function()
@@ -172,8 +212,159 @@ function TexturesParser(patcher, spriteSize)
         {
             this.spritesContainer[sprite].Destroy();
         }
+        for (var movie in this.movieLoaderArray)
+        {
+            this.movieLoaderArray[movie].Destroy();
+        }
         this.fileNamesArray = [];
+        this.movieLoaderArray = [];
         this.spritesContainer = {};
     }
 }
 
+// MOVIE LOADER --------------------------------------------------------------------
+function MovieLoader(filePath)
+{   
+    this.useAsync = 0;
+
+    this.defaultEnvMapFile = gGlobal.default_env_img;
+
+    this.movie = new JitterObject("jit.movie");
+    this.movie.engine = "viddll";
+
+    this.exr = new JitterObject("jit.openexr");
+
+    this.matrix = new JitterMatrix(4, "float32", 320, 240);
+
+    this.texture = new JitterObject("jit.gl.texture", gGlobal.pworldName);
+    this.texture.defaultimage = "black";
+
+    this.textureType = -1;
+
+    this.loader = null;
+
+    this.movieRegname = this.movie.getregisteredname();
+    // FF_Utils.Print(this.movieRegname);
+
+    var LoadCallback = (function(event)
+    {   
+        FF_Utils.Print("EVENT "+event.eventname);
+        if (event.eventname == "read")
+        {
+            // FF_Utils.Print("IS LOADED");
+            // event.subjectname.
+        }
+    }).bind(this);
+
+    this.movListener = new JitterListener(this.movieRegname, LoadCallback);
+
+    this.LoadImage = function(path)
+    {   
+        var ext = GetFileExt(path);
+
+        if (ext == "exr")
+        {
+            this.LoadEXR(path);
+        }
+        else
+        {   
+            this.LoadStandard(path);
+        }
+
+        this.GetNewFrame();
+        // this.AssignTextureNameToGlobal();
+    }
+
+   
+    this.SetTextureType = function(texType)
+    {
+        this.textureType = texType;
+    }
+
+    this.ImportDefaultImage = function()
+    {   
+        this.loader = this.movie;
+        if (this.textureType == "environment")
+        {   
+            this.LoadImage(gGlobal.default_env_img);
+        }
+        else if (this.textureType != "emission")
+        {   
+            this.LoadImage("default_tex.png");
+        }
+        else 
+        {
+            gGlobal.textureNames[this.spriteType] = "Undefined";
+        }
+        this.texture.jit_matrix(this.matrix.name);
+    }
+
+    this.LoadEXR = function(path)
+    {   
+        this.loader = this.exr;
+        this.loader.read(path);
+        this.loader.outputfile = 1;
+    }
+
+    this.LoadStandard = function(path)
+    {   
+        this.loader = this.movie;
+        if (this.useAsync)
+            this.loader.asyncread(path);
+        else
+            this.loader.read(path);
+    }
+
+    this.GetNewFrame = function()
+    {   
+        // this.matrix.freepeer();
+        var tempMat = new JitterMatrix(4, "float32", 320, 240);
+        // tempMat.dim = [this.loader.dim[0], this.loader.dim[1]];
+        this.matrix.planemap = [0,1,2,3];
+        if (this.loader === this.exr)
+        {   
+            // tempMat.planemap = [2,3,1,0];
+            this.matrix.planemap = [0,3,1,2];
+        }
+        this.loader.matrixcalc(tempMat, tempMat);
+ 
+        this.matrix.dim = [tempMat.dim[0], tempMat.dim[1]];
+        this.matrix.frommatrix(tempMat);
+        this.texture.jit_matrix(this.matrix.name);
+        tempMat.freepeer();
+    }
+
+    this.AssignTextureNameToGlobal = function()
+    {   
+        if (this.textureType != -1)
+        {
+            gGlobal.textureNames[this.textureType] = this.matrix.name;
+        }
+    }
+
+    this.SetColor = function(color)
+    {
+        this.matrix.type = "float32";
+        this.matrix.dim = [1,1];
+        this.matrix.planemap = [0,1,2,3];
+        this.matrix.setall([color[3], color[0], color[1], color[2]]);
+        this.texture.dim = [1,1];
+        this.texture.jit_matrix(this.matrix.name);
+    }
+
+    this.GetMatrix = function()
+    {
+        return this.matrix.name;
+    }
+
+     // LOAD INITIAL IMAGE
+     this.LoadImage(filePath);
+
+    this.Destroy = function()
+    {
+        this.movie.freepeer();
+        this.matrix.freepeer();
+        this.texture.freepeer();
+        this.exr.freepeer();
+    }
+}
