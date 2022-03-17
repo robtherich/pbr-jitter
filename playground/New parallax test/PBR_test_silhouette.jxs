@@ -32,7 +32,7 @@
 	<param name="selfShadowing"   		type="float" default="1." />
 	<param name="shadowAmount"  		type="float" default="1000." />
 	<param name="shadowIterations" 		type="vec2"  default="50. 100." />
-	<param name="aoAmount"  			type="float" default="6." />
+	<param name="aoAmount"  			type="float" default="100." />
 	<param name="aoIterations"   		type="int"   default="5" />
 	<param name="aoOffset"   			type="float" default="0.001" />
 
