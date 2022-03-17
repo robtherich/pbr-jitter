@@ -272,6 +272,28 @@ float getHeight(vec2 uv){
 	return textureLod(normalTex, uv, 0.).b;// * 0.95 + 0.05; // bias to avoid stepping over the depth map
 }
 
+/*
+// improved bilinear interpolated texture fetch
+float getHeight( vec2 uv )
+{
+    vec2 res = vec2(1024.0, 1024.0);//textureSize( sam );
+
+    vec2 st = uv*res - 0.5;
+
+    vec2 iuv = floor( st );
+    vec2 fuv = fract( st );
+
+    float a = texture( normalTex, (iuv+vec2(0.5,0.5))/res ).b;
+    float b = texture( normalTex, (iuv+vec2(1.5,0.5))/res ).b;
+    float c = texture( normalTex, (iuv+vec2(0.5,1.5))/res ).b;
+    float d = texture( normalTex, (iuv+vec2(1.5,1.5))/res ).b;
+
+    return mix( mix( a, b, fuv.x),
+                mix( c, d, fuv.x), fuv.y );
+}
+*/
+
+
 mat3	create_tbn_from_texture(vec2 uv){
 
 	vec3 tan = normalize(texture(tanTex, uv).rgb*2. - 1.);
@@ -784,13 +806,6 @@ void getNormTex(sampler2D tex, inout geometry geom){
 	geom.N = normalize(geom.TBN * geom.tanN);
 }
 
-void getNormFromDerivatives(inout geometry geom){
-	// derivation of the fragment position
-	vec3 pos_dx = dFdx( geom.pos );
-	vec3 pos_dy = dFdy( geom.pos );
-	geom.N = normalize(cross(pos_dx, pos_dy));
-	geom.tanN = transpose(geom.TBN) * geom.N;
-}
 
 mat3 getTBN( vec3 N, vec3 pos, vec2 uv)
 {
@@ -862,50 +877,54 @@ void blendHeight(vec3 N, inout geometry geom){
 			geom.triZ.z = blend.z;
 }
 
-// dim: resolution of the texture deriv was sampled from.
-// isDerivScreenSpace: true if deriv is already in screen space.
-vec3 surfgradScaleDependent(in geometry geom, vec3 normN){
+float getAO(in geometry geom, float currH){
 
-		// 3 taps: better quality than float2(ddx fine(H), ddy fine(H)).
-		vec2 texDx = dFdx(jit_in.uv), texDy = dFdy(jit_in.uv);
-		vec3 dPdx = dFdx(geom.pos), dPdy = dFdy(geom.pos);
-		float Hll = getHeight(geom.uv);
-		float Hlr = getHeight(geom.uv + texDx); //*** put back texDx
-		float Hul = getHeight(geom.uv + texDy);
-		//vec2 off = vec2(0.0001, 0.);
-		//vec2 deriv = vec2(	getHeight(geom.uv - off.xy) - getHeight(geom.uv + off.xy),
-		//					getHeight(geom.uv - off.yx) - getHeight(geom.uv + off.yx)
-		//				);
-		vec2 deriv = vec2(Hlr - Hll, Hul - Hll);
-		//deriv /= off.x * 2.;
-		deriv *= heightScale;
-		//deriv /= 0.0001;
+	float occ = 0.;
 
-		//vec2 dim = vec2(1.);//vec2(1024.);
-	// Convert derivative to normalized (s,t) space.
-	//vec2 dHdST = dim*deriv;
-	// Convert derivative to screen space by applying
-	// the chain rule. dHdx and dHdy correspond to
-	// ddx fine(height) and ddy fine(height).
-	//vec2 texDx = dFdx(texST);
-	//vec2 texDy = dFdy(texST);
-	//float dHdx = dHdST.x;//dHdST.x*texDx.x + dHdST.y*texDx.y;
-	//float dHdy = dHdST.y;//dHdST.x*texDy.x + dHdST.y*texDy.y;
-	/*
-	if (isDerivScreenSpace)
-	{
-	dHdx = deriv.x;
-	dHdy = deriv.y;
-	}
-	*/
+	vec2 off = vec2(0.001, 0.);
+	occ += max(0., (textureLod(normalTex, geom.uv - off.xy, 0.).b - currH));
+	occ += max(0., (textureLod(normalTex, geom.uv + off.xy, 0.).b - currH));
+	occ += max(0., (textureLod(normalTex, geom.uv - off.yx, 0.).b - currH));
+	occ += max(0., (textureLod(normalTex, geom.uv + off.yx, 0.).b - currH));
+
+	off *= 2.;
+	occ += max(0., (textureLod(normalTex, geom.uv - off.xy, 2.).b - currH))*0.5;
+	occ += max(0., (textureLod(normalTex, geom.uv + off.xy, 2.).b - currH))*0.5;
+	occ += max(0., (textureLod(normalTex, geom.uv - off.yx, 2.).b - currH))*0.5;
+	occ += max(0., (textureLod(normalTex, geom.uv + off.yx, 2.).b - currH))*0.5;
+
+	off *= 2.;
+	occ += max(0., (textureLod(normalTex, geom.uv - off.xy, 4.).b - currH))*0.25;
+	occ += max(0., (textureLod(normalTex, geom.uv + off.xy, 4.).b - currH))*0.25;
+	occ += max(0., (textureLod(normalTex, geom.uv - off.yx, 4.).b - currH))*0.25;
+	occ += max(0., (textureLod(normalTex, geom.uv + off.yx, 4.).b - currH))*0.25;
+
+	return max(1. - occ * heightScale * 10, 0.);
+
+}
+
+void getNormAndAoFromDerivatives(inout geometry geom, inout material mate, vec3 normN){
+
+	// 3 taps: better quality than float2(ddx fine(H), ddy fine(H)).
+	vec2 	texDx = dFdx(jit_in.uv), texDy = dFdy(jit_in.uv);
+	vec3 	dPdx = dFdx(geom.pos), dPdy = dFdy(geom.pos);
+	float 	Hll = getHeight(geom.uv);
+	float 	Hlr = getHeight(geom.uv + texDx); //*** put back texDx
+	float 	Hul = getHeight(geom.uv + texDy);
+	vec2 	deriv = vec2(Hlr - Hll, Hul - Hll);
+
+			deriv *= heightScale;
+
 	// Equation 3 in [Mikkelsen 2010].
-	vec3 vR1 = cross(dPdy, normN);
-	vec3 vR2 = cross(normN, dPdx);
-	float det = dot(dPdx, vR1);
-	float eps = 1.192093e-15F;
-	float sign_det = det < 0.0 ? -1.0 : 1.0;
-	float s = sign_det/max(eps, abs(det));
-	return normalize(normN - s*(deriv.x*vR1 + deriv.y*vR2));
+	vec3 	vR1 = cross(dPdy, normN);
+	vec3 	vR2 = cross(normN, dPdx);
+	float 	det = dot(dPdx, vR1);
+	float 	eps = 1.192093e-15F;
+	float 	sign_det = det < 0.0 ? -1.0 : 1.0;
+	float 	s = sign_det/max(eps, abs(det));
+			geom.N = normalize(normN - s*(deriv.x*vR1 + deriv.y*vR2));
+			mate.occ = getAO(geom, Hll);
+
 }
 void 	main() {
 
@@ -931,7 +950,7 @@ void 	main() {
 			parallax(mate, geom);
 			geom.pos    -= normN * mate.height;// * heightScale;// * 20.;	
 			//geom.N = (M * vec4(normalize( (normalize(jit_in.modelNor) - heightScale * 1000. * vec3(texture(normalTex, geom.uv).rg, 0.)) ), 0.)).xyz;
-			geom.N = surfgradScaleDependent(geom, normN);
+			getNormAndAoFromDerivatives(geom, mate, normN);
 
 
 /*
@@ -959,8 +978,8 @@ void 	main() {
 			mate.alb 	= triplanarTexturing ? sRGB2lin(triplanarPrallaxed(albedoTex, geom).rgb) : sRGB2lin(texture(albedoTex, geom.uv).rgb);	
 			mate.rou 	= RMOH.r;	//roughness
 			mate.met 	= RMOH.g;	//metallicd
-			mate.occ 	= RMOH.b;	//ambient occlusion
-			mate.occ  	= 1. - (1. - mate.occ)*clamp(heightScale/heightMax, 0., 1.);
+			//mate.occ 	= RMOH.b;	//ambient occlusion
+			//mate.occ  	= 1. - (1. - mate.occ)*clamp(heightScale/heightMax, 0., 1.);
 
 			geom.V 		= normalize(eye - jit_in.pos);				//view direction
 
@@ -974,8 +993,6 @@ void 	main() {
 			*/
 
 
-
-	//getNormFromDerivatives(geom);
 
 
 	//lighting
