@@ -32,6 +32,9 @@
 	<param name="selfShadowing"   		type="float" default="1." />
 	<param name="shadowAmount"  		type="float" default="1000." />
 	<param name="shadowIterations" 		type="vec2"  default="50. 100." />
+	<param name="aoAmount"  			type="float" default="10." />
+	<param name="aoIterations"   		type="int"   default="3" />
+	<param name="aoOffset"   			type="float" default="0.001" />
 
 	<param name="envLig1"   			type="vec3"  default="0. 0. 0." />
 	<param name="envLig2"   			type="vec3"  default="0. 0. 0." />
@@ -72,6 +75,9 @@
 		<bind param="selfShadowing"   		program="fp" />
 		<bind param="shadowAmount"  		program="fp" />
 		<bind param="shadowIterations"   	program="fp" />
+		<bind param="aoAmount"   			program="fp" />
+		<bind param="aoIterations"  		program="fp" />
+		<bind param="aoOffset"  			program="fp" />
 
 		<bind param="envLig1"   			program="fp" />
 		<bind param="envLig2"   			program="fp" />
@@ -119,10 +125,11 @@ void main() {
 uniform vec3 eye;
 uniform sampler2D albedoTex, normalTex, RMOHTex, equirectTex, tanTex, norTex, integMap;
 uniform samplerCube irradianceTex;
-uniform float heightScale, heightMax, triplanarUV, triplanarExp, parallaxMapping, selfShadowing, shadowAmount;
+uniform float heightScale, heightMax, triplanarUV, triplanarExp, parallaxMapping, selfShadowing, shadowAmount, aoAmount, aoOffset;
 uniform vec2 texRepeat, triplanarTexRepeat, parallaxIterations, shadowIterations;
 uniform mat4 M;
 uniform vec3 envLig1, envLig2, envLig3, envLig4;
+uniform int aoIterations;
 
 in jit_PerVertex {
 	smooth 	vec3 nor;
@@ -879,27 +886,27 @@ void blendHeight(vec3 N, inout geometry geom){
 
 float getAO(in geometry geom, float currH){
 
-	float occ = 0.;
+	float 	occ = 0.;
+	vec2 	off = vec2(aoOffset, 0.) / texRepeat;
+	float 	lod = 0.;
+	float 	intensity = 1.;
 
-	vec2 off = vec2(0.001, 0.) / texRepeat;
-	occ += max(0., (textureLod(normalTex, geom.uv - off.xy, 0.).b - currH));
-	occ += max(0., (textureLod(normalTex, geom.uv + off.xy, 0.).b - currH));
-	occ += max(0., (textureLod(normalTex, geom.uv - off.yx, 0.).b - currH));
-	occ += max(0., (textureLod(normalTex, geom.uv + off.yx, 0.).b - currH));
+	for(int i = 0; i < aoIterations; i++){
+		float toAdd = 0.;
+		toAdd += max(0., (textureLod(normalTex, geom.uv - off.xy, lod).b - currH));
+		toAdd += max(0., (textureLod(normalTex, geom.uv + off.xy, lod).b - currH));
+		toAdd += max(0., (textureLod(normalTex, geom.uv - off.yx, lod).b - currH));
+		toAdd += max(0., (textureLod(normalTex, geom.uv + off.yx, lod).b - currH));
+		occ += toAdd*intensity;
+		off *= 2.;
+		lod += 2.;
+		intensity *= 0.5;
+	}
 
-	off *= 2.;
-	occ += max(0., (textureLod(normalTex, geom.uv - off.xy, 2.).b - currH))*0.5;
-	occ += max(0., (textureLod(normalTex, geom.uv + off.xy, 2.).b - currH))*0.5;
-	occ += max(0., (textureLod(normalTex, geom.uv - off.yx, 2.).b - currH))*0.5;
-	occ += max(0., (textureLod(normalTex, geom.uv + off.yx, 2.).b - currH))*0.5;
-
-	off *= 2.;
-	occ += max(0., (textureLod(normalTex, geom.uv - off.xy, 4.).b - currH))*0.25;
-	occ += max(0., (textureLod(normalTex, geom.uv + off.xy, 4.).b - currH))*0.25;
-	occ += max(0., (textureLod(normalTex, geom.uv - off.yx, 4.).b - currH))*0.25;
-	occ += max(0., (textureLod(normalTex, geom.uv + off.yx, 4.).b - currH))*0.25;
-
-	return max(1. - occ * heightScale * 5, 0.);
+	//occ /= float(aoIterations);
+	occ *= heightScale;
+	occ *= aoAmount;
+	return max(1. - occ, 0.);
 
 }
 
@@ -997,7 +1004,7 @@ void 	main() {
 
 	//lighting
 	vec3	radiance = vec3(0.); //initialize the out color 
-
+/*
 	{
 		lig.ligPos	= vec3(1., 3., 0.);					//light position
 		lig.ligCol = vec3(1.)*25.;
@@ -1027,7 +1034,7 @@ void 	main() {
 		lig.ligCol = vec3(1.)*9.;	
 		radiance 	+= getDirectionalLight(lig, mate, geom);
 	}
-/*
+
 	{
 		lig.ligPos = vec3(0., 2., 0.);
 		lig.ligDir = vec3(0., 1., 0.);		//light direction
