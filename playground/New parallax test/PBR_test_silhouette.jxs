@@ -22,7 +22,7 @@
 	<texture file="ibl_brdf_lut.png" type="float16" unit="7" rectangle="0" filter="none none" wrap="repeat repeat"/>
 
 	<param name="texRepeat" 			type="vec2"  default="1. 1." />
-	<param name="heightScale"			type="float" default="0.15" />
+	<param name="heightScale"			type="float" default="0.05" />
 	<param name="heightMax"  			type="float" default="0.02" />
 	<param name="triplanarUV"   		type="float" default="0." />
 	<param name="triplanarExp"  		type="float" default="80." />
@@ -30,7 +30,7 @@
 	<param name="parallaxMapping"  		type="float" default="1." />
 	<param name="parallaxIterations" 	type="vec2"  default="1000. 1000." />
 	<param name="selfShadowing"   		type="float" default="1." />
-	<param name="shadowAmount"  		type="float" default="15." />
+	<param name="shadowAmount"  		type="float" default="1000." />
 	<param name="shadowIterations" 		type="vec2"  default="50. 100." />
 
 	<param name="envLig1"   			type="vec3"  default="0. 0. 0." />
@@ -267,7 +267,9 @@ vec4 	triplanarAlb(sampler2D tex){
 }
 
 float getHeight(vec2 uv){
-	return texture(normalTex, uv).b * 0.95 + 0.05; // bias to avoid stepping over the depth map
+	//forcing to look-up the fist mip level avoids partial derivatives problems
+	//aka, random black pixels here and there
+	return textureLod(normalTex, uv, 0.).b;// * 0.95 + 0.05; // bias to avoid stepping over the depth map
 }
 
 mat3	create_tbn_from_texture(vec2 uv){
@@ -444,16 +446,16 @@ float shadow(vec3 L, in material mate, in geometry geom){
 	if(NdotL > 0){
 
 		vec3 	P = vec3(geom.uv/texRepeat, mate.height);
-		float 	delta 	= 0.0001;
+		float 	delta 	= 0.001;
 		mat3 	TBN 	= create_tbn_from_texture(P.xy);
 		vec3 	offset 	= delta * TBN * L;
 				P.xy 	+= offset.xy;
 				P.z 	-= offset.z;
-		int 	maxIterations = 200;
+		int 	maxIterations = 100;
 		float 	sampsUnderSurface = 0;
 		float 	sha = 0.;
-
-		for(int i = 0; i < maxIterations; i++){
+		int i;
+		for(i = 0; i < maxIterations; i++){
 
 			TBN 	= create_tbn_from_texture(P.xy);
 			offset 	= delta * TBN * L;
@@ -462,13 +464,14 @@ float shadow(vec3 L, in material mate, in geometry geom){
 			if(P.z < 0.){
 				return 1. - saturate(sha*shadowAmount);
 			}
-			float 	H = (1. - getHeight(P.xy*texRepeat))*heightScale + 0.0008;
+			float 	H = (1. - getHeight(P.xy*texRepeat))*heightScale + 0.000;
 			if(P.z > H){
 
-				sha = max(sha, (P.z - H)/(1. + float(i)*0.1));	
+				sha = max(sha, (P.z - H)/(1. + float(i)*0.2));	
 			}
 		}
-		return 1. - saturate(sha*shadowAmount);
+
+		return i == maxIterations - 1 ? 1. : 1. - saturate(sha*shadowAmount);
 	}
 	return 0.;
 }
