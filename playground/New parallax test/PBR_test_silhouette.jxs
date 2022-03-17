@@ -35,6 +35,7 @@
 	<param name="aoAmount"  			type="float" default="100." />
 	<param name="aoIterations"   		type="int"   default="5" />
 	<param name="aoOffset"   			type="float" default="0.001" />
+	<param name="secondLayer"  			type="int"   default="0" />
 
 	<param name="envLig1"   			type="vec3"  default="0. 0. 0." />
 	<param name="envLig2"   			type="vec3"  default="0. 0. 0." />
@@ -78,6 +79,7 @@
 		<bind param="aoAmount"   			program="fp" />
 		<bind param="aoIterations"  		program="fp" />
 		<bind param="aoOffset"  			program="fp" />
+		<bind param="secondLayer"   		program="fp" />
 
 		<bind param="envLig1"   			program="fp" />
 		<bind param="envLig2"   			program="fp" />
@@ -129,7 +131,7 @@ uniform float heightScale, heightMax, triplanarUV, triplanarExp, parallaxMapping
 uniform vec2 texRepeat, triplanarTexRepeat, parallaxIterations, shadowIterations;
 uniform mat4 M;
 uniform vec3 envLig1, envLig2, envLig3, envLig4;
-uniform int aoIterations;
+uniform int aoIterations, secondLayer;
 
 in jit_PerVertex {
 	smooth 	vec3 nor;
@@ -278,7 +280,11 @@ float getHeight(vec2 uv){
 	//aka, random black pixels here and there
 	return heightScale >= 0. ? textureLod(normalTex, uv, 0.).b : 1. - textureLod(normalTex, uv, 0.).b;// * 0.95 + 0.05; // bias to avoid stepping over the depth map
 }
-
+float getHeight2(vec2 uv){
+	//forcing to look-up the fist mip level avoids partial derivatives problems
+	//aka, random black pixels here and there
+	return heightScale >= 0. ? textureLod(normalTex, uv, 0.).g : 1. - textureLod(normalTex, uv, 0.).g;// * 0.95 + 0.05; // bias to avoid stepping over the depth map
+}
 /*
 // improved bilinear interpolated texture fetch
 float getHeight( vec2 uv )
@@ -311,52 +317,7 @@ mat3	create_tbn_from_texture(vec2 uv){
 	vec3 bit = cross(tan, nor);
 	return transpose(mat3(tan, bit, nor));
 }
-/*
-void 	parallax(inout material mate, inout geometry geom){
 
-	vec3 	wV = normalize(eye - jit_in.pos);
-	vec3	V 	= geom.transTBN * wV;		//tangent view direction
-	//compute texture coordinates ratio
-			//V.x *= jit_in.texRepeat.x / jit_in.texRepeat.y; 
-	float 	step = 1. / mix(parallaxIterations.x, parallaxIterations.y, abs(dot(vec3(0, 0, 1), V)));
-
-	float 	h;
-	float 	prevh = 0.;
-	vec2 	uv = geom.uv;
-	vec2 	prevuv;
-	vec2 	deltauv = -1.*heightScale * step * V.xy / V.z;
-	float 	currStep;
-
-   	for(currStep = 1.; currStep > 0. ; currStep -= step){
-   		h = getHeight(uv);
-   		if(h >= currStep){
-   			prevuv = uv - deltauv;
-   			prevh = getHeight(prevuv);
-   			break;
-   		}
-
-   		V = create_tbn_from_texture()*wV;
-   		deltauv = -1.*heightScale * step * V.xy / V.z;
-   		uv += deltauv;
-   	}
-
-    // get depth after and before collision for linear interpolation
-    float 	afterDepth  = h - currStep;
-    float 	beforeDepth = prevh - currStep - step;
-
-    // interpolation of texture coordinates
-    float 	weight = afterDepth / (afterDepth - beforeDepth);
-    float 	inv_weight = 1. - weight;
-   	//float weight = h == prevh ? h : h / (h - prevh);
-   			uv 	= prevuv * weight + uv * inv_weight;
-   			h 	= prevh  * weight + h  * inv_weight;
-
-   			geom.uv = uv;
-   			mate.height = h;
-   	
-   		//if(geom.uv.x > jit_in.texRepeat.x || geom.uv.y > jit_in.texRepeat.y || geom.uv.x < 0.0 || geom.uv.y < 0.0){discard; }
-}
-*/
 void binarySearch(inout vec3 P, inout float H, in vec3 offset){
 	offset *= 0.5;
 	P.xy += offset.xy;
@@ -939,6 +900,29 @@ void getNormAndAoFromDerivatives(inout geometry geom, inout material mate, vec3 
 			mate.occ = getAO(geom, Hll);
 
 }
+void getNormAndAoFromDerivatives2(inout geometry geom, inout material mate, vec3 normN){
+
+	// 3 taps: better quality than float2(ddx fine(H), ddy fine(H)).
+	vec2 	texDx = dFdx(geom.uv), texDy = dFdy(geom.uv);
+	vec3 	dPdx = dFdx(geom.pos), dPdy = dFdy(geom.pos);
+	float 	Hll = getHeight2(geom.uv);
+	float 	Hlr = getHeight2(geom.uv + texDx); //*** put back texDx
+	float 	Hul = getHeight2(geom.uv + texDy);
+	vec2 	deriv = vec2(Hlr - Hll, Hul - Hll);
+
+			deriv *= abs(heightScale*0.1);
+
+	// Equation 3 in [Mikkelsen 2010].
+	vec3 	vR1 = cross(dPdy, normN);
+	vec3 	vR2 = cross(normN, dPdx);
+	float 	det = dot(dPdx, vR1);
+	float 	eps = 1.192093e-15F;
+	float 	sign_det = det < 0.0 ? -1.0 : 1.0;
+	float 	s = sign_det/max(eps, abs(det));
+			geom.N = normalize(normN - s*(deriv.x*vR1 + deriv.y*vR2));
+			//mate.occ *= getAO(geom, Hll);
+
+}
 void 	main() {
 
 	material 	mate;
@@ -964,6 +948,13 @@ void 	main() {
 			geom.pos    -= normN * mate.height;// * heightScale;// * 20.;	
 			//geom.N = (M * vec4(normalize( (normalize(jit_in.modelNor) - heightScale * 1000. * vec3(texture(normalTex, geom.uv).rg, 0.)) ), 0.)).xyz;
 			getNormAndAoFromDerivatives(geom, mate, normN);
+
+			//parallax(mate, geom);
+			//geom.pos    -= geom.N * mate.height;// * heightScale;// * 20.;	
+			if(secondLayer == 1){
+				getNormAndAoFromDerivatives2(geom, mate, geom.N);
+				geom.pos    -= geom.N * mate.height;// * heightScale;// * 20.;
+			}
 
 
 /*
