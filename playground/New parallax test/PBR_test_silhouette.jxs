@@ -35,7 +35,7 @@
 	<param name="aoAmount"  			type="float" default="100." />
 	<param name="aoIterations"   		type="int"   default="5" />
 	<param name="aoOffset"   			type="float" default="0.001" />
-	<param name="secondLayer"  			type="int"   default="0" />
+	<param name="secondLayer"  			type="int"   default="1" />
 
 	<param name="envLig1"   			type="vec3"  default="0. 0. 0." />
 	<param name="envLig2"   			type="vec3"  default="0. 0. 0." />
@@ -370,6 +370,50 @@ void parallax(inout material mate, inout geometry geom){
 			//P.xy = mix(prevP.xy, P.xy, weight);
 			//findMean()
 			binarySearch(P, H, offset);
+			geom.uv = texRepeat * P.xy;
+			mate.height = H;
+			return;
+		}
+		prevH = H;
+		prevP = P;
+	}
+}
+
+void parallax2(inout material mate, inout geometry geom){
+	vec3 	V = normalize(eye - jit_in.pos);
+	vec3 	P; 
+			P.xy = geom.uv/texRepeat;
+			P.z = 0.;
+
+	float H;
+	float prevH;
+	vec3 prevP;
+	vec3 offset;
+
+	int maxIterations = 500;
+	float delta = 0.001;
+
+	//linear search
+	for(int i = 0; i < maxIterations; i++){
+		mat3 	TBN = create_tbn_from_texture(P.xy);
+		 		offset = delta * TBN * V;
+				P.xy -= offset.xy;
+				P.z += offset.z;
+		if(P.z < 0.){
+			discard;
+			return;
+		}
+		H = (1. - getHeight2(P.xy*texRepeat))*0.005;//abs(heightScale*0.1);
+		if(P.z > H){
+			//attemp linear interpolation
+
+			//float d0 = abs(P.z - prevH);
+			//float d1 = abs(P.z - H);
+			//float weight = d0 / (d0 + d1);
+			//H = mix(prevH, H, weight);
+			//P.xy = mix(prevP.xy, P.xy, weight);
+			//findMean()
+			//binarySearch(P, H, offset);
 			geom.uv = texRepeat * P.xy;
 			mate.height = H;
 			return;
@@ -900,26 +944,26 @@ void getNormAndAoFromDerivatives(inout geometry geom, inout material mate, vec3 
 			mate.occ = getAO(geom, Hll);
 
 }
-void getNormAndAoFromDerivatives2(inout geometry geom, inout material mate, vec3 normN){
+void getNormAndAoFromDerivatives2(inout geometry geom, inout material mate){
 
-	// 3 taps: better quality than float2(ddx fine(H), ddy fine(H)).
-	vec2 	texDx = dFdx(geom.uv), texDy = dFdy(geom.uv);
-	vec3 	dPdx = dFdx(geom.pos), dPdy = dFdy(geom.pos);
-	float 	Hll = getHeight2(geom.uv);
-	float 	Hlr = getHeight2(geom.uv + texDx); //*** put back texDx
-	float 	Hul = getHeight2(geom.uv + texDy);
+	vec3 modelPos = (transpose(M)*vec4(geom.pos, 0)).xyz;
+	vec2 	texDx = dFdx(modelPos.xz), texDy = dFdy(modelPos.xz);
+	vec3	dPdx = dFdx(modelPos), dPdy = dFdy(modelPos);
+	float 	Hll = getHeight2(modelPos.xz);
+	float 	Hlr = getHeight2(modelPos.xz + texDx); //*** put back texDx
+	float 	Hul = getHeight2(modelPos.xz + texDy);
 	vec2 	deriv = vec2(Hlr - Hll, Hul - Hll);
 
-			deriv *= abs(heightScale*0.1);
+			deriv *= 0.001;//abs(heightScale*0.1);
 
 	// Equation 3 in [Mikkelsen 2010].
-	vec3 	vR1 = cross(dPdy, normN);
-	vec3 	vR2 = cross(normN, dPdx);
+	vec3 	vR1 = cross(dPdy, geom.N);
+	vec3 	vR2 = cross(geom.N, dPdx);
 	float 	det = dot(dPdx, vR1);
 	float 	eps = 1.192093e-15F;
 	float 	sign_det = det < 0.0 ? -1.0 : 1.0;
 	float 	s = sign_det/max(eps, abs(det));
-			geom.N = normalize(normN - s*(deriv.x*vR1 + deriv.y*vR2));
+			geom.N = normalize(geom.N - s*(deriv.x*vR1 + deriv.y*vR2));
 			//mate.occ *= getAO(geom, Hll);
 
 }
@@ -938,7 +982,6 @@ void 	main() {
 
 	vec3 	normN 			= normalize(jit_in.nor);
 
-
 			//geom.pos += normN*geomError*0.5;
 	 		
 	 		geom.TBN 		= getTBN(normN, geom.pos, geom.uv);
@@ -949,14 +992,16 @@ void 	main() {
 			//geom.N = (M * vec4(normalize( (normalize(jit_in.modelNor) - heightScale * 1000. * vec3(texture(normalTex, geom.uv).rg, 0.)) ), 0.)).xyz;
 			getNormAndAoFromDerivatives(geom, mate, normN);
 
+/*
 			//parallax(mate, geom);
 			//geom.pos    -= geom.N * mate.height;// * heightScale;// * 20.;	
 			if(secondLayer == 1){
-				getNormAndAoFromDerivatives2(geom, mate, geom.N);
+				vec3 modelPos = jit_in.modelPos - normalize(jit_in.modelNor) * mate.height;
+				getNormAndAoFromDerivatives2(geom, mate);
 				geom.pos    -= geom.N * mate.height;// * heightScale;// * 20.;
 			}
 
-
+*/
 /*
 	 		getTriTBN(normN, geom);
 
@@ -1090,7 +1135,6 @@ void 	main() {
  	//gamma corrections
 	col.rgb /= col.rgb + vec3(1.);  //from HDI lo LDI
 	//lin = ACES(lin);
-
 
 	col.rgb = lin2sRGB(col.rgb);	//gamma correction
 	col.a = 1.;
