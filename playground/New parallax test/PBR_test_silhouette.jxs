@@ -276,7 +276,7 @@ vec4 	triplanarAlb(sampler2D tex){
 float getHeight(vec2 uv){
 	//forcing to look-up the fist mip level avoids partial derivatives problems
 	//aka, random black pixels here and there
-	return textureLod(normalTex, uv, 0.).b;// * 0.95 + 0.05; // bias to avoid stepping over the depth map
+	return heightScale >= 0. ? textureLod(normalTex, uv, 0.).b : 1. - textureLod(normalTex, uv, 0.).b;// * 0.95 + 0.05; // bias to avoid stepping over the depth map
 }
 
 /*
@@ -364,7 +364,7 @@ void binarySearch(inout vec3 P, inout float H, in vec3 offset){
 	for(int j = 0; j < 10; j++){
 		//prevP = P;
 		//prevH = H;
-		H = (1. - getHeight(P.xy*texRepeat))*heightScale;
+		H = (1. - getHeight(P.xy*texRepeat))*abs(heightScale);
 		offset *= 0.5;
 		P += P.z > H ? vec3(offset.xy, -offset.z) : vec3(-offset.xy, offset.z);
 	}
@@ -398,7 +398,7 @@ void parallax(inout material mate, inout geometry geom){
 			discard;
 			return;
 		}
-		H = (1. - getHeight(P.xy*texRepeat))*heightScale ;
+		H = (1. - getHeight(P.xy*texRepeat))*abs(heightScale);
 		if(P.z > H){
 			//attemp linear interpolation
 
@@ -428,7 +428,7 @@ void 	parallaxTriplanar(inout vec4 triplanar_uv, in mat3 tbn){
 	float 	prevh = 0.;
 	vec2 	uv = triplanar_uv.xy;
 	vec2 	prevuv;
-	vec2 	deltauv = -1.*heightScale * step * V.xy / V.z;
+	vec2 	deltauv = -1.*abs(heightScale) * step * V.xy / V.z;
 	float 	currStep;
 
    	for(currStep = 1.; currStep > 0. ; currStep -= step){
@@ -480,7 +480,7 @@ float shadow(vec3 L, in material mate, in geometry geom){
 		vec3 	offset 	= delta * TBN * L;
 				P.xy 	+= offset.xy;
 				P.z 	-= offset.z;
-		int 	maxIterations = 100;
+		int 	maxIterations = 200;
 		float 	sampsUnderSurface = 0;
 		float 	sha = 0.;
 		int i;
@@ -493,7 +493,7 @@ float shadow(vec3 L, in material mate, in geometry geom){
 			if(P.z < 0.){
 				return 1. - saturate(sha*shadowAmount);
 			}
-			float 	H = (1. - getHeight(P.xy*texRepeat))*heightScale + 0.000;
+			float 	H = (1. - getHeight(P.xy*texRepeat))*abs(heightScale);
 			if(P.z > H){
 
 				sha = max(sha, (P.z - H)/(1. + float(i)*0.2));	
@@ -806,7 +806,7 @@ void getNormTex(sampler2D tex, inout geometry geom){
 	geom.tanN *= 2.;
 	geom.tanN -= 1.;
 	geom.tanN.y *= -1.;
-	float ratio = heightScale/heightMax;
+	float ratio = abs(heightScale)/heightMax;
 	ratio *= ratio;
 	//ratio *= ratio;
 	geom.tanN.xy *= min(ratio, 1.);
@@ -884,6 +884,11 @@ void blendHeight(vec3 N, inout geometry geom){
 			geom.triZ.z = blend.z;
 }
 
+float getHeightDifference(vec2 uv, float lod, float currH){
+	return heightScale >= 0. ? 	max(0., (textureLod(normalTex, uv, lod).b - currH)) : 
+								max(0., (1. - (textureLod(normalTex, uv, lod).b) - currH));
+}
+
 float getAO(in geometry geom, float currH){
 
 	float 	occ = 0.;
@@ -893,10 +898,10 @@ float getAO(in geometry geom, float currH){
 
 	for(int i = 0; i < aoIterations; i++){
 		float toAdd = 0.;
-		toAdd += max(0., (textureLod(normalTex, geom.uv - off.xy, lod).b - currH));
-		toAdd += max(0., (textureLod(normalTex, geom.uv + off.xy, lod).b - currH));
-		toAdd += max(0., (textureLod(normalTex, geom.uv - off.yx, lod).b - currH));
-		toAdd += max(0., (textureLod(normalTex, geom.uv + off.yx, lod).b - currH));
+		toAdd += getHeightDifference(geom.uv - off.xy, lod, currH);
+		toAdd += getHeightDifference(geom.uv + off.xy, lod, currH);
+		toAdd += getHeightDifference(geom.uv - off.yx, lod, currH);
+		toAdd += getHeightDifference(geom.uv + off.yx, lod, currH);
 		occ += toAdd*intensity;
 		off *= 2.;
 		lod += 2.;
@@ -904,10 +909,10 @@ float getAO(in geometry geom, float currH){
 	}
 
 	//occ /= float(aoIterations);
-	occ *= heightScale;
+	occ *= abs(heightScale);
 	occ *= aoAmount;
 	occ /= 1. + occ;
-	return max(1. - occ, 0.);
+	return 1. - occ;
 
 }
 
@@ -921,7 +926,7 @@ void getNormAndAoFromDerivatives(inout geometry geom, inout material mate, vec3 
 	float 	Hul = getHeight(geom.uv + texDy);
 	vec2 	deriv = vec2(Hlr - Hll, Hul - Hll);
 
-			deriv *= heightScale;
+			deriv *= abs(heightScale);
 
 	// Equation 3 in [Mikkelsen 2010].
 	vec3 	vR1 = cross(dPdy, normN);
@@ -943,7 +948,7 @@ void 	main() {
 			geom.uv 		= jit_in.uv;
 			geom.pos  		= jit_in.pos;
 
-
+			//const bool pos_neg_parallax = heightScale >= 0.;
 	// uv_coordinates, blending factor, height
 			//getTriplanarUV_and_blend(geom);
 
