@@ -881,7 +881,7 @@ float getAO(in geometry geom, float currH){
 
 	float occ = 0.;
 
-	vec2 off = vec2(0.001, 0.);
+	vec2 off = vec2(0.001, 0.) / texRepeat;
 	occ += max(0., (textureLod(normalTex, geom.uv - off.xy, 0.).b - currH));
 	occ += max(0., (textureLod(normalTex, geom.uv + off.xy, 0.).b - currH));
 	occ += max(0., (textureLod(normalTex, geom.uv - off.yx, 0.).b - currH));
@@ -899,7 +899,7 @@ float getAO(in geometry geom, float currH){
 	occ += max(0., (textureLod(normalTex, geom.uv - off.yx, 4.).b - currH))*0.25;
 	occ += max(0., (textureLod(normalTex, geom.uv + off.yx, 4.).b - currH))*0.25;
 
-	return max(1. - occ * heightScale * 10, 0.);
+	return max(1. - occ * heightScale * 5, 0.);
 
 }
 
