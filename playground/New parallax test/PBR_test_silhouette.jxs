@@ -906,6 +906,7 @@ float getAO(in geometry geom, float currH){
 	//occ /= float(aoIterations);
 	occ *= heightScale;
 	occ *= aoAmount;
+	occ /= 1. + occ;
 	return max(1. - occ, 0.);
 
 }
@@ -1004,7 +1005,7 @@ void 	main() {
 
 	//lighting
 	vec3	radiance = vec3(0.); //initialize the out color 
-/*
+
 	{
 		lig.ligPos	= vec3(1., 3., 0.);					//light position
 		lig.ligCol = vec3(1.)*25.;
@@ -1027,7 +1028,7 @@ void 	main() {
 		lig.ligCol = vec3(1.)*9.;	
 		radiance 	+= getPointLight(lig, mate, geom);
 	}
-
+/*
 
 	{
 		lig.ligDir = normalize(vec3(0., 1., 0.));		//light direction
