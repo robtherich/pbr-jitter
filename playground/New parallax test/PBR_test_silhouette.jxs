@@ -8,6 +8,7 @@
 	<param name="MVP" 	type="mat4" state="MODELVIEW_PROJECTION_MATRIX" />
 	<param name="MV"	type="mat4" state="MODELVIEW_MATRIX" />
 	<param name="M" 	type="mat4" state="WORLD_MATRIX" />
+	<param name="invM"  type="mat4" state="WORLD_MATRIX" transform="INVERSE" />
 	<param name="NM"	type="mat3" state="NORMAL_MATRIX" />
 	<param name="eye" 	type="vec3" state="CAMERA_POSITION" />
 	//textures
@@ -35,7 +36,7 @@
 	<param name="aoAmount"  			type="float" default="100." />
 	<param name="aoIterations"   		type="int"   default="5" />
 	<param name="aoOffset"   			type="float" default="0.001" />
-	<param name="secondLayer"  			type="int"   default="1" />
+	<param name="secondaryHeightScale"  type="float"   default="0.001" />
 
 	<param name="envLig1"   			type="vec3"  default="0. 0. 0." />
 	<param name="envLig2"   			type="vec3"  default="0. 0. 0." />
@@ -52,6 +53,7 @@
 		<bind param="MV"	program="vp" />
 		<bind param="M" 	program="vp" />
 		<bind param="M" 	program="fp" />
+		<bind param="invM"  program="fp" />
 		<bind param="NM"	program="vp" />
 		<bind param="eye" 	program="fp" />
 		//textures
@@ -79,7 +81,7 @@
 		<bind param="aoAmount"   			program="fp" />
 		<bind param="aoIterations"  		program="fp" />
 		<bind param="aoOffset"  			program="fp" />
-		<bind param="secondLayer"   		program="fp" />
+		<bind param="secondaryHeightScale"  program="fp" />
 
 		<bind param="envLig1"   			program="fp" />
 		<bind param="envLig2"   			program="fp" />
@@ -127,11 +129,11 @@ void main() {
 uniform vec3 eye;
 uniform sampler2D albedoTex, normalTex, RMOHTex, equirectTex, tanTex, norTex, integMap;
 uniform samplerCube irradianceTex;
-uniform float heightScale, heightMax, triplanarUV, triplanarExp, parallaxMapping, selfShadowing, shadowAmount, aoAmount, aoOffset;
+uniform float heightScale, heightMax, triplanarUV, triplanarExp, parallaxMapping, selfShadowing, shadowAmount, aoAmount, aoOffset, secondaryHeightScale;
 uniform vec2 texRepeat, triplanarTexRepeat, parallaxIterations, shadowIterations;
-uniform mat4 M;
+uniform mat4 M, invM;
 uniform vec3 envLig1, envLig2, envLig3, envLig4;
-uniform int aoIterations, secondLayer;
+uniform int aoIterations;
 
 in jit_PerVertex {
 	smooth 	vec3 nor;
@@ -946,15 +948,32 @@ void getNormAndAoFromDerivatives(inout geometry geom, inout material mate, vec3 
 }
 void getNormAndAoFromDerivatives2(inout geometry geom, inout material mate){
 
-	vec3 modelPos = (transpose(M)*vec4(geom.pos, 0)).xyz;
-	vec2 	texDx = dFdx(modelPos.xz), texDy = dFdy(modelPos.xz);
-	vec3	dPdx = dFdx(modelPos), dPdy = dFdy(modelPos);
-	float 	Hll = getHeight2(modelPos.xz);
-	float 	Hlr = getHeight2(modelPos.xz + texDx); //*** put back texDx
-	float 	Hul = getHeight2(modelPos.xz + texDy);
+
+	vec3 modelPos = (invM*vec4(geom.pos, 1)).xyz;
+	vec3 modelNor = (invM*vec4(geom.N, 0)).xyz;
+
+	vec2 uv;
+	float dirx = abs(modelNor.x);
+	float diry = abs(modelNor.y);
+	float dirz = abs(modelNor.z);
+
+	if(dirx > diry && dirx > dirz){
+		uv = modelPos.yz;
+	}
+	if(diry > dirx && diry > dirz){
+		uv = modelPos.xz;
+	}
+	if(dirz > dirx && dirz > diry){
+		uv = modelPos.xy;
+	}
+	vec2 	texDx = dFdx(geom.uv), texDy = dFdy(geom.uv);
+	vec3	dPdx = dFdx(geom.pos), dPdy = dFdy(geom.pos);
+	float 	Hll = getHeight2(geom.uv);
+	float 	Hlr = getHeight2(geom.uv + texDx*(1. - mate.height)); //*** put back texDx
+	float 	Hul = getHeight2(geom.uv + texDy*(1. - mate.height));
 	vec2 	deriv = vec2(Hlr - Hll, Hul - Hll);
 
-			deriv *= 0.001;//abs(heightScale*0.1);
+			deriv *= secondaryHeightScale;//abs(heightScale*0.1);
 
 	// Equation 3 in [Mikkelsen 2010].
 	vec3 	vR1 = cross(dPdy, geom.N);
@@ -992,16 +1011,15 @@ void 	main() {
 			//geom.N = (M * vec4(normalize( (normalize(jit_in.modelNor) - heightScale * 1000. * vec3(texture(normalTex, geom.uv).rg, 0.)) ), 0.)).xyz;
 			getNormAndAoFromDerivatives(geom, mate, normN);
 
-/*
+
 			//parallax(mate, geom);
 			//geom.pos    -= geom.N * mate.height;// * heightScale;// * 20.;	
-			if(secondLayer == 1){
-				vec3 modelPos = jit_in.modelPos - normalize(jit_in.modelNor) * mate.height;
-				getNormAndAoFromDerivatives2(geom, mate);
-				geom.pos    -= geom.N * mate.height;// * heightScale;// * 20.;
-			}
+			vec3 modelPos = jit_in.modelPos - normalize(jit_in.modelNor) * mate.height;
+			getNormAndAoFromDerivatives2(geom, mate);
+			geom.pos    -= geom.N * mate.height;// * heightScale;// * 20.;
 
-*/
+
+
 /*
 	 		getTriTBN(normN, geom);
 
