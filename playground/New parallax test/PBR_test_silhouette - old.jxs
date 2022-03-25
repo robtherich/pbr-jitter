@@ -24,6 +24,7 @@
 
 	<param name="texRepeat" 			type="vec2"  default="1. 1." />
 	<param name="heightScale"			type="float" default="0.05" />
+	<param name="heightMax"  			type="float" default="0.02" />
 	<param name="triplanarUV"   		type="float" default="0." />
 	<param name="triplanarExp"  		type="float" default="80." />
 	<param name="triplanarTexRepeat" 	type="vec2"  default="2. 2." />
@@ -68,6 +69,7 @@
 		<bind param="texRepeat"				program="vp" />
 		<bind param="texRepeat"  			program="fp" />
 		<bind param="heightScale"   		program="fp" />
+		<bind param="heightMax"   			program="fp" />
 		<bind param="triplanarUV"   		program="fp" />
 		<bind param="triplanarExp"			program="fp" />
 		<bind param="triplanarTexRepeat" 	program="fp" />
@@ -157,13 +159,8 @@ struct 	geometry{
 	vec3	tanN;
 	vec3	pos;
 	vec2	uv;
-
-	// heightmap
-	float 	height;	// Y
-	mat3    TBN;	// Y
-	mat3    transTBN;	// Y
-
-	// triplanar parallax
+	mat3    TBN;
+	mat3    transTBN;
 	vec4	triX;
 	vec4  	triY;
 	vec4  	triZ;
@@ -283,7 +280,6 @@ vec4 	triplanarAlb(sampler2D tex){
 float getHeight(vec2 uv){
 	//forcing to look-up the fist mip level avoids partial derivatives problems
 	//aka, random black pixels here and there
-	
 	return heightScale >= 0. ? textureLod(normalTex, uv, 0.).b : 1. - textureLod(normalTex, uv, 0.).b;// * 0.95 + 0.05; // bias to avoid stepping over the depth map
 }
 float getHeight2(vec2 uv){
@@ -291,8 +287,29 @@ float getHeight2(vec2 uv){
 	//aka, random black pixels here and there
 	return heightScale >= 0. ? textureLod(normalTex, uv, 0.).g : 1. - textureLod(normalTex, uv, 0.).g;// * 0.95 + 0.05; // bias to avoid stepping over the depth map
 }
+/*
+// improved bilinear interpolated texture fetch
+float getHeight( vec2 uv )
+{
+    vec2 res = vec2(1024.0, 1024.0);//textureSize( sam );
 
-mat3 create_tbn_from_texture(vec2 uv){
+    vec2 st = uv*res - 0.5;
+
+    vec2 iuv = floor( st );
+    vec2 fuv = fract( st );
+
+    float a = texture( normalTex, (iuv+vec2(0.5,0.5))/res ).b;
+    float b = texture( normalTex, (iuv+vec2(1.5,0.5))/res ).b;
+    float c = texture( normalTex, (iuv+vec2(0.5,1.5))/res ).b;
+    float d = texture( normalTex, (iuv+vec2(1.5,1.5))/res ).b;
+
+    return mix( mix( a, b, fuv.x),
+                mix( c, d, fuv.x), fuv.y );
+}
+*/
+
+
+mat3	create_tbn_from_texture(vec2 uv){
 
 	vec3 tan = normalize(texture(tanTex, uv).rgb*2. - 1.);
 	vec3 nor = normalize(texture(norTex, uv).rgb*2. - 1.);
@@ -300,7 +317,6 @@ mat3 create_tbn_from_texture(vec2 uv){
 		tan = (M * vec4(tan, 0.)).xyz;
 		nor = (M * vec4(nor, 0.)).xyz;
 	vec3 bit = cross(tan, nor);
-
 	return transpose(mat3(tan, bit, nor));
 }
 
@@ -317,7 +333,11 @@ void binarySearch(inout vec3 P, inout float H, in vec3 offset){
 	}
 }
 
-void parallax(inout geometry geom){
+void findMean(in float prevH, inout float H, in vec3 P){
+
+}
+
+void parallax(inout material mate, inout geometry geom){
 	vec3 	V = normalize(eye - jit_in.pos);
 	vec3 	P; 
 			P.xy = geom.uv/texRepeat;
@@ -353,8 +373,7 @@ void parallax(inout geometry geom){
 			//findMean()
 			binarySearch(P, H, offset);
 			geom.uv = texRepeat * P.xy;
-			geom.height = H;
-			geom.pos    -= geom.N * geom.height;
+			mate.height = H;
 			return;
 		}
 		prevH = H;
@@ -362,6 +381,49 @@ void parallax(inout geometry geom){
 	}
 }
 
+void parallax2(inout material mate, inout geometry geom){
+	vec3 	V = normalize(eye - jit_in.pos);
+	vec3 	P; 
+			P.xy = geom.uv/texRepeat;
+			P.z = 0.;
+
+	float H;
+	float prevH;
+	vec3 prevP;
+	vec3 offset;
+
+	int maxIterations = 500;
+	float delta = 0.001;
+
+	//linear search
+	for(int i = 0; i < maxIterations; i++){
+		mat3 	TBN = create_tbn_from_texture(P.xy);
+		 		offset = delta * TBN * V;
+				P.xy -= offset.xy;
+				P.z += offset.z;
+		if(P.z < 0.){
+			discard;
+			return;
+		}
+		H = (1. - getHeight2(P.xy*texRepeat))*0.005;//abs(heightScale*0.1);
+		if(P.z > H){
+			//attemp linear interpolation
+
+			//float d0 = abs(P.z - prevH);
+			//float d1 = abs(P.z - H);
+			//float weight = d0 / (d0 + d1);
+			//H = mix(prevH, H, weight);
+			//P.xy = mix(prevP.xy, P.xy, weight);
+			//findMean()
+			//binarySearch(P, H, offset);
+			geom.uv = texRepeat * P.xy;
+			mate.height = H;
+			return;
+		}
+		prevH = H;
+		prevP = P;
+	}
+}
 void 	parallaxTriplanar(inout vec4 triplanar_uv, in mat3 tbn){
 
 	vec3	V 	= normalize(tbn * (eye - jit_in.pos));		//tangent view direction
@@ -414,12 +476,12 @@ vec3 hash( uvec3 x, float size )
     return jitt * size;
 }
 
-float shadow(vec3 L, in geometry geom){
+float shadow(vec3 L, in material mate, in geometry geom){
 
 	float NdotL = dot(geom.N, L);
 	if(NdotL > 0){
 
-		vec3 	P = vec3(geom.uv/texRepeat, geom.height);
+		vec3 	P = vec3(geom.uv/texRepeat, mate.height);
 		float 	delta 	= 0.001;
 		mat3 	TBN 	= create_tbn_from_texture(P.xy);
 		vec3 	offset 	= delta * TBN * L;
@@ -450,6 +512,91 @@ float shadow(vec3 L, in geometry geom){
 	return 0.;
 }
 
+/*
+float 	shadow(vec3 L, vec3 N, vec2 initialUV, float initialHeight){
+
+	float NdotL = dot(N, L);
+   	if(NdotL > 0.0) {
+		float step = 0.01;//1. / mix(shadowIterations.x, shadowIterations.y, abs(dot(N, L)));
+
+		//float k = 5.;
+		vec2 	deltauv = heightScale * step * L.xy / L.z;
+		vec2 	uv = initialUV + deltauv;
+		float 	underSurface = 0.;
+		initialHeight += step;
+		int maxSearch = 0;
+		float jitterSize = (1. - NdotL);
+			jitterSize *= jitterSize;
+			jitterSize *= 0.;//0.015;
+	   	for(float currH = initialHeight; currH < 1.; currH += step){
+	   		vec2 jitt = hash(uvec3(initialUV*1000, jit_in.modelNor), jitterSize).xy;
+	   		float texH = getHeight(uv + jitt) - 0.0;
+	   		float diffH = currH - texH;
+	   		if(diffH < 0.){
+	   			underSurface += 1.;
+	   		}
+	   		uv += deltauv;
+	   		maxSearch += 1;
+	   		if(maxSearch > 80){break;}
+	   	}
+	   	float sha = saturate(1. - (underSurface*0.05));
+	   	sha *= sha;
+	   	sha *= sha;
+	   	return sha;
+   	}
+   	return 0.;
+}
+*/
+/*
+float 	shadow(vec3 L, vec3 N, vec2 initialTexCoord, float initialHeight){
+
+	//L.z *= -1.;
+	//N.y *= -1.;
+   // calculate lighting only for surface oriented to the light source
+   float NdotL = dot(vec3(0., 0., 1.), L);
+   if(NdotL < 0.0) {return 0.;}
+
+    // calculate initial parameters
+    float numSamplesUnderSurface = 0.;
+    float shadowMultiplier = 0.;
+    float numLayers = mix(shadowIterations.x, shadowIterations.y, abs(NdotL));
+    initialHeight = 1. - initialHeight;
+    float layerHeight = initialHeight / numLayers;
+    vec2 texStep = -1.*heightScale * L.xy / L.z / numLayers; 
+
+    // current parameters
+    float currentLayerHeight = initialHeight - layerHeight;
+    vec2 currentTextureCoords = initialTexCoord - texStep;
+    float heightFromTexture = 1. - getHeight(currentTextureCoords);
+    float stepIndex = 1.;
+
+    //int count = 0;
+
+    // while point is below depth 0.0 )
+    while(currentLayerHeight > 0.){
+
+        // if point is under the surface
+        if(heightFromTexture < currentLayerHeight){
+
+            // calculate partial shadowing factor
+            numSamplesUnderSurface += 1.;
+            float newShadowMultiplier = (currentLayerHeight  - heightFromTexture)*(stepIndex / numLayers);
+            shadowMultiplier = max(shadowMultiplier, newShadowMultiplier);
+        }
+
+        // offset to the next layer
+        stepIndex += 1.;
+        currentLayerHeight -= layerHeight;
+        currentTextureCoords -= texStep;
+        heightFromTexture = 1. - getHeight(currentTextureCoords);
+        //count += 1;
+    }
+    shadowMultiplier *= shadowAmount;
+    // Shadowing factor should be 1 if there were no points under the surface
+    return (numSamplesUnderSurface < 1.) ? 1. : 1. - saturate(shadowMultiplier);
+    //return abs(NdotL);
+}
+*/
 //PBR functions
 vec3 	fresnelSchlickRoughness(float HdotV, vec3 F0, float rou){
 	float 	x = saturate(1. - HdotV); //x^5
@@ -516,13 +663,13 @@ vec3	getPointLight(in light lig, in material mate, in geometry geom){
 	vec3	rad 		= lig.ligCol / (ligDis*ligDis);						//radiance
 	vec3	ligDir 		= ligMinPos / ligDis;	//light pos in tangent space
 	bool	compute 	= true;//rad.x+rad.y+rad.z > 0.05;
-	return  compute ? 	( selfShadowing == 1. ? shadow(ligDir, geom) : 1.) * 
+	return  compute ? 	( selfShadowing == 1. ? shadow(ligDir, mate, geom) : 1.) * 
 						getRadiance(geom.V, geom.N, L, rad, geom.pos, mate.alb, mate.rou, mate.met) :
 						vec3(0.); //get radiance for this light
 }	
 vec3	getDirectionalLight(in light lig, in material mate, in geometry geom){
 	
-	return  ( selfShadowing == 1. ? shadow(lig.ligDir, geom) : 1.) * 
+	return  ( selfShadowing == 1. ? shadow(lig.ligDir, mate, geom) : 1.) * 
 			getRadiance(geom.V, geom.N, lig.ligDir, lig.ligCol, geom.pos, mate.alb, mate.rou, mate.met); //get radiance for this light
 }
 vec3  	getSpotLight(in light lig, in material mate, in geometry geom){
@@ -588,6 +735,31 @@ void getTriplanarUV_and_blend(inout geometry geom){
 
 }
 
+/*
+mat3 getTBN(vec2 uv){
+	// derivation of the fragment position
+	vec3 pos_dx = dFdx( jit_in.pos );
+	vec3 pos_dy = dFdy( jit_in.pos );
+	// derivations of the texture coordinate
+	vec2 texC_dx = dFdx( uv );
+	vec2 texC_dy = dFdy( uv );
+	// tangent vector and binormal vector
+	vec3 t = texC_dy.y * pos_dx - texC_dx.y * pos_dy;
+	vec3 b = texC_dx.x * pos_dy - texC_dy.x * pos_dx;
+
+	//t *= sign(texC_dx.x);
+
+	// get new tangent from a given mesh normal
+	vec3 n = normalize(jit_in.nor);
+
+	t = t - n * dot( t, n ); // orthonormalization ot the tangent vectors
+	b = b - n * dot( b, n ); // orthonormalization of the bitangent vectors to the normal vector 
+
+	t = normalize(t);
+	b = normalize(b);
+    return mat3(t, b, n);
+}
+*/
 void getTriplanarNormTex(sampler2D tex, vec3 N, inout geometry geom){
 	// Tangent Reconstruction
 	// Triplanar uvs
@@ -649,28 +821,74 @@ void getNormTex(sampler2D tex, inout geometry geom){
 }
 
 
-void getTBN(inout geometry geom)
+mat3 getTBN( vec3 N, vec3 pos, vec2 uv)
 {
     // get edge vectors of the pixel triangle
 
     //pos += hash(uvec3(pos*1000), 0.0005);
-    vec3 dp1 = dFdx( geom.pos );
-    vec3 dp2 = dFdy( geom.pos );
+    vec3 dp1 = dFdx( pos );
+    vec3 dp2 = dFdy( pos );
     //uv += hash(uvec3(pos*1000), 0.0002).xy;
-    vec2 duv1 = dFdx( geom.uv );
-    vec2 duv2 = dFdy( geom.uv );
+    vec2 duv1 = dFdx( uv );
+    vec2 duv2 = dFdy( uv );
  
     // solve the linear system
-    vec3 dp2perp = cross( dp2, geom.N );
-    vec3 dp1perp = cross( geom.N, dp1 );
+    vec3 dp2perp = cross( dp2, N );
+    vec3 dp1perp = cross( N, dp1 );
     vec3 T = dp2perp * duv1.x + dp1perp * duv2.x;
     vec3 B = dp2perp * duv1.y + dp1perp * duv2.y;
 
     float invmax = inversesqrt( max( dot(T,T), dot(B,B) ) );
  
     // construct a scale-invariant frame 
-    geom.TBN = mat3( T * invmax, B * invmax, geom.N );
-    geom.transTBN = transpose(geom.TBN);
+    return mat3( T * invmax, B * invmax, N );
+}
+void getTriTBN( vec3 N, inout geometry geom)
+{
+	geom.triTBNX 	= getTBN(N, geom.pos, geom.triX.xy);
+	geom.triTBNY 	= getTBN(N, geom.pos, geom.triY.xy);
+	geom.triTBNZ 	= getTBN(N, geom.pos, geom.triZ.xy);
+
+	geom.triTransTBNX = transpose(geom.triTBNX);
+	geom.triTransTBNY = transpose(geom.triTBNY);
+	geom.triTransTBNZ = transpose(geom.triTBNZ);
+}
+/*
+void blendHeight(inout geometry geom){
+
+	float hX = texture(RMOHTex, geom.triX.xy).a * geom.triX.z;
+	float hY = texture(RMOHTex, geom.triY.xy).a * geom.triY.z;
+	float hZ = texture(RMOHTex, geom.triZ.xy).a * geom.triZ.z;
+
+	geom.triX.z = (hX > hY || hX > hZ) ? geom.triX.z : 0.;
+	geom.triY.z = (hY > hX || hY > hZ) ? geom.triY.z : 0.;
+	geom.triZ.z = (hZ > hX || hZ > hX) ? geom.triZ.z : 0.;
+
+}
+*/
+void blendHeight(vec3 N, inout geometry geom){
+	// Height Map Triplanar Blend
+	vec3 	blend = abs(N);
+			blend /= dot(blend, vec3(1.,1.,1.));
+
+			//vec3 blend = vec3(geom.triX.z, geom.triY.z, geom.triZ.z);
+	// Height value from each plane's texture. This is usually
+	// packed in to another texture or (less optimally) as a separate 
+	// texture.
+
+	float 	hX = texture(RMOHTex, geom.triX.xy).a;// * geom.triX.z;
+	float 	hY = texture(RMOHTex, geom.triY.xy).a;// * geom.triY.z;
+	float 	hZ = texture(RMOHTex, geom.triZ.xy).a;// * geom.triZ.z;
+	vec3 	heights = vec3(hX, hY, hZ) + (blend * 3.0);
+	// _HeightmapBlending is a value between 0.01 and 1.0
+	float 	heightBlend = 0.05;
+	float 	height_start = max(max(heights.x, heights.y), heights.z) - heightBlend;
+	vec3 	h = max(heights - vec3(height_start), vec3(0.,0.,0.));
+			blend = h / dot(h, vec3(1.,1.,1.));
+
+			geom.triX.z = blend.x;
+			geom.triY.z = blend.y;
+			geom.triZ.z = blend.z;
 }
 
 float getHeightDifference(vec2 uv, float lod, float currH){
@@ -705,7 +923,7 @@ float getAO(in geometry geom, float currH){
 
 }
 
-void getNormAndAoFromDerivatives(inout geometry geom, inout material mate){
+void getNormAndAoFromDerivatives(inout geometry geom, inout material mate, vec3 normN){
 
 	// 3 taps: better quality than float2(ddx fine(H), ddy fine(H)).
 	vec2 	texDx = dFdx(jit_in.uv), texDy = dFdy(jit_in.uv);
@@ -718,19 +936,19 @@ void getNormAndAoFromDerivatives(inout geometry geom, inout material mate){
 			deriv *= abs(heightScale);
 
 	// Equation 3 in [Mikkelsen 2010].
-	vec3 	vR1 = cross(dPdy, geom.N);
-	vec3 	vR2 = cross(geom.N, dPdx);
+	vec3 	vR1 = cross(dPdy, normN);
+	vec3 	vR2 = cross(normN, dPdx);
 	float 	det = dot(dPdx, vR1);
 	float 	eps = 1.192093e-15F;
 	float 	sign_det = det < 0.0 ? -1.0 : 1.0;
 	float 	s = sign_det/max(eps, abs(det));
-			geom.N = normalize(geom.N - s*(deriv.x*vR1 + deriv.y*vR2));
+			geom.N = normalize(normN - s*(deriv.x*vR1 + deriv.y*vR2));
 			mate.occ = getAO(geom, Hll);
 
 }
 void getNormAndAoFromDerivatives2(inout geometry geom, inout material mate){
 
-/*
+
 	vec3 modelPos = (invM*vec4(geom.pos, 1)).xyz;
 	vec3 modelNor = (invM*vec4(geom.N, 0)).xyz;
 
@@ -748,12 +966,11 @@ void getNormAndAoFromDerivatives2(inout geometry geom, inout material mate){
 	if(dirz > dirx && dirz > diry){
 		uv = modelPos.xy;
 	}
-	*/
 	vec2 	texDx = dFdx(geom.uv), texDy = dFdy(geom.uv);
 	vec3	dPdx = dFdx(geom.pos), dPdy = dFdy(geom.pos);
 	float 	Hll = getHeight2(geom.uv);
-	float 	Hlr = getHeight2(geom.uv + texDx*(1. - geom.height)); //*** put back texDx
-	float 	Hul = getHeight2(geom.uv + texDy*(1. - geom.height));
+	float 	Hlr = getHeight2(geom.uv + texDx*(1. - mate.height)); //*** put back texDx
+	float 	Hul = getHeight2(geom.uv + texDy*(1. - mate.height));
 	vec2 	deriv = vec2(Hlr - Hll, Hul - Hll);
 
 			deriv *= secondaryHeightScale;//abs(heightScale*0.1);
@@ -777,12 +994,31 @@ void 	main() {
 
 			geom.uv 		= jit_in.uv;
 			geom.pos  		= jit_in.pos;
-		 	geom.N 			= normalize(jit_in.nor);
 
-	 		//getTBN(geom);
-			parallax(geom);
-			getNormAndAoFromDerivatives(geom, mate);
+			//const bool pos_neg_parallax = heightScale >= 0.;
+	// uv_coordinates, blending factor, height
+			//getTriplanarUV_and_blend(geom);
+
+	vec3 	normN 			= normalize(jit_in.nor);
+
+			//geom.pos += normN*geomError*0.5;
+	 		
+	 		geom.TBN 		= getTBN(normN, geom.pos, geom.uv);
+	 		geom.transTBN 	= transpose(geom.TBN);
+
+			parallax(mate, geom);
+			geom.pos    -= normN * mate.height;// * heightScale;// * 20.;	
+			//geom.N = (M * vec4(normalize( (normalize(jit_in.modelNor) - heightScale * 1000. * vec3(texture(normalTex, geom.uv).rg, 0.)) ), 0.)).xyz;
+			getNormAndAoFromDerivatives(geom, mate, normN);
+
+
+			//parallax(mate, geom);
+			//geom.pos    -= geom.N * mate.height;// * heightScale;// * 20.;	
+			vec3 modelPos = jit_in.modelPos - normalize(jit_in.modelNor) * mate.height;
 			getNormAndAoFromDerivatives2(geom, mate);
+			geom.pos    -= geom.N * mate.height;// * heightScale;// * 20.;
+
+
 
 /*
 	 		getTriTBN(normN, geom);
