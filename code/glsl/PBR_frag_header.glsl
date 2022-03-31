@@ -27,12 +27,6 @@ struct PBRLightSourceParameters {
 	float quadAtten;
 };
 
-#define NUM_LIGHTS (4)
-layout (std140) uniform PBRParameters {
-	PBRMaterialParameters pbrmtl;
-	PBRLightSourceParameters pbrlight[NUM_LIGHTS];
-};
-
 struct 	material{
 	vec3 	alb;
 	float 	occ;

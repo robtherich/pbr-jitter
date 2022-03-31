@@ -1,1 +1,0 @@
-max objectfile jit.gl.pbr jit.gl.material jit.gl.pbr;
