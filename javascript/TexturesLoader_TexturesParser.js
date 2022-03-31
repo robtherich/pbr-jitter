@@ -37,11 +37,6 @@ function TexturesParser(patcher, spriteSize)
         this.ApplyTexturesToShape();
     }
 
-    this.IsBPatcherSmallerThanSpritesXSize = function(bpSizeX)
-    {
-        return (bpSizeX <= this.allSpritesXSize);
-    }
-
     this.ResizeSprites = function(bpSizeX, sizeY)
     {   
         var xSize = Math.max(60, (bpSizeX-this.spriteOffset*8-30)/8);
@@ -65,54 +60,62 @@ function TexturesParser(patcher, spriteSize)
 
     this.ParseFolder = function(path)
     {   
-        this.ClearImages();
+        // this.ClearImages();
 
         this.folder = new Folder(path);
         this.folder.typelist = ["JPEG", "PNG", "TIFF"];
 
-        // this.fileNamesArray = [];
+        FF_Utils.Print("folder count "+this.folder.count)
 
-        var texTypes = Object.keys(gGlobal.textureNames);
-        var nonFoundImageIndex = 0;
-        var texTypesFound = [];
+        var texTypesFound = Array(this.folder.count);
+        var tex_found_names = Array(this.folder.count);;
+        var tex_not_found_names = [];
 
+        var temp_index = 0;
         while (!this.folder.end)
         {
             if (this.folder.filename.length > 0)
             {   
-                this.FileNames_PushNewFile(path+this.folder.filename);
-            
                 var texType = this.ParseTextureType(this.folder.filename);
-                this.movieLoaderArray.push(new MovieLoader(path+this.folder.filename, texType));
+                this.PushNewMovieLoader_and_Filename(path+this.folder.filename, texType);
 
-                // if (texType == -1)
-                // {   
-                //     texType = texTypes[nonFoundImageIndex];
-                //     nonFoundImageIndex++;
-                // }
-                if (texType != -1)
+                if (texTypesFound.indexOf(texType) == -1 && texType != -1)
                 {
-                    texTypesFound.push(texType);
+                    tex_found_names[temp_index] = (path+this.folder.filename);
+                    texTypesFound[temp_index] = texType;
                 }
-                // var matName = this.movieLoaderArray[this.movieLoaderArray.length-1].GetMatrix();
-                // this.spritesContainer[texType].AssignMatrix(matName,path+this.folder.filename);
+                else 
+                {
+                    tex_not_found_names.push(path+this.folder.filename);
+                }
+                temp_index++;
             }
             this.folder.next();
         }
 
-        // If some textures were parsed, check for the correspondent matrix 
-        for (var i=0; i<texTypesFound.length; i++)
-        {   
-            var texTypeFound = texTypesFound[i];
-            for (var j=0; j<this.movieLoaderArray.length; j++)
-            {
-                if (this.movieLoaderArray[j].textureType == texTypeFound)
+        var temp_tex_types = Object.keys(gGlobal.textureNames);
+        for (var i=0, j=0; i<temp_tex_types.length; i++)
+        {
+            var curr_tex_type = temp_tex_types[i];
+            FF_Utils.Print("curr tex type ",curr_tex_type);
+
+            var found_index = texTypesFound.indexOf(curr_tex_type);
+            var matName = -1;
+            var imgPath = -1;
+            if (found_index != -1)
+            {   
+                imgPath = tex_found_names[found_index];
+                matName = this.GetMatrixFromPath(imgPath);
+                this.spritesContainer[curr_tex_type].AssignMatrix(matName,imgPath);
+            }
+            else 
+            {   
+                if (j < tex_not_found_names.length)
                 {   
-                    FF_Utils.Print("Matrix found ", texTypeFound)
-                    var matName = this.movieLoaderArray[j].GetMatrix();
-                    var imgPath = this.movieLoaderArray[j].GetImagePath();
-                    this.spritesContainer[texTypeFound].AssignMatrix(matName,imgPath);
-                    break;
+                    imgPath = tex_not_found_names[j];
+                    matName = this.GetMatrixFromPath(imgPath);
+                    this.spritesContainer[curr_tex_type].AssignMatrix(matName,imgPath);
+                    j++;
                 }
             }
         }
@@ -122,11 +125,9 @@ function TexturesParser(patcher, spriteSize)
     }
 
     this.ParseTextureType = function(filename)
-    {
-        // this.ClearImages();
-    
+    {    
         var texType = -1;
-        if (/diff|col|alb/.test(filename)) {
+        if (/diff|col|alb|base/.test(filename)) {
             texType = "albedo";
         }
         else if (/NOR|nor/.test(filename)) 
@@ -162,17 +163,23 @@ function TexturesParser(patcher, spriteSize)
 
     this.AddImageFromDropFile = function(path, spriteType)
     {
-        this.movieLoaderArray.push(new MovieLoader(path));
-        var matName = this.movieLoaderArray[this.movieLoaderArray.length-1].GetMatrix();
+        this.PushNewMovieLoader_and_Filename(path, spriteType);
+        var matName = this.GetMatrixFromPath(path);
         this.spritesContainer[spriteType].AssignMatrix(matName,path);
-        g_TexturesParser.FileNames_PushNewFile(path);
-        g_TexturesParser.FillSpriteUmenus();
+        this.FillSpriteUmenus();
     }
 
-    this.GetMatrixFromIndex = function(index)
-    {   
-        FF_Utils.Print("Index ", index)
-        return this.movieLoaderArray[index].GetMatrix();
+    this.GetMatrixFromPath = function(path)
+    {
+        for (var movie in this.movieLoaderArray)
+        {
+            var curr_mov = this.movieLoaderArray[movie];
+            if (path == curr_mov.imgPath)
+            {   
+                return curr_mov.GetMatrix();
+            }
+        }
+        return -1;
     }
     
     var PickerCallback = (function(data) 
@@ -205,8 +212,19 @@ function TexturesParser(patcher, spriteSize)
         }
     }
 
-    this.FileNames_PushNewFile = function(fileName)
+    this.PushNewMovieLoader_and_Filename = function(fileName, texType)
     {
+        if (this.fileNamesArray.indexOf(fileName) == -1)
+        {   
+            FF_Utils.Print("filename", fileName);
+            this.movieLoaderArray.push(new MovieLoader(fileName, texType));
+            this.FileNames_PushNewFile(fileName);
+        }
+    }
+
+    this.FileNames_PushNewFile = function(fileName)
+    {      
+        FF_Utils.Print("filename_2", fileName);
         this.fileNamesArray.push(fileName);
     }
 
@@ -225,13 +243,13 @@ function TexturesParser(patcher, spriteSize)
         outlet(0, "SetAllMtrTextures");
     }
 
-    this.ClearImages = function()
-    {   
-        for (var sprite in this.spritesContainer)
-        {
-            this.spritesContainer[sprite].ClearImage();
-        }
-    }
+    // this.ClearImages = function()
+    // {   
+    //     for (var sprite in this.spritesContainer)
+    //     {
+    //         this.spritesContainer[sprite].ClearImage();
+    //     }
+    // }
 
     this.Destroy = function()
     {
@@ -258,7 +276,7 @@ function MovieLoader(filePath, texType)
 
     this.movie = new JitterObject("jit.movie");
     this.movie.engine = "viddll";
-    this.imgPath = null;
+    this.imgPath = filePath;
 
     this.exr = new JitterObject("jit.openexr");
 

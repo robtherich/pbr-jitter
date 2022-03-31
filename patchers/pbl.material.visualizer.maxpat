@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 375.0, 92.0, 900.0, 920.0 ],
+		"rect" : [ 964.0, 253.0, 1109.0, 985.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -39,6 +39,34 @@
 		"subpatcher_template" : "Template_Grid",
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
+				"box" : 				{
+					"hidden" : 1,
+					"id" : "obj-19",
+					"maxclass" : "newobj",
+					"numinlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 75.5, 697.0, 197.0, 22.0 ],
+					"text" : "r jit_gl_pbr_messages_receiver_FF"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"color" : [ 0.0, 0.494117647058824, 0.847058823529412, 1.0 ],
+					"hidden" : 1,
+					"id" : "obj-16",
+					"maxclass" : "newobj",
+					"numinlets" : 8,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "" ],
+					"patching_rect" : [ 99.0, 753.0, 258.0, 22.0 ],
+					"text" : "jit.gl.pbr @name jit_gl_pbr_proxy @reflection 1",
+					"varname" : "jit_gl_pbr_gui"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"bgcolor" : [ 0.4, 0.6, 0.8, 1.0 ],
 					"fontface" : 1,
@@ -110,7 +138,7 @@
 					"numoutlets" : 2,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 466.666666666666686, 50.0, 223.333333333333314, 226.666666666666686 ],
+					"patching_rect" : [ 466.666666666666686, 40.0, 223.333333333333314, 236.666666666666686 ],
 					"viewvisibility" : 1
 				}
 
@@ -122,7 +150,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 4,
 					"numoutlets" : 0,
-					"patching_rect" : [ 754.0, 697.0, 118.0, 22.0 ],
+					"patching_rect" : [ 754.0, 672.0, 118.0, 22.0 ],
 					"text" : "bgcolor 0.2 0.2 0.2 1"
 				}
 
@@ -315,6 +343,20 @@
 				}
 
 			}
+, 			{
+				"box" : 				{
+					"attr" : "metalness",
+					"hidden" : 1,
+					"id" : "obj-18",
+					"maxclass" : "attrui",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 99.0, 727.0, 150.0, 22.0 ]
+				}
+
+			}
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
@@ -373,6 +415,22 @@
 					"destination" : [ "obj-14", 0 ],
 					"hidden" : 1,
 					"source" : [ "obj-15", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-16", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-18", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-16", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-19", 0 ]
 				}
 
 			}

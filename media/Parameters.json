@@ -1,8 +1,7 @@
 {
-    "triplanar": ["toggle", 1],
-    "parallax":  ["flonum", 0],
-    "gamma":     ["flonum", 0],
-    "shadow":    ["toggle", 0],
-    "roughness": ["flonum", 0.5],
-    "enable":    ["toggle", 1]
+    "triplanar":   ["toggle", 1],
+    "parallax":    ["flonum", 0],
+    "reflection":  ["toggle", 1, "0, 1"],
+    "metalness":   ["flonum", 0, "0, 1"],
+    "roughness":   ["flonum", 0.5, "0, 1"]
 }

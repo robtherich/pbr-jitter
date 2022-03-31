@@ -51,9 +51,16 @@ function Parameters(patcher)
                 var defaultVal = this.parametersDict.get(paramName)[1];
                 var paramClass = this.parametersDict.get(paramName)[0];
 
+                var range = -1;
+                if (this.parametersDict.get(paramName)[2] !== undefined)
+                {   
+                    range = (this.parametersDict.get(paramName)[2]);
+                    range = range.split(',');
+                }
+
                 var tempPos = this.parametersStartingPosition.getCopy();
                 tempPos.y += index*20;
-                this.CreateParameterBlock(paramName, paramClass, tempPos, defaultVal);
+                this.CreateParameterBlock(paramName, paramClass, tempPos, defaultVal, range);
                 index++;
             }
         }
@@ -64,10 +71,10 @@ function Parameters(patcher)
         return 1;
     }
 
-    this.CreateParameterBlock = function(name, type, position, value)
+    this.CreateParameterBlock = function(name, type, position, value, range)
     {   
         var comment = this.objGenerator.CreateAttrNameComment(position, name);
-        var uiObj = this.objGenerator.CreateBasicUIObj(type, position.addNew([65,0,0]), value);
+        var uiObj = this.objGenerator.CreateBasicUIObj(type, position.addNew([65,0,0]), value, range);
         // print(position.addNew([50,0,0]).toArray())
         uiObj.SetAttrName(name);
 
@@ -121,7 +128,7 @@ function ObjectsGenerator(patcher)
     this.p = patcher;
     this.toggleSize = [17,17];
 
-    this.CreateBasicUIObj = function(objClass, position, val) {
+    this.CreateBasicUIObj = function(objClass, position, val, range) {
         var argObj = (this.p.newdefault(position.x, position.y, objClass));
         var type = null;
         
@@ -132,6 +139,12 @@ function ObjectsGenerator(patcher)
             type = "float";
             argObj.fontsize(8);
             argObj.tricolor([0,0,0,0]);
+           
+            if (range != -1)
+            {   
+                argObj.minimum(parseInt(range[0]));
+                argObj.maximum(parseInt(range[1]));
+            }
         } else if (objClass == "number" || objClass == "toggle") {
             type ="int";
             this.SetObjPosSize(argObj, position, this.toggleSize);

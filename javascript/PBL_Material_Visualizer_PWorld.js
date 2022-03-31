@@ -39,12 +39,16 @@ function PWorld(patcher)
     this.gridshape.enable = 1;
 
     // MATERIAL //
-    this.material = new JitterObject("jit.gl.material");
-    this.material.mat_ambient = [0.3,0.3,0.3,1];
-    this.material.mat_diffuse = [1,1,1,1];
-    this.material.mat_specular = [0.3,0.3,0.3,1];
+    messnamed("jit_gl_pbr_messages_receiver_FF", "reflections", 1);
+    // this.pbrProxy = new JitterObject("jit.proxy");
+    // this.pbrProxy.name = "jit_gl_pbr_proxy";
+    // this.pbrProxy.mat_ambient = [0.3,0.3,0.3,1];
+    // this.pbrProxy.mat_diffuse = [1,1,1,1];
+    // this.pbrProxy.mat_specular = [0.3,0.3,0.3,1];
 
-    this.gridshape.material = this.material.name;   
+    // FF_Utils.Print("mat name", this.pbrProxy.name)
+
+    this.gridshape.material = "jit_gl_pbr_proxy";   
 
     // GLOBAL TEXTURE NAMES //
     gGlobal.textureNames = 
@@ -61,37 +65,47 @@ function PWorld(patcher)
 
     this.link_mtrClassicInputs_texTypes = 
     {
-        diffuse_texture: "albedo",
+        albedo_texture: "albedo",
         normals_texture: "normals",
-        glossmap_texture: "roughness",
-        specular_texture: "metallic",
+        roughness_texture: "roughness",
+        metallic_texture: "metallic",
+        ambient_texture: "ambient",
         heightmap_texture: "heightmap",
         emission_texture: "emission",
         environment_texture: "environment"
     }
 
     this.PWorld_SetAllMtrTextures = function()
-    {
+    {   
         this.SetMtrToEmpty();
         var mtrTexInputs = Object.keys(this.link_mtrClassicInputs_texTypes);
         for (var key in mtrTexInputs)
         {   
             var inputType = mtrTexInputs[key];
             var texType = this.link_mtrClassicInputs_texTypes[inputType];
-            this.material[inputType](gGlobal.textureNames[texType]);
-            FF_Utils.Print("tex type ", texType)
-            FF_Utils.Print(gGlobal.textureNames[texType]);
+
+            FF_Utils.Print("SET ALL MTR Textures", inputType, gGlobal.textureNames[texType]);
+
+
+            messnamed("jit_gl_pbr_messages_receiver_FF", inputType, gGlobal.textureNames[texType]);
+            // this.pbrProxy[inputType](gGlobal.textureNames[texType]);
+            // this.pbrProxy.send(inputType, gGlobal.textureNames[texType]);
+            // FF_Utils.Print("tex type ", texType)
+            // FF_Utils.Print(gGlobal.textureNames[texType]);
         }
         this.envMap.AssignTexToSkybox();
     }
 
     this.PWorld_SetMtrTexture = function(texType)
     {   
-        FF_Utils.Print("textype", texType);
+        FF_Utils.Print("SET MTR Texture textype", texType);
 
         var inputType = getKeyByValue(this.link_mtrClassicInputs_texTypes, texType);
         FF_Utils.Print("input type", inputType);
-        this.material[inputType](gGlobal.textureNames[texType]);
+        // this.pbrProxy[inputType](gGlobal.textureNames[texType]);
+        // this.pbrProxy.send(inputType, gGlobal.textureNames[texType]);
+
+        messnamed("jit_gl_pbr_messages_receiver_FF", inputType, gGlobal.textureNames[texType]);
         
         if (texType = "Environment")
         {   
@@ -110,7 +124,9 @@ function PWorld(patcher)
         for (var key in mtrTexInputs)
         {   
             var inputType = mtrTexInputs[key];
-            this.material[inputType](this.textureEmpty.name);
+            // this.pbrProxy.send(inputType, this.textureEmpty.name);
+            // this.pbrProxy[inputType](this.textureEmpty.name);
+            messnamed("jit_gl_pbr_messages_receiver_FF", inputType, this.textureEmpty.name);
         }
     }
 
@@ -121,17 +137,18 @@ function PWorld(patcher)
 
     this.SendMessageToShader = function(paramName, value)
     {
-        this.material[paramName] = value;
+        // this.pbrProxy.send(paramName, value);
+        // FF_Utils.Print(this.pbrProxy.send("getmetalness"));
+        messnamed("jit_gl_pbr_messages_receiver_FF", paramName, value);
     }
 
-    this.SetDrawTo = function(name)
+    this.SetDrawTo = function(name) 
     {
         this.name = name;
         this.light.drawto = this.name;
         this.gridshape.drawto = this.name;
-        this.material.drawto = this.name;
+        messnamed("jit_gl_pbr_messages_receiver_FF", "drawto", this.name);
         this.envMap.SetDrawTo(name);
-        // this.envMap.AssignImgToCubeMap(this.material);
     }
 
     this.SetIsLoading = function()
@@ -156,7 +173,6 @@ function PWorld(patcher)
     this.Destroy = function()
     {
         this.gridshape.freepeer();
-        this.material.freepeer();
         this.light.freepeer();
         this.envMap.Destroy();
         this.vp.freepeer();
