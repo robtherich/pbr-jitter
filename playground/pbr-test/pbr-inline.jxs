@@ -1019,7 +1019,7 @@ void 	main() {
 
 	col.rgb += pbrmtl.emission.rgb;
 
-	col.rgb += vec3(0.01)*mate.occ; //***** remove this one, it's just for testing!
+	col.rgb += vec3(0.02)*mate.occ; //***** remove this line, it's just to test if the occlusion works
 
 	col.rgb = gammaCorrection(col.rgb);
 
