@@ -23,7 +23,8 @@
 	<param name="parallaxIterations" type="vec2" default="50. 100." />
 	<param name="selfShadowing" type="float" default="0." />
 	<param name="shadowAmount" type="float" default="300." />
-	<param name="shadowIterations" type="vec2" default="50. 100." />
+	<param name="shadowIterations" type="int" default="100" /> //********* NEW ****//
+	<param name="shadowStep" type="float" default="0.01" /> //********** NEW *****//
 	<param name="worldLocked" type="float" default="0." />
 	<param name="albedoTex" type="int" default="0" />
 	<param name="normalTex" type="int" default="1" />
@@ -34,9 +35,9 @@
 	<texture file="ibl_brdf_lut.png" type="float16" unit="5" rectangle="0" filter="none none" wrap="repeat repeat" />
 
 //************** NEW ***********************************************//
-	<param name="aoAmount"  			type="float" default="100." />
-	<param name="aoIterations"   		type="int"   default="5" />
-	<param name="aoOffset"   			type="float" default="0.001" />
+	<param name="occlusionAmount"  	type="float" default="100." />
+	<param name="occlusionIterations"  type="int"   default="5" />
+	<param name="occlusionOffset"   	type="float" default="0.001" />
 ////***************************************************************//
 
 	<language name="glsl" version="1.5">
@@ -71,6 +72,7 @@
 		<bind param="selfShadowing" program="fp" />
 		<bind param="shadowAmount" program="fp" />
 		<bind param="shadowIterations" program="fp" />
+		<bind param="shadowStep" program="fp" /> // ********* NEW **********//
 		<bind param="worldLocked" program="fp" />
 		<bind param="albedoTex" program="fp" />
 		<bind param="normalTex" program="fp" />
@@ -80,9 +82,9 @@
 		<bind param="integMap" program="fp" />
 
 //************** NEW ****************************************//
-		<bind param="aoAmount"   			program="fp" />
-		<bind param="aoIterations"  		program="fp" />
-		<bind param="aoOffset"  			program="fp" />
+		<bind param="occlusionAmount"   	program="fp" />
+		<bind param="occlusionIterations"  	program="fp" />
+		<bind param="occlusionOffset"  		program="fp" />
 //***********************************************************//
 
 		<program name="vp" type="vertex">
@@ -145,14 +147,15 @@ uniform vec3 eye;
 uniform sampler2D albedoTex, normalTex, RMOHTex, emissionTex, rectLightTex, integMap;
 uniform samplerCube environmentTex, reflectionTex;
 uniform float heightScale, triplanarExp, shadowAmount, worldLocked;
-uniform vec2 triplanarTexRepeat, parallaxIterations, shadowIterations;
+uniform vec2 triplanarTexRepeat, parallaxIterations;
 uniform float roughness, metalness;
 uniform float near, far;
 uniform mat4 Vmat, Pmat;
 
 //****** NEW *********************//
-uniform float aoAmount, aoOffset; 
-uniform int aoIterations;
+uniform int shadowIterations; 
+uniform float occlusionAmount, occlusionOffset, shadowStep; 
+uniform int occlusionIterations;
 uniform vec2 texRepeat;
 //********************************//
 
@@ -212,7 +215,6 @@ in jit_PerVertex {
 vec3 	lin2sRGB(vec3 x){ return pow(x, vec3(0.4545454545));}
 vec3 	sRGB2lin(vec3 x){ return pow(x, vec3(2.2));}
 float 	saturate(float x){ return clamp(x, 0., 1.);}
-
 
 // from Inigo Quilez implementation:
 //https://iquilezles.org/www/articles/biplanar/biplanar.htm
@@ -405,18 +407,17 @@ float shadow(vec3 L, in geometry geom){
 	if(1 > 0.){
 
 		vec3 	P = vec3(geom.uv/texRepeat, geom.height);
-		float 	delta 	= 0.001;
 		//mat3 	TBN 	= create_tbn_from_texture(P.xy);
-		vec3 	offset 	= delta * jit_in.transTBN * L;
+		vec3 	offset 	= shadowStep * jit_in.transTBN * L;
 				P.xy 	+= offset.xy;
 				P.z 	-= offset.z;
-		int 	maxIterations = 200;
 		float 	sha = 0.;
 		int i;
-		for(i = 0; i < maxIterations; i++){
+		for(i = 0; i < shadowIterations; i++){
 
 			//TBN 	= create_tbn_from_texture(P.xy);
-			offset 	= delta * jit_in.transTBN * L;
+			float jittering = fract( fract(float(i)*PI_INV)*abs(P.x+P.z)*2358940.12345) * shadowStep;
+			offset 	= ( shadowStep + jittering ) * jit_in.transTBN * L;
 			P.xy 	+= offset.xy;
 			P.z 	-= offset.z;
 			if(P.z < 0.){
@@ -428,8 +429,7 @@ float shadow(vec3 L, in geometry geom){
 				sha = max(sha, (P.z - H)/(1. + float(i)*0.2));	
 			}
 		}
-
-		return i == maxIterations - 1 ? 1. : 1. - saturate(sha*shadowAmount);
+		return i == shadowIterations - 1 ? 1. : 1. - saturate(sha*shadowAmount);
 	}
 	return 0.;
 }
@@ -861,11 +861,11 @@ float getHeightDifference(vec2 uv, float lod, float currH){
 float getAO(in geometry geom, float currH){
 
 	float 	occ = 0.;
-	vec2 	off = vec2(aoOffset, 0.) / texRepeat;
+	vec2 	off = vec2(occlusionOffset, 0.) / texRepeat;
 	float 	lod = 0.;
 	float 	intensity = 1.;
 
-	for(int i = 0; i < aoIterations; i++){
+	for(int i = 0; i < occlusionIterations; i++){
 		float toAdd = 0.;
 		toAdd += getHeightDifference(geom.uv - off.xy, lod, currH);
 		toAdd += getHeightDifference(geom.uv + off.xy, lod, currH);
@@ -877,9 +877,9 @@ float getAO(in geometry geom, float currH){
 		intensity *= 0.5;
 	}
 
-	//occ /= float(aoIterations);
+	//occ /= float(occlusionIterations);
 	occ *= abs(heightScale);
-	occ *= aoAmount;
+	occ *= occlusionAmount;
 	occ /= 1. + occ;
 	return 1. - occ;
 
@@ -979,14 +979,13 @@ layout (std140) uniform PBRParameters {
 };
 
 void 	main() {
+
 	material 	mate;
 	geometry 	geom;
 
 	geom.uv 	= jit_in.uv;
 	geom.pos  	= jit_in.pos;
 	geom.N 		= normalize(jit_in.nor);
-
-
 
 	parallax(geom);
 	getNormAndAoFromDerivatives(geom, mate);
@@ -1001,7 +1000,6 @@ void 	main() {
 	mate.F0 	= mix(vec3(0.04), mate.alb, vec3(mate.met));  //use alb as F0 if metallic
 
 	geom.V 		= normalize(eye - jit_in.pos);	//view direction
-
 
 //******* not needed if the normals are computed using height derivatives//
 	//geom.tanN 	= normalize(triplanar(normalTex).rgb * 2. - 1.);
@@ -1019,7 +1017,7 @@ void 	main() {
 
 	col.rgb += pbrmtl.emission.rgb;
 
-	col.rgb += vec3(0.02)*mate.occ; //***** remove this line, it's just to test if the occlusion works
+	col.rgb += vec3(0.02)*mate.occ; //***** remove this line, it's just to test if the occlusion works without having to load an environment map
 
 	col.rgb = gammaCorrection(col.rgb);
 
