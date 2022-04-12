@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 1281.0, 197.0, 1376.0, 936.0 ],
+		"rect" : [ 1270.0, 180.0, 1376.0, 936.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -77,7 +77,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 1281.0, 223.0, 1376.0, 910.0 ],
+						"rect" : [ 1270.0, 206.0, 1376.0, 910.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -109,12 +109,12 @@
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-21",
-									"linecount" : 5,
+									"linecount" : 6,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 860.434000000003152, 125.355670103092734, 404.0, 81.0 ],
-									"text" : "with this new parallax implementation, it makes sense to normalize the height map, as the orientation of the surface depends only on the amount of displacement (therefore, the height map can be decorrelated from the normal map). The normalized hight maps allows for a better control of the displacement"
+									"patching_rect" : [ 865.434000000003152, 111.5, 404.0, 96.0 ],
+									"text" : "with this new parallax implementation, it makes sense to normalize the height map, as the orientation of the surface depends only on the amount of displacement (therefore, the height map can be decorrelated from the normal map). The normalized hight maps allows for a better control of the displacement because the highest peaks never leave the surface of the object"
 								}
 
 							}
