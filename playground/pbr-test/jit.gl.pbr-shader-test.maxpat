@@ -108,6 +108,41 @@
 						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
+									"id" : "obj-21",
+									"linecount" : 5,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 860.434000000003152, 125.355670103092734, 404.0, 81.0 ],
+									"text" : "with this new parallax implementation, it makes sense to normalize the height map, as the orientation of the surface depends only on the amount of displacement (therefore, the height map can be decorrelated from the normal map). The normalized hight maps allows for a better control of the displacement"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-16",
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 2,
+									"outlettype" : [ "jit_matrix", "" ],
+									"patching_rect" : [ 780.434000000003152, 161.0, 78.0, 23.0 ],
+									"text" : "jit.normalize"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-15",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 359.107000000001335, 37.5, 510.0, 21.0 ],
+									"text" : "i don't know why, but i've to load the maps twice the first time to make the parallax work"
+								}
+
+							}
+, 							{
+								"box" : 								{
 									"id" : "obj-9",
 									"maxclass" : "newobj",
 									"numinlets" : 1,
@@ -732,7 +767,7 @@
  ]
 									}
 ,
-									"patching_rect" : [ 327.734000000001117, 158.855670103092734, 471.700000000002092, 23.0 ],
+									"patching_rect" : [ 327.734000000001117, 187.855670103092734, 471.700000000002092, 23.0 ],
 									"text" : "jit.gen"
 								}
 
@@ -744,7 +779,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 2,
 									"outlettype" : [ "jit_gl_texture", "" ],
-									"patching_rect" : [ 327.734000000001117, 185.855670103092734, 585.0, 23.0 ],
+									"patching_rect" : [ 327.734000000001117, 214.855670103092734, 585.0, 23.0 ],
 									"text" : "jit.gl.texture @name RMOH @rectangle 0 @mipmap trilinear @wrap repeat repeat repeat @adapt 0"
 								}
 
@@ -1817,6 +1852,13 @@
 							}
 , 							{
 								"patchline" : 								{
+									"destination" : [ "obj-172", 3 ],
+									"source" : [ "obj-16", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
 									"destination" : [ "obj-176", 0 ],
 									"source" : [ "obj-172", 0 ]
 								}
@@ -1852,7 +1894,7 @@
 							}
 , 							{
 								"patchline" : 								{
-									"destination" : [ "obj-172", 3 ],
+									"destination" : [ "obj-16", 0 ],
 									"source" : [ "obj-265", 5 ]
 								}
 
