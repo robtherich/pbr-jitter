@@ -18,7 +18,7 @@
 	<param name="metalness" type="float" default="1.0" />
 	<param name="texRepeat" type="vec2" default="1. 1." />
 	<param name="heightScale" type="float" default="0.1" />
-	<param name="triplanarBlendingAmount" type="float" default="0.2" /> //**** NEW ****// this is the old triplanarExp
+	<param name="triplanarBlendingAmount" type="float" default="0.7" /> //**** NEW ****// this is the old triplanarExp now generalized to control both the triplanar blending modes
 	<param name="triplanarTexRepeat" type="vec2" default="0.5 0.5" />
 	<param name="triplanarBlendingMode" type="int" default="0" /> //********** NEW *********//
 	<param name="parallaxIterations" type="int" default="100" /> //****** NEW *******// (from vec2 to int)
@@ -279,7 +279,7 @@ void getTriplanarUVs(inout geometry geom){
 }
 
 void getTriplanarExpBlend(inout geometry geom){
-	geom.triBlend = normalize(pow(abs(jit_in.modelNor), vec3(triplanarBlendingAmount*30.)));
+	geom.triBlend = normalize(pow(abs(jit_in.modelNor), vec3(triplanarBlendingAmount*50.)));
 	geom.triBlendNormalizer = 1. / (geom.triBlend.x + geom.triBlend.y + geom.triBlend.z);
 }
 
@@ -1051,18 +1051,25 @@ void 	main() {
 	geom.pos  	= jit_in.pos;
 	geom.N 		= normalize(jit_in.nor);
 
-	//***** if triplanar = off and parallax = on ********************//
-	/*
+	//**** NOTE: comment the following block of code (NON TRIPLANAR) and uncomment the code below (TRIPLANAR)
+	//if you want to see how the two modes work. Make sure to set "shadowAmount = 0" in the main patch when using triplanar
+
+
+	//************************** NON TRIPLANAR ***************************/
+	//if triplanar = off and parallax = on
+	
 	parallax(geom);
 	getNormAndAoFromDerivatives(geom, mate);
 	vec4 RMOH	= texture(RMOHTex, geom.uv);
 	mate.alb 	= texture(albedoTex, geom.uv).rgb * pbrmtl.diffuse.rgb;
-	*/
+	
 	//************************************************************//
 
-	// ***** else, if triplanar = on **********************************************//
+
+	//********************************* TRIPLANAR ********************************//
+	//else, if triplanar = on 
 	// when using triplanar, shadows and parallax should be turned off //
-	
+	/*
 	getTriplanarUVs(geom);
 	if(triplanarBlendingMode == 1){
 		gettriplanarBlendingMode(geom);
@@ -1074,6 +1081,7 @@ void 	main() {
 			geom.N 		= triplanarNormals(normalTex, geom); //******** NEW ******** //
 			geom.height = 1. - RMOH.w;
 			mate.occ 	= RMOH.b; //ambient occlusion
+	*/
 	//*******************************************************************************//
 
 

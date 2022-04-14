@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 1006.0, 202.0, 1583.0, 1198.0 ],
+		"rect" : [ 915.0, 143.0, 1583.0, 1198.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -77,7 +77,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 1006.0, 228.0, 1583.0, 1172.0 ],
+						"rect" : [ 915.0, 169.0, 1583.0, 1172.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -108,14 +108,14 @@
 						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
-									"id" : "obj-83",
-									"linecount" : 4,
-									"maxclass" : "message",
-									"numinlets" : 2,
-									"numoutlets" : 1,
-									"outlettype" : [ "" ],
-									"patching_rect" : [ 113.25, 589.0, 50.0, 68.0 ],
-									"text" : "triplanarBlendingMode 0"
+									"id" : "obj-86",
+									"linecount" : 5,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 179.0, 551.0, 134.0, 81.0 ],
+									"presentation_linecount" : 5,
+									"text" : "With height blending, the heighest peaks pass. This is good for terrains and organic materials"
 								}
 
 							}
@@ -128,7 +128,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "bang" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 6.0, 481.0, 50.0, 23.0 ]
+									"patching_rect" : [ 1.0, 488.0, 50.0, 23.0 ]
 								}
 
 							}
@@ -161,13 +161,13 @@
 , 							{
 								"box" : 								{
 									"id" : "obj-75",
-									"linecount" : 2,
+									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 179.0, 443.0, 134.0, 36.0 ],
-									"presentation_linecount" : 2,
-									"text" : "new blending mode for triplanar mapping"
+									"patching_rect" : [ 179.0, 428.0, 134.0, 51.0 ],
+									"presentation_linecount" : 3,
+									"text" : "added new blending mode for triplanar mapping"
 								}
 
 							}
@@ -1041,7 +1041,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 283.5, 605.644329896907266, 62.0, 23.0 ],
+									"patching_rect" : [ 291.234000000001117, 698.644329896907266, 62.0, 23.0 ],
 									"text" : "loadbang"
 								}
 
@@ -1053,7 +1053,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 590.067000000003986, 684.644329896907266, 150.0, 51.0 ],
+									"patching_rect" : [ 545.107000000001221, 777.644329896907266, 150.0, 51.0 ],
 									"text" : "jit.gl.gridshape plane doesn't work, but jit.gen plane does"
 								}
 
@@ -1066,7 +1066,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 564.067000000003986, 701.644329896907266, 24.0, 24.0 ]
+									"patching_rect" : [ 519.107000000001221, 794.644329896907266, 24.0, 24.0 ]
 								}
 
 							}
@@ -1077,7 +1077,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 2,
 									"outlettype" : [ "jit_matrix", "" ],
-									"patching_rect" : [ 564.067000000003986, 742.644329896907266, 161.0, 23.0 ],
+									"patching_rect" : [ 519.107000000001221, 835.644329896907266, 161.0, 23.0 ],
 									"text" : "jit.matrix 3 float32 100 100"
 								}
 
@@ -1249,7 +1249,7 @@
  ]
 									}
 ,
-									"patching_rect" : [ 564.067000000003986, 784.644329896907266, 43.0, 23.0 ],
+									"patching_rect" : [ 519.107000000001221, 877.644329896907266, 43.0, 23.0 ],
 									"text" : "jit.gen"
 								}
 
@@ -1263,7 +1263,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 320.0, 645.644329896907266, 150.0, 23.0 ],
+									"patching_rect" : [ 327.734000000001117, 738.644329896907266, 150.0, 23.0 ],
 									"text_width" : 73.5
 								}
 
@@ -1314,7 +1314,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 283.5, 645.644329896907266, 24.0, 24.0 ]
+									"patching_rect" : [ 291.234000000001117, 738.644329896907266, 24.0, 24.0 ]
 								}
 
 							}
@@ -1326,7 +1326,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 2,
 									"outlettype" : [ "jit_matrix", "" ],
-									"patching_rect" : [ 283.5, 688.288659793814531, 129.0, 83.0 ],
+									"patching_rect" : [ 291.234000000001117, 781.288659793814531, 129.0, 83.0 ],
 									"text" : "jit.gl.gridshape @shape sphere @dim 100 100 @matrixoutput 1 @automatic 0"
 								}
 
@@ -1338,7 +1338,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 3,
 									"outlettype" : [ "jit_matrix", "jit_matrix", "" ],
-									"patching_rect" : [ 283.5, 784.644329896907266, 211.0, 23.0 ],
+									"patching_rect" : [ 291.234000000001117, 877.644329896907266, 211.0, 23.0 ],
 									"text" : "jit.unpack 2 @jump 3 2 @offset 0 3"
 								}
 
@@ -2566,7 +2566,7 @@
 									"numinlets" : 9,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
-									"patching_rect" : [ 283.5, 876.644329896907266, 597.0, 23.0 ],
+									"patching_rect" : [ 291.234000000001117, 969.644329896907266, 597.0, 23.0 ],
 									"text" : "jit.gl.mesh @auto_tangents 1 @auto_normals 1 @texture albedo normal RMOH @smooth_tangents 1"
 								}
 
@@ -3156,15 +3156,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-2", 0 ],
-									"order" : 0,
-									"source" : [ "obj-72", 0 ]
-								}
-
-							}
-, 							{
-								"patchline" : 								{
-									"destination" : [ "obj-83", 1 ],
-									"order" : 1,
 									"source" : [ "obj-72", 0 ]
 								}
 
