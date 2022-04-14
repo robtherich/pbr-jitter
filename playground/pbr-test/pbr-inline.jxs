@@ -20,7 +20,8 @@
 	<param name="heightScale" type="float" default="0.1" />
 	<param name="triplanarExp" type="float" default="12." />
 	<param name="triplanarTexRepeat" type="vec2" default="0.5 0.5" />
-	<param name="parallaxIterations" type="vec2" default="50. 100." />
+	<param name="parallaxIterations" type="int" default="100" /> //****** NEW *******// (from vec2 to int)
+	<param name="parallaxStep" type="float" default="0.005" /> //******* NEW *******//
 	<param name="selfShadowing" type="float" default="0." />
 	<param name="shadowAmount" type="float" default="300." />
 	<param name="shadowIterations" type="int" default="100" /> //********* NEW ****//
@@ -69,6 +70,7 @@
 		<bind param="triplanarTexRepeat" program="fp" />
 		<bind param="parallaxMapping" program="fp" />
 		<bind param="parallaxIterations" program="fp" />
+		<bind param="parallaxStep" program="fp" />
 		<bind param="selfShadowing" program="fp" />
 		<bind param="shadowAmount" program="fp" />
 		<bind param="shadowIterations" program="fp" />
@@ -147,15 +149,14 @@ uniform vec3 eye;
 uniform sampler2D albedoTex, normalTex, RMOHTex, emissionTex, rectLightTex, integMap;
 uniform samplerCube environmentTex, reflectionTex;
 uniform float heightScale, triplanarExp, shadowAmount, worldLocked;
-uniform vec2 triplanarTexRepeat, parallaxIterations;
+uniform vec2 triplanarTexRepeat;
 uniform float roughness, metalness;
 uniform float near, far;
 uniform mat4 Vmat, Pmat;
 
 //****** NEW *********************//
-uniform int shadowIterations; 
-uniform float occlusionAmount, occlusionOffset, shadowStep; 
-uniform int occlusionIterations;
+uniform float occlusionAmount, occlusionOffset, shadowStep, parallaxStep; 
+uniform int shadowIterations, occlusionIterations, parallaxIterations;
 uniform vec2 texRepeat;
 //********************************//
 
@@ -367,13 +368,10 @@ void parallax(inout geometry geom){
 	vec3 prevP;
 	vec3 offset;
 
-	int maxIterations = 500;
-	float delta = 0.001;
-
 	//linear search
-	for(int i = 0; i < maxIterations; i++){
+	for(int i = 0; i < parallaxIterations; i++){
 		//mat3 	TBN = create_tbn_from_texture(P.xy);
-		 		offset = delta * jit_in.transTBN * V;
+		 		offset = parallaxStep * jit_in.transTBN * V;
 				P.xy -= offset.xy;
 				P.z += offset.z;
 		if(P.z < 0.){
@@ -382,14 +380,7 @@ void parallax(inout geometry geom){
 		}
 		H = (1. - getHeight(P.xy*texRepeat))*abs(heightScale);
 		if(P.z > H){
-			//attemp linear interpolation
 
-			//float d0 = abs(P.z - prevH);
-			//float d1 = abs(P.z - H);
-			//float weight = d0 / (d0 + d1);
-			//H = mix(prevH, H, weight);
-			//P.xy = mix(prevP.xy, P.xy, weight);
-			//findMean()
 			binarySearch(P, H, offset);
 			geom.uv = texRepeat * P.xy;
 			geom.height = H;
