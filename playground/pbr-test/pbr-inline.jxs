@@ -36,8 +36,8 @@
 	<texture file="ibl_brdf_lut.png" type="float16" unit="5" rectangle="0" filter="none none" wrap="repeat repeat" />
 
 //************** NEW ***********************************************//
-	<param name="occlusionAmount"  	type="float" default="100." />
-	<param name="occlusionIterations"  type="int"   default="5" />
+	<param name="occlusionAmount"  		type="float" default="100." />
+	<param name="occlusionIterations"  	type="int"   default="5" />
 	<param name="occlusionOffset"   	type="float" default="0.001" />
 ////***************************************************************//
 
@@ -978,24 +978,34 @@ void 	main() {
 	geom.pos  	= jit_in.pos;
 	geom.N 		= normalize(jit_in.nor);
 
+	//***** if triplanar = off and parallax = on ********************//
+	
 	parallax(geom);
 	getNormAndAoFromDerivatives(geom, mate);
-	vec4 RMOH	= texture(RMOHTex, geom.uv);// ***** triplanar(RMOHTex);	
-	//geom.height = 1. - RMOH.w;
-
-	//mate.alb 	= triplanar(albedoTex).rgb * pbrmtl.diffuse.rgb;
+	vec4 RMOH	= texture(RMOHTex, geom.uv);
 	mate.alb 	= texture(albedoTex, geom.uv).rgb * pbrmtl.diffuse.rgb;
+	
+	//************************************************************//
+
+	// ***** else, if triplanar = on ******************************//
+	// when using triplanar, shadows and parallax should be turned off //
+	/*
+	vec4 RMOH = triplanar(RMOHTex);	
+	geom.height = 1. - RMOH.w;
+	mate.alb 	= triplanar(albedoTex).rgb * pbrmtl.diffuse.rgb;
+	geom.tanN 	= normalize(triplanar(normalTex).rgb * 2. - 1.);
+	geom.N 		= normalize(jit_in.TBN * geom.tanN); 
+	mate.occ 	= RMOH.b * 1.; //ambient occlusion
+	*/
+	//*************************************************************************//
+
+
 	mate.rou 	= RMOH.r * roughness;
 	mate.met 	= RMOH.g * metalness;
-	//mate.occ 	= RMOH.b * 1.; //ambient occlusion
 	mate.F0 	= mix(vec3(0.04), mate.alb, vec3(mate.met));  //use alb as F0 if metallic
-
 	geom.V 		= normalize(eye - jit_in.pos);	//view direction
 
-//******* not needed if the normals are computed using height derivatives//
-	//geom.tanN 	= normalize(triplanar(normalTex).rgb * 2. - 1.);
-	//geom.N 		= normalize(jit_in.TBN * geom.tanN); 
-//*************************************************************************//
+
 
 	geom.R 		= reflect(geom.V, geom.N);
 	//geom.pos	+= geom.N * (1. - geom.height) * heightScale;

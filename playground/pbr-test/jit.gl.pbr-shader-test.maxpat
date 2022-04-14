@@ -152,16 +152,16 @@
 										"style" : "",
 										"subpatcher_template" : "",
 										"assistshowspatchername" : 0,
+										"visible" : 1,
 										"boxes" : [ 											{
 												"box" : 												{
 													"id" : "obj-14",
-													"linecount" : 7,
 													"maxclass" : "newobj",
 													"numinlets" : 2,
 													"numoutlets" : 2,
 													"outlettype" : [ "", "" ],
-													"patching_rect" : [ 623.73400000000106, 335.0, 59.0, 105.0 ],
-													"text" : "zl.lookup 0.01 0.006 0.004 0.003 0.002 0.001"
+													"patching_rect" : [ 623.73400000000106, 210.0, 309.0, 22.0 ],
+													"text" : "zl.lookup 0.01 0.006 0.0025 0.0015 0.0013 0.001 0.0008"
 												}
 
 											}
@@ -172,21 +172,20 @@
 													"numinlets" : 2,
 													"numoutlets" : 2,
 													"outlettype" : [ "", "" ],
-													"patching_rect" : [ 433.73400000000106, 335.0, 170.0, 22.0 ],
-													"text" : "zl.lookup 20 30 50 90 200 500"
+													"patching_rect" : [ 433.73400000000106, 373.0, 199.0, 22.0 ],
+													"text" : "zl.lookup 20 30 60 90 200 500 1200"
 												}
 
 											}
 , 											{
 												"box" : 												{
 													"id" : "obj-13",
-													"linecount" : 7,
 													"maxclass" : "newobj",
 													"numinlets" : 2,
 													"numoutlets" : 2,
 													"outlettype" : [ "", "" ],
-													"patching_rect" : [ 935.21400000000267, 338.644329896907266, 57.0, 105.0 ],
-													"text" : "zl.lookup 0.04 0.03 0.02 0.01 0.005 0.001"
+													"patching_rect" : [ 935.21400000000267, 338.644329896907266, 263.0, 22.0 ],
+													"text" : "zl.lookup 0.04 0.03 0.02 0.01 0.005 0.001 0.001"
 												}
 
 											}
@@ -197,21 +196,20 @@
 													"numinlets" : 2,
 													"numoutlets" : 2,
 													"outlettype" : [ "", "" ],
-													"patching_rect" : [ 784.21400000000267, 338.644329896907266, 116.0, 22.0 ],
-													"text" : "zl.lookup 1 2 3 4 5 6"
+													"patching_rect" : [ 784.21400000000267, 338.644329896907266, 126.0, 22.0 ],
+													"text" : "zl.lookup 1 2 3 4 5 6 6"
 												}
 
 											}
 , 											{
 												"box" : 												{
 													"id" : "obj-11",
-													"linecount" : 7,
 													"maxclass" : "newobj",
 													"numinlets" : 2,
 													"numoutlets" : 2,
 													"outlettype" : [ "", "" ],
-													"patching_rect" : [ 245.607000000001221, 328.0, 60.0, 105.0 ],
-													"text" : "zl.lookup 0.01 0.008 0.005 0.003 0.001 0.001"
+													"patching_rect" : [ 245.607000000001221, 328.0, 289.0, 22.0 ],
+													"text" : "zl.lookup 0.01 0.008 0.005 0.003 0.001 0.001 0.0008"
 												}
 
 											}
@@ -246,8 +244,8 @@
 													"numinlets" : 2,
 													"numoutlets" : 2,
 													"outlettype" : [ "", "" ],
-													"patching_rect" : [ 66.0, 328.0, 169.0, 22.0 ],
-													"text" : "zl.lookup 20 20 35 50 200 450"
+													"patching_rect" : [ 44.5, 335.0, 199.0, 22.0 ],
+													"text" : "zl.lookup 20 20 35 50 200 450 1200"
 												}
 
 											}
@@ -419,7 +417,7 @@
 , 											{
 												"patchline" : 												{
 													"destination" : [ "obj-4", 0 ],
-													"midpoints" : [ 75.5, 252.5, 75.5, 252.5 ],
+													"midpoints" : [ 75.5, 252.5, 54.0, 252.5 ],
 													"order" : 5,
 													"source" : [ "obj-1", 0 ]
 												}
@@ -525,7 +523,7 @@
  ]
 									}
 ,
-									"patching_rect" : [ 1616.587000000002718, 376.0, 107.0, 23.0 ],
+									"patching_rect" : [ 1616.587000000002718, 426.0, 107.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"description" : "",
 										"digest" : "",
@@ -575,7 +573,7 @@
 , 							{
 								"box" : 								{
 									"id" : "obj-65",
-									"items" : [ "lo", ",", "mid-lo", ",", "mid", ",", "mid-hi", ",", "hi", ",", "ultra" ],
+									"items" : [ "lo", ",", "mid-lo", ",", "mid", ",", "mid-hi", ",", "hi", ",", "ultra", ",", "non-real-time" ],
 									"maxclass" : "umenu",
 									"numinlets" : 1,
 									"numoutlets" : 3,
