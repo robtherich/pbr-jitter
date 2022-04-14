@@ -18,8 +18,9 @@
 	<param name="metalness" type="float" default="1.0" />
 	<param name="texRepeat" type="vec2" default="1. 1." />
 	<param name="heightScale" type="float" default="0.1" />
-	<param name="triplanarExp" type="float" default="12." />
+	<param name="triplanarBlendingAmount" type="float" default="0.2" /> //**** NEW ****// this is the old triplanarExp
 	<param name="triplanarTexRepeat" type="vec2" default="0.5 0.5" />
+	<param name="triplanarBlendingMode" type="int" default="0" /> //********** NEW *********//
 	<param name="parallaxIterations" type="int" default="100" /> //****** NEW *******// (from vec2 to int)
 	<param name="parallaxStep" type="float" default="0.005" /> //******* NEW *******//
 	<param name="selfShadowing" type="float" default="0." />
@@ -66,8 +67,9 @@
 //**************************************************//
 
 		<bind param="heightScale" program="fp" />
-		<bind param="triplanarExp" program="fp" />
+		<bind param="triplanarBlendingAmount" program="fp" /> //******* NEW ****** //
 		<bind param="triplanarTexRepeat" program="fp" />
+		<bind param="triplanarBlendingMode" program="fp" /> //****** NEW *********//
 		<bind param="parallaxMapping" program="fp" />
 		<bind param="parallaxIterations" program="fp" />
 		<bind param="parallaxStep" program="fp" />
@@ -148,15 +150,16 @@ void main() {
 uniform vec3 eye;
 uniform sampler2D albedoTex, normalTex, RMOHTex, emissionTex, rectLightTex, integMap;
 uniform samplerCube environmentTex, reflectionTex;
-uniform float heightScale, triplanarExp, shadowAmount, worldLocked;
+uniform float heightScale, /*triplanarExp, */shadowAmount, worldLocked; //*** REMOVE triplanarExp****//
 uniform vec2 triplanarTexRepeat;
 uniform float roughness, metalness;
 uniform float near, far;
 uniform mat4 Vmat, Pmat;
 
 //****** NEW *********************//
-uniform float occlusionAmount, occlusionOffset, shadowStep, parallaxStep; 
+uniform float occlusionAmount, occlusionOffset, shadowStep, parallaxStep, triplanarBlendingAmount; 
 uniform int shadowIterations, occlusionIterations, parallaxIterations;
+uniform int triplanarBlendingMode;
 uniform vec2 texRepeat;
 //********************************//
 
@@ -193,6 +196,12 @@ struct 	geometry{
 	vec3	pos;
 	vec2	uv;
 	float 	height;
+	//********* NEW ************//
+	//common triplanar params
+	vec2 	uvX, uvY, uvZ;
+	vec3 	triBlend;
+	float 	triBlendNormalizer;
+	//***********************************//
 };
 
 in jit_PerVertex {
@@ -256,46 +265,60 @@ vec4 biplanar( sampler2D tex )
     // blend and return
     return (x*w.x + y*w.y) / (w.x + w.y);
 }
+//*************************** NEW ***************************************************//
+void getTriplanarUVs(inout geometry geom){
 
+	geom.uvX = jit_in.modelPos.zy*triplanarTexRepeat; //**** changed the swizzling from yz to zy ****//
+	geom.uvX.x = jit_in.modelNor.x < 0. ? geom.uvX.x : -geom.uvX.x;
+	geom.uvY = jit_in.modelPos.xz*triplanarTexRepeat;
+	geom.uvY.x = jit_in.modelNor.y < 0. ? geom.uvY.x : -geom.uvY.x;
+	geom.uvZ = jit_in.modelPos.xy*triplanarTexRepeat;
+	geom.uvZ.x = jit_in.modelNor.z >= 0. ? geom.uvZ.x : -geom.uvZ.x;
+	geom.uvX.y += 0.5;
+	geom.uvZ.x += 0.5;
+}
+
+void getTriplanarExpBlend(inout geometry geom){
+	geom.triBlend = normalize(pow(abs(jit_in.modelNor), vec3(triplanarBlendingAmount*30.)));
+	geom.triBlendNormalizer = 1. / (geom.triBlend.x + geom.triBlend.y + geom.triBlend.z);
+}
+
+void gettriplanarBlendingMode(inout geometry geom){
+	// Height Map Triplanar Blend
+	vec3 	blend = abs(jit_in.modelNor.xyz);
+			blend /= dot(blend, vec3(1.0,1.0,1.0));
+	// Height value from each plane's texture. This is usually
+	// packed in to another texture or (less optimally) as a separate 
+	// texture.
+	float heightX = texture(RMOHTex, geom.uvX).w;
+	float heightY = texture(RMOHTex, geom.uvY).w;
+	float heightZ = texture(RMOHTex, geom.uvZ).w;
+
+	vec3 	heights = vec3(heightX, heightY, heightZ) + (blend * 3.0);
+	float 	height_start = max(max(heights.x, heights.y), heights.z) - clamp(1. - triplanarBlendingAmount, 0.05, 1.);
+	vec3 	h = max(heights - vec3(height_start), vec3(0.0,0.0,0.0));
+	geom.triBlend =	h / dot(h, vec3(1.0,1.0,1.0));
+	geom.triBlendNormalizer = 1. / (geom.triBlend.x + geom.triBlend.y + geom.triBlend.z);
+}
 //triplanar mapping
-vec4 	triplanar(sampler2D tex){
+vec4 	triplanar(sampler2D tex, in geometry geom){
 
-	vec3 	k = normalize(pow(abs(jit_in.modelNor), vec3(triplanarExp)));
-	vec2 	Xuv = jit_in.modelPos.zy*triplanarTexRepeat; //**** changed the swizzling from yz to zy ****//
-			Xuv.x = jit_in.modelNor.x < 0. ? Xuv.x : -Xuv.x;
-	vec2 	Yuv = jit_in.modelPos.xz*triplanarTexRepeat;
-			Yuv.x = jit_in.modelNor.y < 0. ? Yuv.x : -Yuv.x;
-	vec2 	Zuv = jit_in.modelPos.xy*triplanarTexRepeat;
-			Zuv.x = jit_in.modelNor.z >= 0. ? Zuv.x : -Zuv.x;
-			Xuv.y += 0.5;
-			Zuv.x += 0.5;
-	vec4 	X = texture(tex, Xuv)*k.x;
-	vec4 	Y = texture(tex, Yuv)*k.y;
-	vec4 	Z = texture(tex, Zuv)*k.z;
-	return 	(X+Y+Z)/(k.x+k.y+k.z);
+	vec4 	X = texture(tex, geom.uvX)*geom.triBlend.x;
+	vec4 	Y = texture(tex, geom.uvY)*geom.triBlend.y;
+	vec4 	Z = texture(tex, geom.uvZ)*geom.triBlend.z;
+	return 	(X+Y+Z) * geom.triBlendNormalizer;
 }
 
 // ******************************** NEW ************************************** //
-vec3 	triplanarNormals(sampler2D tex){
+vec3 	triplanarNormals(sampler2D tex, in geometry geom){
 
 	// Whiteout blend
 	// from https://bgolus.medium.com/normal-mapping-for-a-triplanar-shader-10bf39dca05a
 
-	vec3 	blend = normalize(pow(abs(jit_in.modelNor), vec3(triplanarExp)));
-
-	// Triplanar uvs
-	vec2 	uvX 	= jit_in.modelPos.zy*triplanarTexRepeat; // x facing plane
-			uvX.x 	= jit_in.modelNor.x < 0. ? uvX.x : -uvX.x;
-	vec2 	uvY 	= jit_in.modelPos.xz*triplanarTexRepeat; // y facing plane
-			uvY.x 	= jit_in.modelNor.y < 0. ? uvY.x : -uvY.x;
-	vec2 	uvZ 	= jit_in.modelPos.xy*triplanarTexRepeat; // z facing plane
-			uvZ.x = jit_in.modelNor.z >= 0. ? uvZ.x : -uvZ.x;
-			uvX.y += 0.5;
-			uvZ.x += 0.5;
 	// Tangent space normal maps
-	vec3 	tnX = texture(tex, uvX).xyz*2. - vec3(1.);
-	vec3 	tnY = texture(tex, uvY).xyz*2. - vec3(1.);
-	vec3 	tnZ = texture(tex, uvZ).xyz*2. - vec3(1.);
+	vec3 	tnX = texture(tex, geom.uvX).xyz*2. - vec3(1.);
+	vec3 	tnY = texture(tex, geom.uvY).xyz*2. - vec3(1.);
+	vec3 	tnZ = texture(tex, geom.uvZ).xyz*2. - vec3(1.);
 
 			tnX.y *= -1.;
 			tnY.y *= -1.;
@@ -315,12 +338,12 @@ vec3 	triplanarNormals(sampler2D tex){
 			    abs(tnZ.z) * jit_in.modelNor.z
 			    );
 
-			tnX *= blend.x;
-			tnY *= blend.y;
-			tnZ *= blend.z;
+			tnX *= geom.triBlend.x;
+			tnY *= geom.triBlend.y;
+			tnZ *= geom.triBlend.z;
 
 	// Swizzle tangent normals to match world orientation and triblend
-	return normalize( (tnX.zyx + tnY.xzy + tnZ.xyz) / (blend.x + blend.y + blend.z) );
+	return normalize( (tnX.zyx + tnY.xzy + tnZ.xyz) * geom.triBlendNormalizer );
 	    
 }
 //*******************************************************************************//
@@ -1037,16 +1060,21 @@ void 	main() {
 	*/
 	//************************************************************//
 
-	// ***** else, if triplanar = on ******************************//
+	// ***** else, if triplanar = on **********************************************//
 	// when using triplanar, shadows and parallax should be turned off //
 	
-	vec4 RMOH = triplanar(RMOHTex);	
-	geom.height = 1. - RMOH.w;
-	mate.alb 	= triplanar(albedoTex).rgb * pbrmtl.diffuse.rgb;
-	geom.N 	= triplanarNormals(normalTex); //******** NEW ******** //
-	mate.occ 	= RMOH.b * 1.; //ambient occlusion
-	
-	//*************************************************************************//
+	getTriplanarUVs(geom);
+	if(triplanarBlendingMode == 1){
+		gettriplanarBlendingMode(geom);
+		} else {
+			getTriplanarExpBlend(geom);
+		}
+	vec4 	RMOH = triplanar(RMOHTex, geom);	
+			mate.alb 	= triplanar(albedoTex, geom).rgb * pbrmtl.diffuse.rgb;
+			geom.N 		= triplanarNormals(normalTex, geom); //******** NEW ******** //
+			geom.height = 1. - RMOH.w;
+			mate.occ 	= RMOH.b; //ambient occlusion
+	//*******************************************************************************//
 
 
 	mate.rou 	= RMOH.r * roughness;
