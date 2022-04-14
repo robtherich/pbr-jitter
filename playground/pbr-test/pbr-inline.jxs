@@ -467,36 +467,31 @@ void parallax(inout geometry geom){
 
 float shadow(vec3 L, in geometry geom){
 
-	float NdotL = dot(geom.N, jit_in.TBN*L);
-	if(1 > 0.){
-
-		vec3 	P = vec3(geom.uv/texRepeat, geom.height);
-		//mat3 	TBN 	= create_tbn_from_texture(P.xy);
-		vec3 	offset 	= shadowStep * jit_in.transTBN * L;
-				P.xy 	+= offset.xy;
-				P.z 	-= offset.z;
-		float 	sha = 0.;
-		int i;
-		for(i = 0; i < shadowIterations; i++){
-
-			//TBN 	= create_tbn_from_texture(P.xy);
-			 //a stochastic variation of the marching step seems to create better results with low quality settings
-			float jittering = fract( fract(float(i)*PI_INV)*abs(P.x+P.z)*2358940.12345) * shadowStep;
-			offset 	= ( shadowStep + jittering ) * jit_in.transTBN * L;
+	vec3 	P = vec3(geom.uv/texRepeat, geom.height);
+	//mat3 	TBN 	= create_tbn_from_texture(P.xy);
+	vec3 	offset 	= shadowStep * jit_in.transTBN * L;
 			P.xy 	+= offset.xy;
 			P.z 	-= offset.z;
-			if(P.z < 0.){
-				return 1. - saturate(sha*shadowAmount);
-			}
-			float 	H = (1. - getHeight(P.xy*texRepeat))*abs(heightScale);
-			if(P.z > H){
+	float 	sha = 0.;
+	int i;
+	for(i = 0; i < shadowIterations; i++){
 
-				sha = max(sha, (P.z - H)/(1. + float(i)*0.2));	
-			}
+		//TBN 	= create_tbn_from_texture(P.xy);
+		 //a stochastic variation of the marching step seems to create better results with low quality settings
+		float jittering = fract( fract(float(i)*PI_INV)*abs(P.x+P.z)*2358940.12345) * shadowStep;
+		offset 	= ( shadowStep + jittering ) * jit_in.transTBN * L;
+		P.xy 	+= offset.xy;
+		P.z 	-= offset.z;
+		if(P.z < 0.){
+			return 1. - saturate(sha*shadowAmount);
 		}
-		return i == shadowIterations - 1 ? 1. : 1. - saturate(sha*shadowAmount);
+		float 	H = (1. - getHeight(P.xy*texRepeat))*abs(heightScale);
+		if(P.z > H){
+
+			sha = max(sha, (P.z - H)/(1. + float(i)*0.2));	
+		}
 	}
-	return 0.;
+	return i == shadowIterations - 1 ? 1. : 1. - saturate(sha*shadowAmount);
 }
 //**********************************************************************************************//
 /*
