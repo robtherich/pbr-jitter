@@ -480,6 +480,7 @@ float shadow(vec3 L, in geometry geom){
 		for(i = 0; i < shadowIterations; i++){
 
 			//TBN 	= create_tbn_from_texture(P.xy);
+			 //a stochastic variation of the marching step seems to create better results with low quality settings
 			float jittering = fract( fract(float(i)*PI_INV)*abs(P.x+P.z)*2358940.12345) * shadowStep;
 			offset 	= ( shadowStep + jittering ) * jit_in.transTBN * L;
 			P.xy 	+= offset.xy;
