@@ -39,6 +39,7 @@
 		<bind param="prevMVP" program="vp" />
 		<bind param="MV" program="vp" />
 		<bind param="M" program="vp" />
+		<bind param="M" program="fp" />
 		<bind param="NM" program="vp" />
 		<bind param="Vmat" program="fp" />
 		<bind param="Pmat" program="fp" />
@@ -127,7 +128,7 @@ uniform float roughness, metalness;
 uniform float near, far;
 uniform vec2 texRepeat;
 uniform vec3 eye;
-uniform mat4 Vmat, Pmat;
+uniform mat4 Vmat, Pmat, M;
 
 struct PBRMaterialParameters {
 	vec4 diffuse;
@@ -278,26 +279,30 @@ vec3 	triplanarNormals(sampler2D tex, in geometry geom){
 	vec3 	tnY = texture(tex, geom.uvY).xyz*2. - vec3(1.);
 	vec3 	tnZ = texture(tex, geom.uvZ).xyz*2. - vec3(1.);
 			tnX.y *= -1.;
+			tnX.x *= jit_in.modelNor.x > 0. ? -1. : 1.;
 			tnY.y *= -1.;
+			tnY.x *= jit_in.modelNor.y > 0. ? -1. : 1.;
 			tnZ.y *= -1.;
+			tnZ.x *= jit_in.modelNor.z < 0. ? -1. : 1.;
 	// Swizzle world normals into tangent space and apply Whiteout blend
 			tnX = vec3(
-			    tnX.xy + geom.N.zy,
-			    abs(tnX.z) * geom.N.x
+			    tnX.xy + jit_in.modelNor.zy,
+			    abs(tnX.z) * jit_in.modelNor.x
 			    );
 			tnY = vec3(
-			    tnY.xy + geom.N.xz,
-			    abs(tnY.z) * geom.N.y
+			    tnY.xy + jit_in.modelNor.xz,
+			    abs(tnY.z) * jit_in.modelNor.y
 			    );
+			//tnY.z *= jit_in.modelNor.y > 0. ? -1. : 1.;
 			tnZ = vec3(
-			    tnZ.xy + geom.N.xy,
-			    abs(tnZ.z) * geom.N.z
+			    tnZ.xy + jit_in.modelNor.xy,
+			    abs(tnZ.z) * jit_in.modelNor.z
 			    );
 			tnX *= geom.triBlend.x;
 			tnY *= geom.triBlend.y;
 			tnZ *= geom.triBlend.z;
 	// Swizzle tangent normals to match world orientation and triblend
-	return normalize( (tnX.zyx + tnY.xzy + tnZ.xyz) * geom.triBlendNormalizer );
+	return ( M * vec4(normalize( (tnX.zyx + tnY.xzy + tnZ.xyz) * geom.triBlendNormalizer ), 0.)).xyz;
 }
 
 // parallax
@@ -846,7 +851,6 @@ void 	main() {
 
 	mate.occ 	= RMOH.b * 1.; //ambient occlusion
 
-	geom.N 		= normalize(jit_in.nor); //normalized world normals
 	geom.N 		= triplanarNormals(normalTex, geom);
 	
 	
@@ -863,8 +867,6 @@ void 	main() {
 	col.rgb = vec3(0.);
 
 	col.rgb += get_directional_light(pbrlight[0], mate, geom);
-
-	
 
 	col.rgb += pbrmtl.emission.rgb;
 
