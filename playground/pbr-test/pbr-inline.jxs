@@ -282,16 +282,16 @@ vec3 	triplanarNormals(sampler2D tex, in geometry geom){
 			tnZ.y *= -1.;
 	// Swizzle world normals into tangent space and apply Whiteout blend
 			tnX = vec3(
-			    tnX.xy + jit_in.modelNor.zy,
-			    abs(tnX.z) * jit_in.modelNor.x
+			    tnX.xy + geom.N.zy,
+			    abs(tnX.z) * geom.N.x
 			    );
 			tnY = vec3(
-			    tnY.xy + jit_in.modelNor.xz,
-			    abs(tnY.z) * jit_in.modelNor.y
+			    tnY.xy + geom.N.xz,
+			    abs(tnY.z) * geom.N.y
 			    );
 			tnZ = vec3(
-			    tnZ.xy + jit_in.modelNor.xy,
-			    abs(tnZ.z) * jit_in.modelNor.z
+			    tnZ.xy + geom.N.xy,
+			    abs(tnZ.z) * geom.N.z
 			    );
 			tnX *= geom.triBlend.x;
 			tnY *= geom.triBlend.y;
@@ -846,7 +846,7 @@ void 	main() {
 
 	mate.occ 	= RMOH.b * 1.; //ambient occlusion
 
-	
+	geom.N 		= normalize(jit_in.nor); //normalized world normals
 	geom.N 		= triplanarNormals(normalTex, geom);
 	
 	
