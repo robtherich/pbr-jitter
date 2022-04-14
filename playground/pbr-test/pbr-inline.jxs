@@ -1,4 +1,4 @@
-<jittershader name="alb-nor-RMO-env-ref-di-ro-me-ao-he-tp-px-gm">
+<jittershader name="alb-nor-RMO-di-ro-me-ao-he-tp-gm">
 	<param name="pos" type="vec3" state="POSITION" />
 	<param name="nor" type="vec3" state="NORMAL" />
 	<param name="tan" type="vec3" state="TANGENT" />
@@ -14,34 +14,22 @@
 	<param name="far" type="float" state="FAR_CLIP" />
 	<param name="near" type="float" state="NEAR_CLIP" />
 	<param name="PBRParameters" state="PBR" />
-	<param name="roughness" type="float" default="1.0" />
-	<param name="metalness" type="float" default="1.0" />
+	<param name="roughness" type="float" default="0.3" />
+	<param name="metalness" type="float" default="0.0" />
 	<param name="texRepeat" type="vec2" default="1. 1." />
-	<param name="heightScale" type="float" default="0.1" />
-	<param name="triplanarBlendingAmount" type="float" default="0.7" /> //**** NEW ****// this is the old triplanarExp now generalized to control both the triplanar blending modes
-	<param name="triplanarTexRepeat" type="vec2" default="0.5 0.5" />
-	<param name="triplanarBlendingMode" type="int" default="0" /> //********** NEW *********//
-	<param name="parallaxIterations" type="int" default="100" /> //****** NEW *******// (from vec2 to int)
-	<param name="parallaxStep" type="float" default="0.005" /> //******* NEW *******//
-	<param name="selfShadowing" type="float" default="0." />
+	<param name="heightScale" type="float" default="0.01" />
+	<param name="triplanarBlendingAmount" type="float" default="0.7" />
+	<param name="parallaxIterations" type="int" default="100" />
+	<param name="parallaxStep" type="float" default="0.005" />
 	<param name="shadowAmount" type="float" default="300." />
-	<param name="shadowIterations" type="int" default="100" /> //********* NEW ****//
-	<param name="shadowStep" type="float" default="0.01" /> //********** NEW *****//
-	<param name="worldLocked" type="float" default="0." />
+	<param name="shadowIterations" type="int" default="100" />
+	<param name="shadowStep" type="float" default="0.001" />
+	<param name="occlusionAmount" type="float" default="100." />
+	<param name="occlusionIterations" type="int" default="5" />
+	<param name="occlusionOffset" type="float" default="0.001" />
 	<param name="albedoTex" type="int" default="0" />
 	<param name="normalTex" type="int" default="1" />
 	<param name="RMOHTex" type="int" default="2" />
-	<param name="environmentTex" type="int" default="3" />
-	<param name="reflectionTex" type="int" default="4" />
-	<param name="integMap" type="int" default="5" />
-	<texture file="ibl_brdf_lut.png" type="float16" unit="5" rectangle="0" filter="none none" wrap="repeat repeat" />
-
-//************** NEW ***********************************************//
-	<param name="occlusionAmount"  		type="float" default="100." />
-	<param name="occlusionIterations"  	type="int"   default="5" />
-	<param name="occlusionOffset"   	type="float" default="0.001" />
-////***************************************************************//
-
 	<language name="glsl" version="1.5">
 		<bind param="pos" program="vp" />
 		<bind param="nor" program="vp" />
@@ -61,36 +49,20 @@
 		<bind param="roughness" program="fp" />
 		<bind param="metalness" program="fp" />
 		<bind param="texRepeat" program="vp" />
-
-//******************** NEW **************************//
 		<bind param="texRepeat" program="fp" />
-//**************************************************//
-
 		<bind param="heightScale" program="fp" />
-		<bind param="triplanarBlendingAmount" program="fp" /> //******* NEW ****** //
-		<bind param="triplanarTexRepeat" program="fp" />
-		<bind param="triplanarBlendingMode" program="fp" /> //****** NEW *********//
-		<bind param="parallaxMapping" program="fp" />
+		<bind param="triplanarBlendingAmount" program="fp" />
 		<bind param="parallaxIterations" program="fp" />
 		<bind param="parallaxStep" program="fp" />
-		<bind param="selfShadowing" program="fp" />
 		<bind param="shadowAmount" program="fp" />
 		<bind param="shadowIterations" program="fp" />
-		<bind param="shadowStep" program="fp" /> // ********* NEW **********//
-		<bind param="worldLocked" program="fp" />
+		<bind param="shadowStep" program="fp" />
+		<bind param="occlusionAmount" program="fp" />
+		<bind param="occlusionIterations" program="fp" />
+		<bind param="occlusionOffset" program="fp" />
 		<bind param="albedoTex" program="fp" />
 		<bind param="normalTex" program="fp" />
 		<bind param="RMOHTex" program="fp" />
-		<bind param="environmentTex" program="fp" />
-		<bind param="reflectionTex" program="fp" />
-		<bind param="integMap" program="fp" />
-
-//************** NEW ****************************************//
-		<bind param="occlusionAmount"   	program="fp" />
-		<bind param="occlusionIterations"  	program="fp" />
-		<bind param="occlusionOffset"  		program="fp" />
-//***********************************************************//
-
 		<program name="vp" type="vertex">
 			<![CDATA[
 #version 330 core
@@ -106,7 +78,6 @@ out jit_PerVertex {
 	smooth 	vec3 bit;
 	smooth 	vec3 pos;
 	smooth 	vec2 uv;
-	//flat 	vec2 texRepeat; ********* REMOVE **************//
 	smooth 	vec3 eyePos;
 	smooth  vec3 modelPos;
 	smooth  vec3 modelNor;
@@ -124,8 +95,7 @@ void main() {
 	jit_out.tan = (M * vec4(tan, 0.)).xyz;
 	jit_out.bit = cross(jit_out.tan, jit_out.nor);
 	jit_out.pos = (M * vec4(pos, 1.)).xyz;
-	jit_out.uv = uv*texRepeat;
-	//jit_out.texRepeat = texRepeat; *********** REMOVE *******//
+	jit_out.uv = uv * texRepeat;
 	jit_out.eyePos = (MV * vec4(pos, 1.)).xyz;
 	jit_out.modelPos = pos;
 	jit_out.modelNor = nor;
@@ -137,31 +107,27 @@ void main() {
 		</program>
 		<program name="fp" type="fragment">
 			<![CDATA[
-#version 330 core
 
-#define textureJit texture
+
+
+#version 330 core
 #define JIT_PBR_IBL_REFLECTION
-#define JIT_PBR_SHADOW
 #line 1
 #define PI 3.14159265
 #define TWOPI 6.28318531
 #define PI_INV 0.3183098861
 
-uniform vec3 eye;
 uniform sampler2D albedoTex, normalTex, RMOHTex, emissionTex, rectLightTex, integMap;
 uniform samplerCube environmentTex, reflectionTex;
-uniform float heightScale, /*triplanarExp, */shadowAmount, worldLocked; //*** REMOVE triplanarExp****//
-uniform vec2 triplanarTexRepeat;
+uniform int shadowIterations, parallaxIterations, occlusionIterations; 
+uniform float heightScale, triplanarBlendingAmount;
+uniform float shadowAmount, shadowStep, parallaxStep;
+uniform float occlusionAmount, occlusionOffset;
 uniform float roughness, metalness;
 uniform float near, far;
-uniform mat4 Vmat, Pmat;
-
-//****** NEW *********************//
-uniform float occlusionAmount, occlusionOffset, shadowStep, parallaxStep, triplanarBlendingAmount; 
-uniform int shadowIterations, occlusionIterations, parallaxIterations;
-uniform int triplanarBlendingMode;
 uniform vec2 texRepeat;
-//********************************//
+uniform vec3 eye;
+uniform mat4 Vmat, Pmat;
 
 struct PBRMaterialParameters {
 	vec4 diffuse;
@@ -184,7 +150,6 @@ struct 	material{
 	float 	occ;
 	float 	met;
 	float 	rou;
-	//float 	height; ********* REMOVE *************//
 	vec3 	F0;
 };
 
@@ -192,16 +157,14 @@ struct 	geometry{
 	vec3	V;
 	vec3	N;
 	vec3 	R;
-	//vec3	tanN; //*********** REMOVE *************//
 	vec3	pos;
 	vec2	uv;
-	float 	height;
-	//********* NEW ************//
+	float 	height;	
+
 	//common triplanar params
 	vec2 	uvX, uvY, uvZ;
 	vec3 	triBlend;
-	float 	triBlendNormalizer;
-	//***********************************//
+	float 	triBlendNormalizer;	
 };
 
 in jit_PerVertex {
@@ -209,8 +172,7 @@ in jit_PerVertex {
 	smooth 	vec3 tan;
 	smooth 	vec3 bit;
 	smooth 	vec3 pos;
-	smooth 	vec2 uv;	
-	//flat 	vec2 texRepeat; ************ REMOVE ***************//
+	smooth 	vec2 uv;
 	smooth  vec3 eyePos;
 	smooth  vec3 modelPos;
 	smooth  vec3 modelNor;
@@ -226,10 +188,10 @@ vec3 	lin2sRGB(vec3 x){ return pow(x, vec3(0.4545454545));}
 vec3 	sRGB2lin(vec3 x){ return pow(x, vec3(2.2));}
 float 	saturate(float x){ return clamp(x, 0., 1.);}
 
+//biplanar mapping
 // from Inigo Quilez implementation:
 //https://iquilezles.org/www/articles/biplanar/biplanar.htm
-//biplanar mapping
-vec4 biplanar( sampler2D tex )
+vec4 biplanar( sampler2D tex, in geometry geom )
 {
     // grab coord derivatives for texturing
     vec3 p = jit_in.modelPos;
@@ -265,14 +227,14 @@ vec4 biplanar( sampler2D tex )
     // blend and return
     return (x*w.x + y*w.y) / (w.x + w.y);
 }
-//*************************** NEW ***************************************************//
-void getTriplanarUVs(inout geometry geom){
 
-	geom.uvX = jit_in.modelPos.zy*triplanarTexRepeat; //**** changed the swizzling from yz to zy ****//
+//triplanar mapping
+void getTriplanarUVs(inout geometry geom){
+	geom.uvX = jit_in.modelPos.zy*texRepeat; //changed the swizzling from yz to zy
 	geom.uvX.x = jit_in.modelNor.x < 0. ? geom.uvX.x : -geom.uvX.x;
-	geom.uvY = jit_in.modelPos.xz*triplanarTexRepeat;
+	geom.uvY = jit_in.modelPos.xz*texRepeat;
 	geom.uvY.x = jit_in.modelNor.y < 0. ? geom.uvY.x : -geom.uvY.x;
-	geom.uvZ = jit_in.modelPos.xy*triplanarTexRepeat;
+	geom.uvZ = jit_in.modelPos.xy*texRepeat;
 	geom.uvZ.x = jit_in.modelNor.z >= 0. ? geom.uvZ.x : -geom.uvZ.x;
 	geom.uvX.y += 0.5;
 	geom.uvZ.x += 0.5;
@@ -283,7 +245,7 @@ void getTriplanarExpBlend(inout geometry geom){
 	geom.triBlendNormalizer = 1. / (geom.triBlend.x + geom.triBlend.y + geom.triBlend.z);
 }
 
-void gettriplanarBlendingMode(inout geometry geom){
+void getTriplanarBlendingMode(inout geometry geom){
 	// Height Map Triplanar Blend
 	vec3 	blend = abs(jit_in.modelNor.xyz);
 			blend /= dot(blend, vec3(1.0,1.0,1.0));
@@ -300,30 +262,24 @@ void gettriplanarBlendingMode(inout geometry geom){
 	geom.triBlend =	h / dot(h, vec3(1.0,1.0,1.0));
 	geom.triBlendNormalizer = 1. / (geom.triBlend.x + geom.triBlend.y + geom.triBlend.z);
 }
-//triplanar mapping
-vec4 	triplanar(sampler2D tex, in geometry geom){
 
+vec4 	triplanar(sampler2D tex, in geometry geom){
 	vec4 	X = texture(tex, geom.uvX)*geom.triBlend.x;
 	vec4 	Y = texture(tex, geom.uvY)*geom.triBlend.y;
 	vec4 	Z = texture(tex, geom.uvZ)*geom.triBlend.z;
 	return 	(X+Y+Z) * geom.triBlendNormalizer;
 }
 
-// ******************************** NEW ************************************** //
 vec3 	triplanarNormals(sampler2D tex, in geometry geom){
-
 	// Whiteout blend
 	// from https://bgolus.medium.com/normal-mapping-for-a-triplanar-shader-10bf39dca05a
-
 	// Tangent space normal maps
 	vec3 	tnX = texture(tex, geom.uvX).xyz*2. - vec3(1.);
 	vec3 	tnY = texture(tex, geom.uvY).xyz*2. - vec3(1.);
 	vec3 	tnZ = texture(tex, geom.uvZ).xyz*2. - vec3(1.);
-
 			tnX.y *= -1.;
 			tnY.y *= -1.;
 			tnZ.y *= -1.;
-
 	// Swizzle world normals into tangent space and apply Whiteout blend
 			tnX = vec3(
 			    tnX.xy + jit_in.modelNor.zy,
@@ -337,80 +293,14 @@ vec3 	triplanarNormals(sampler2D tex, in geometry geom){
 			    tnZ.xy + jit_in.modelNor.xy,
 			    abs(tnZ.z) * jit_in.modelNor.z
 			    );
-
 			tnX *= geom.triBlend.x;
 			tnY *= geom.triBlend.y;
 			tnZ *= geom.triBlend.z;
-
 	// Swizzle tangent normals to match world orientation and triblend
 	return normalize( (tnX.zyx + tnY.xzy + tnZ.xyz) * geom.triBlendNormalizer );
-	    
 }
-//*******************************************************************************//
 
-//**************************************** REMOVE ***************************************************//
-/*
-//parallax mapping
-void 	parallax(inout material mate, inout geometry geom){
-
-	vec3	V 	= normalize(jit_in.transTBN * (jit_in.pos - eye));		//tangent view direction
-	//compute texture coordinates ratio
-	float uvRatio = texRepeat.x / texRepeat.y; 
-	V.x *= uvRatio;
-
-   	// determine optimal number of layers
-   	float numLayers = mix(parallaxIterations.x, parallaxIterations.y, abs(dot(vec3(0, 0, 1), V)));
-
-   	// height of each layer
-   	float layerHeight = 1.0 / numLayers;
-   	// current depth of the layer
-   	float curLayerHeight = 0;
-   	// shift of texture coordinates for each layer
-   	vec2 dtex = heightScale * V.xy / V.z / numLayers;
-
-   	// current texture coordinates
-   	vec2 currentTextureCoords = geom.uv;
-
-  	// depth from heightmap
-   	float heightFromTexture = geom.height;
-
-   	// while point is above the surface
-   	while(heightFromTexture > curLayerHeight) 
-   	{
-      	// to the next layer
-      	curLayerHeight += layerHeight; 
-      	// shift of texture coordinates
-      	currentTextureCoords += dtex;
-      	// new depth from heightmap
-      	heightFromTexture = 1. - texture(RMOHTex, currentTextureCoords).a;
-   	}
-
-   	///////////////////////////////////////////////////////////
-
-   	// previous texture coordinates
-   	vec2 prevTCoords = currentTextureCoords - dtex;
-
-   	// heights for linear interpolation
-   	float nextH = heightFromTexture - curLayerHeight;
-   	float prevH = 1. - texture(RMOHTex, prevTCoords).a
-                           - curLayerHeight + layerHeight;
-
-   	// proportions for linear interpolation
-   	float weight = nextH / (nextH - prevH);
-
-   	// interpolation of texture coordinates
-   	geom.uv = mix(currentTextureCoords, prevTCoords, vec2(weight));
-   	geom.height = curLayerHeight + mix(nextH, prevH,weight);
-   	if(geom.uv.x > texRepeat.x || geom.uv.y > texRepeat.y || geom.uv.x < 0.0 || geom.uv.y < 0.0){discard; }
-}
-*/
-// ***********************************************************************************************************//
-
-
-
-
-// ******************************************** NEW **********************************************************//
-
+// parallax
 float getHeight(vec2 uv){
 	//forcing to look-up the fist mip level avoids partial derivatives problems
 	//aka, random black pixels here and there
@@ -465,18 +355,14 @@ void parallax(inout geometry geom){
 	}
 }
 
-float shadow(vec3 L, in geometry geom){
-
+float selfShadow(vec3 L, in geometry geom){
 	vec3 	P = vec3(geom.uv/texRepeat, geom.height);
-	//mat3 	TBN 	= create_tbn_from_texture(P.xy);
 	vec3 	offset 	= shadowStep * jit_in.transTBN * L;
 			P.xy 	+= offset.xy;
 			P.z 	-= offset.z;
 	float 	sha = 0.;
 	int i;
 	for(i = 0; i < shadowIterations; i++){
-
-		//TBN 	= create_tbn_from_texture(P.xy);
 		 //a stochastic variation of the marching step seems to create better results with low quality settings
 		float jittering = fract( fract(float(i)*PI_INV)*abs(P.x+P.z)*2358940.12345) * shadowStep;
 		offset 	= ( shadowStep + jittering ) * jit_in.transTBN * L;
@@ -487,62 +373,12 @@ float shadow(vec3 L, in geometry geom){
 		}
 		float 	H = (1. - getHeight(P.xy*texRepeat))*abs(heightScale);
 		if(P.z > H){
-
 			sha = max(sha, (P.z - H)/(1. + float(i)*0.2));	
 		}
 	}
 	return i == shadowIterations - 1 ? 1. : 1. - saturate(sha*shadowAmount);
 }
-//**********************************************************************************************//
-/*
-float 	shadow(vec3 L, vec3 N, vec2 initialTexCoord, float initialHeight){
 
-	//L.z *= -1.;
-	//N.y *= -1.;
-   // calculate lighting only for surface oriented to the light source
-   float NdotL = dot(N, L);
-   if(NdotL < 0.0) {return 0.;}
-
-    // calculate initial parameters
-    float numSamplesUnderSurface = 0.;
-    float shadowMultiplier = 0.;
-    float numLayers = mix(shadowIterations.x, shadowIterations.y, abs(NdotL));
-    float layerHeight = initialHeight / numLayers;
-    vec2 texStep = heightScale * L.xy / L.z / numLayers; 
-
-    // current parameters
-    float currentLayerHeight = initialHeight - layerHeight;
-    vec2 currentTextureCoords = initialTexCoord - texStep;
-    float heightFromTexture = 1. - texture(RMOHTex, currentTextureCoords).a;
-    float stepIndex = 1.;
-
-    //int count = 0;
-
-    // while point is below depth 0.0 )
-    while(currentLayerHeight > 0.){
-
-        // if point is under the surface
-        if(heightFromTexture < currentLayerHeight){
-
-            // calculate partial shadowing factor
-            numSamplesUnderSurface += 1.;
-            float newShadowMultiplier = (currentLayerHeight  - heightFromTexture)*(stepIndex / numLayers);
-            shadowMultiplier = max(shadowMultiplier, newShadowMultiplier);
-        }
-
-        // offset to the next layer
-        stepIndex += 1.;
-        currentLayerHeight -= layerHeight;
-        currentTextureCoords -= texStep;
-        heightFromTexture = 1. - texture(RMOHTex, currentTextureCoords).a;
-        //count += 1;
-    }
-    shadowMultiplier *= shadowAmount;
-    // Shadowing factor should be 1 if there were no points under the surface
-    return (numSamplesUnderSurface < 1.) ? 1. : 1. - saturate(shadowMultiplier);
-    //return abs(NdotL);
-}
-*/
 //PBR functions
 vec3 	fresnelSchlickRoughness(float HdotV, vec3 F0, float rou){
 	float 	x = saturate(1. - HdotV); //x^5
@@ -641,6 +477,61 @@ vec3 	rayPlaneIntersect(vec3 ro, vec3 rd, vec3 ligDir, vec3 ligPos){
 	float a = dot(ligDir, rd);
     return a == 0. ? ro + rd * (dot(ligDir, ligPos - ro) / a) : vec3(ro + rd*1000);
 }
+
+float getHeightDifference(vec2 uv, float lod, float currH){
+	return heightScale >= 0. ? 	max(0., (textureLod(RMOHTex, uv, lod).w - currH)) : 
+					max(0., (1. - (textureLod(RMOHTex, uv, lod).w) - currH));
+}
+
+float getAO(in geometry geom, float currH){
+
+	float 	occ = 0.;
+	vec2 	off = vec2(occlusionOffset, 0.) / texRepeat;
+	float 	lod = 0.;
+	float 	intensity = 1.;
+
+	for(int i = 0; i < occlusionIterations; i++){
+		float toAdd = 0.;
+		toAdd += getHeightDifference(geom.uv - off.xy, lod, currH);
+		toAdd += getHeightDifference(geom.uv + off.xy, lod, currH);
+		toAdd += getHeightDifference(geom.uv - off.yx, lod, currH);
+		toAdd += getHeightDifference(geom.uv + off.yx, lod, currH);
+		occ += toAdd*intensity;
+		off *= 2.;
+		lod += 2.;
+		intensity *= 0.5;
+	}
+
+	//occ /= float(occlusionIterations);
+	occ *= abs(heightScale);
+	occ *= occlusionAmount;
+	occ /= 1. + occ;
+	return 1. - occ;
+
+}
+
+float getNormAndHeightFromDerivatives(inout geometry geom, inout material mate){
+
+	// 3 taps: better quality than float2(ddx fine(H), ddy fine(H)).
+	vec2 	texDx = dFdx(jit_in.uv), texDy = dFdy(jit_in.uv);
+	vec3 	dPdx = dFdx(geom.pos), dPdy = dFdy(geom.pos);
+	float 	Hll = getHeight(geom.uv);
+	float 	Hlr = getHeight(geom.uv + texDx); //*** put back texDx
+	float 	Hul = getHeight(geom.uv + texDy);
+	vec2 	deriv = vec2(Hlr - Hll, Hul - Hll);
+		deriv *= abs(heightScale);
+
+	// Equation 3 in [Mikkelsen 2010].
+	vec3 	vR1 = cross(dPdy, geom.N);
+	vec3 	vR2 = cross(geom.N, dPdx);
+	float 	det = dot(dPdx, vR1);
+	float 	eps = 1.192093e-15F;
+	float 	sign_det = det < 0.0 ? -1.0 : 1.0;
+	float 	s = sign_det/max(eps, abs(det));
+		    geom.N = normalize(geom.N - s*(deriv.x*vR1 + deriv.y*vR2));
+            
+    return Hll;
+}
 //PBR light functions
 
 //Point light	
@@ -654,8 +545,8 @@ vec3	get_point_light(in PBRLightSourceParameters lig, in material mate, in geome
 	vec3	rad 		= lig.color.rgb * atten;			//radiance
 	bool	compute 	= rad.x+rad.y+rad.z > 0.05;
 	return  compute ? 	
-#ifdef JIT_PBR_SHADOW
-                shadow(normalize(jit_in.transTBN * ligMinPos), geom) * 
+#ifdef JIT_PBR_SELF_SHADOW
+                selfShadow(normalize(jit_in.transTBN * ligMinPos), geom) * 
 #endif
 		getRadiance(geom.V, geom.N, L, rad, geom.pos, mate) :
 		vec3(0.);
@@ -665,10 +556,9 @@ vec3	get_point_light(in PBRLightSourceParameters lig, in material mate, in geome
 vec3	get_directional_light(in PBRLightSourceParameters lig, in material mate, in geometry geom){
 	
         vec3    direction = normalize(lig.position.xyz);
-        vec3    tanLigDir = normalize(direction);	//light pos in tangent space
         return  
-#ifdef JIT_PBR_SHADOW
-                shadow(tanLigDir, geom) * 
+#ifdef JIT_PBR_SELF_SHADOW
+                selfShadow(normalize(direction), geom) * 
 #endif
                 getRadiance(geom.V, geom.N, direction, lig.color.rgb, geom.pos, mate);
 }
@@ -685,12 +575,24 @@ vec3  	get_spot_light(in PBRLightSourceParameters lig, in material mate, in geom
 	        atten       = spotatten > lig.spotCosCutoff ? atten * pow(spotatten, lig.spotExponent) : 0.;
 	vec3	rad 		= lig.color.rgb * atten;			//radiance
 	bool	compute 	= rad.x+rad.y+rad.z > 0.05;
-    return  compute ?   
-#ifdef JIT_PBR_SHADOW
-        shadow(normalize(jit_in.transTBN * ligMinPos), geom) * 
+        return  compute ?   
+#ifdef JIT_PBR_SELF_SHADOW
+                selfShadow(normalize(jit_in.transTBN * ligMinPos), geom) * 
 #endif
-        getRadiance(geom.V, geom.N, L, rad, geom.pos, mate) :
-        vec3(0.);
+                getRadiance(geom.V, geom.N, L, rad, geom.pos, mate) :
+                vec3(0.);
+}
+
+vec3	get_hemisphere_light(in PBRLightSourceParameters lig, in material mate, in geometry geom){
+        vec3    direction = normalize(lig.position.xyz);
+        vec3    rad =  
+#ifdef JIT_PBR_SELF_SHADOW
+                selfShadow(normalize(direction), geom) * 
+#endif
+                getRadiance(geom.V, geom.N, direction, lig.color.rgb, geom.pos, mate);
+
+        float weight = 0.5 * dot(geom.N, direction) + 0.5;
+        return mix(lig.ambient.rgb, rad, weight);
 }
 
 //PBR Image-based lighting
@@ -802,8 +704,8 @@ vec3    getRectLight(in rectlight lig, in material mate, in geometry geom){
             kD *= 1. - mate.met;
         
     float sha = 
-#ifdef JIT_PBR_SHADOW 
-        shadow(tanLigDir, geom);
+#ifdef JIT_PBR_SELF_SHADOW 
+        selfShadow(tanLigDir, geom);
 #else
         1.;
 #endif
@@ -905,132 +807,15 @@ vec3    getRectLightTextured(in rectlight lig, in material mate, in geometry geo
     vec3    kD = vec3(1.) - F;//rectLightFresnel;
             kD *= 1. - mate.met;
     float   sha = 
-#ifdef JIT_PBR_SHADOW 
-        shadow(tanLigDir, geom);
+#ifdef JIT_PBR_SELF_SHADOW 
+        selfShadow(tanLigDir, geom);
 #else 
         1.;
 #endif
     return  (kD * PI_INV * mate.alb*difCol + result*LdotR*speCol) * NdotL * sha;   
 }
-// ******************************** NEW *************************************************//
-float getHeightDifference(vec2 uv, float lod, float currH){
-	return heightScale >= 0. ? 	max(0., (textureLod(RMOHTex, uv, lod).w - currH)) : 
-								max(0., (1. - (textureLod(RMOHTex, uv, lod).w) - currH));
-}
-
-float getAO(in geometry geom, float currH){
-
-	float 	occ = 0.;
-	vec2 	off = vec2(occlusionOffset, 0.) / texRepeat;
-	float 	lod = 0.;
-	float 	intensity = 1.;
-
-	for(int i = 0; i < occlusionIterations; i++){
-		float toAdd = 0.;
-		toAdd += getHeightDifference(geom.uv - off.xy, lod, currH);
-		toAdd += getHeightDifference(geom.uv + off.xy, lod, currH);
-		toAdd += getHeightDifference(geom.uv - off.yx, lod, currH);
-		toAdd += getHeightDifference(geom.uv + off.yx, lod, currH);
-		occ += toAdd*intensity;
-		off *= 2.;
-		lod += 2.;
-		intensity *= 0.5;
-	}
-
-	//occ /= float(occlusionIterations);
-	occ *= abs(heightScale);
-	occ *= occlusionAmount;
-	occ /= 1. + occ;
-	return 1. - occ;
-
-}
-void getNormAndAoFromDerivatives(inout geometry geom, inout material mate){
-
-	// 3 taps: better quality than float2(ddx fine(H), ddy fine(H)).
-	vec2 	texDx = dFdx(jit_in.uv), texDy = dFdy(jit_in.uv);
-	vec3 	dPdx = dFdx(geom.pos), dPdy = dFdy(geom.pos);
-	float 	Hll = getHeight(geom.uv);
-	float 	Hlr = getHeight(geom.uv + texDx); //*** put back texDx
-	float 	Hul = getHeight(geom.uv + texDy);
-	vec2 	deriv = vec2(Hlr - Hll, Hul - Hll);
-
-			deriv *= abs(heightScale);
-
-	// Equation 3 in [Mikkelsen 2010].
-	vec3 	vR1 = cross(dPdy, geom.N);
-	vec3 	vR2 = cross(geom.N, dPdx);
-	float 	det = dot(dPdx, vR1);
-	float 	eps = 1.192093e-15F;
-	float 	sign_det = det < 0.0 ? -1.0 : 1.0;
-	float 	s = sign_det/max(eps, abs(det));
-			geom.N = normalize(geom.N - s*(deriv.x*vR1 + deriv.y*vR2));
-			mate.occ = getAO(geom, Hll);
-
-}
-
-//*******************************************************************************************//
-
-/* ============================= HOW TO USE THE FUNCTIONS =======================================//
-
-in the main() function:
-___________________________________________________________________________________________
-point light
-	{
-		lig.ligPos		= vec3(1., 3., 0.);					//light position
-		lig.ligCol 		= vec3(1.);							//light color
-		col.rgb 		+= getPointLight(lig, mate, geom);	
-	}
-___________________________________________________________________________________________
-directional light
-	{
-		lig.ligDir 		= normalize(vec3(0., 1., 0.));				//normalized light direction
-		lig.ligCol 		= vec3(1.);									//light color
-		col.rgb 		+= getDirectionalLight(lig, mate, geom);
-	}
-___________________________________________________________________________________________
-spot light
-	{
-		lig.ligPos 		= vec3(0., 2., 0.);					//light position
-		lig.ligDir 		= vec3(0., 1., 0.);					//normalized light direction
-		lig.ligCol 		= vec3(1., 0.1, 0.2);				//light color
-		lig.cutoffInner = -0.7;								//precomputed cosine on the inner cutoff
-		lig.cutoffOuter = -0.5;								//precomputed cosine on the outer cutoff
-		col.rgb 		+= getSpotLight(lig, mate, geom);
-	}
-___________________________________________________________________________________________
-IBL
-	{
-		col.rgb 		+= getIBL(mate, geom); 
-	}
-___________________________________________________________________________________________
-rectangular light
-    {
-        lig.ligPos      = vec3(3., 0., 0.);         //light position (center of the rectangle)
-        lig.ligDir      = vec3(1., 0., 0.);         //normalized light direction
-        lig.ligCol      = vec3(0.1, 0.4, 0.7);      //light color
-        lig.width       = 4.;                       //rectangle width
-        lig.height      = 2.;                       //rectangel height
-        lig.twoSided    = false;                    //illuminate in one direction or both (boolean)
-        col.rgb         += getRectLight(lig, mate, geom);
-    }
-___________________________________________________________________________________________
-rectangular textured light
-    {
-        lig.ligPos      = vec3(3., 0., 0.);         //light position (center of the rectangle)
-        lig.ligDir      = vec3(1., 0., 0.);         //normalized light direction
-        lig.ligCol      = vec3(0.1, 0.4, 0.7);      //light color
-        lig.width       = 4.;                       //rectangle width
-        lig.height      = 2.;                       //rectangel height
-        lig.twoSided    = false;                    //illuminate in one direction or both (boolean)
-        col.rgb         += getRectLightTextured(lig, mate, geom);
-    }
-___________________________________________________________________________________________
-
-//============================================================================================= */
 
 layout(location = 0) out vec4 col;
-//layout(location = 1) out vec4 depth;
-//layout(location = 2) out vec4 velocity;
 
 #define NUM_LIGHTS (1)
 layout (std140) uniform PBRParameters {
@@ -1038,86 +823,58 @@ layout (std140) uniform PBRParameters {
 	PBRLightSourceParameters pbrlight[NUM_LIGHTS];
 };
 
-void 	main() {
 
+#define PBRTEXMAP triplanar
+
+
+void 	main() {
 	material 	mate;
 	geometry 	geom;
 
 	geom.uv 	= jit_in.uv;
 	geom.pos  	= jit_in.pos;
-	geom.N 		= normalize(jit_in.nor);
-
-	//**** NOTE: comment the following block of code (NON TRIPLANAR) and uncomment the code below (TRIPLANAR)
-	//if you want to see how the two modes work. Make sure to set "shadowAmount = 0" in the main patch when using triplanar
-
-
-	//************************** NON TRIPLANAR ***************************/
-	//if triplanar = off and parallax = on
+	geom.height = 1.;
 	
-	parallax(geom);
-	getNormAndAoFromDerivatives(geom, mate);
-	vec4 RMOH	= texture(RMOHTex, geom.uv);
-	mate.alb 	= texture(albedoTex, geom.uv).rgb * pbrmtl.diffuse.rgb;
+	getTriplanarUVs(geom);	
+
+	getTriplanarExpBlend(geom);
+
 	
-	//************************************************************//
+
+	vec4 RMOH	= PBRTEXMAP(RMOHTex, geom);	
 
 
-	//********************************* TRIPLANAR ********************************//
-	//else, if triplanar = on 
-	// when using triplanar, shadows and parallax should be turned off //
-	/*
-	getTriplanarUVs(geom);
-	if(triplanarBlendingMode == 1){
-		gettriplanarBlendingMode(geom);
-		} else {
-			getTriplanarExpBlend(geom);
-		}
-	vec4 	RMOH = triplanar(RMOHTex, geom);	
-			mate.alb 	= triplanar(albedoTex, geom).rgb * pbrmtl.diffuse.rgb;
-			geom.N 		= triplanarNormals(normalTex, geom); //******** NEW ******** //
-			geom.height = 1. - RMOH.w;
-			mate.occ 	= RMOH.b; //ambient occlusion
-	*/
-	//*******************************************************************************//
+	mate.occ 	= RMOH.b * 1.; //ambient occlusion
 
+	
+	geom.N 		= triplanarNormals(normalTex, geom);
+	
+	
 
+	vec4 alb 	= PBRTEXMAP(albedoTex, geom) * pbrmtl.diffuse;
+	mate.alb	= alb.rgb;
 	mate.rou 	= RMOH.r * roughness;
 	mate.met 	= RMOH.g * metalness;
 	mate.F0 	= mix(vec3(0.04), mate.alb, vec3(mate.met));  //use alb as F0 if metallic
+
 	geom.V 		= normalize(eye - jit_in.pos);	//view direction
-
-
-
 	geom.R 		= reflect(geom.V, geom.N);
-	//geom.pos	+= geom.N * (1. - geom.height) * heightScale;
 
-	col.rgb = vec3(0.); //initialize the out color 
+	col.rgb = vec3(0.);
 
 	col.rgb += get_directional_light(pbrlight[0], mate, geom);
 
-	col.rgb += getIBL(mate, geom);
+	
 
 	col.rgb += pbrmtl.emission.rgb;
 
-	col.rgb += vec3(0.02)*mate.occ; //***** remove this line, it's just to test if the occlusion works without having to load an environment map
-
 	col.rgb = gammaCorrection(col.rgb);
 
-	// not sure about alpha
-	col.a = 1.;
+	col.a = alb.a;
 
-	// the rest...
-	/*float z = gl_FragCoord.z * 2.0 - 1.0; // back to NDC 
-	z = (2.0 * near * far) / (far + near - z * (far - near));	
-	z /= far;
-
-	depth.rgb = (Pmat * Vmat * vec4(geom.N, 0.)).xyz;
-	depth.a = z;
-
-	vec2 a = (jit_in.currPos.xy / jit_in.currPos.w) * 0.5 + 0.5;
-	vec2 b = (jit_in.prevPos.xy / jit_in.prevPos.w) * 0.5 + 0.5;
-	velocity = vec4(a - b, 0., 1.);	*/
+	// TODO: other render targets
 }			
+		
 		
 
 ]]>
