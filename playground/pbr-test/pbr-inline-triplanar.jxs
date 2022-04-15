@@ -961,6 +961,9 @@ in jit_PerVertexShadow {
 
 
 
+#define PBRTEXMAP triplanar
+
+
 void 	main() {
 	material 	mate;
 	geometry 	geom;
@@ -969,18 +972,23 @@ void 	main() {
 	geom.pos  	= jit_in.pos;
 	geom.height = 1.;
 	
+	getTriplanarUVs(geom);	
 
-	vec4 RMOH	= texture(RMOHTex, geom.uv);	
+	getTriplanarHeightMap(geom);
+
+	
+
+	vec4 RMOH	= PBRTEXMAP(RMOHTex, geom);	
 
 
 	mate.occ 	= RMOH.b * 1.; //ambient occlusion
 
-
-	geom.N 	= normalize(jit_in.TBN * normalize(texture(normalTex, geom.uv).rgb * 2. - 1.));
+	
+	geom.N 		= triplanarNormals(normalTex, geom);
 	
 	
 
-	vec4 alb 	= texture(albedoTex, geom.uv) * pbrmtl.diffuse;
+	vec4 alb 	= PBRTEXMAP(albedoTex, geom) * pbrmtl.diffuse;
 	mate.alb	= alb.rgb;
 	mate.rou 	= RMOH.r * roughness;
 	mate.met 	= RMOH.g * metalness;
