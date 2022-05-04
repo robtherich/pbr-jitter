@@ -28,6 +28,9 @@ function PWorld(patcher)
     this.light = new JitterObject("jit.gl.light");
     this.light.ambient = [1,1,1,1];
 
+    this.matEmpty = new JitterMatrix();
+    this.matEmpty.importmovie("default_tex.png");
+
     this.textureEmpty = new JitterObject("jit.gl.texture");
 
     this.gridshape = new JitterObject("jit.gl.gridshape");
@@ -98,12 +101,9 @@ function PWorld(patcher)
 
     this.PWorld_SetMtrTexture = function(texType)
     {   
-        FF_Utils.Print("SET MTR Texture textype", texType);
+        // FF_Utils.Print("SET MTR Texture textype", texType);
 
         var inputType = getKeyByValue(this.link_mtrClassicInputs_texTypes, texType);
-        FF_Utils.Print("input type", inputType);
-        // this.pbrProxy[inputType](gGlobal.textureNames[texType]);
-        // this.pbrProxy.send(inputType, gGlobal.textureNames[texType]);
 
         messnamed("jit_gl_pbr_messages_receiver_FF", inputType, gGlobal.textureNames[texType]);
         

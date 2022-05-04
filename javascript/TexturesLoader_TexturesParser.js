@@ -181,6 +181,11 @@ function TexturesParser(patcher, spriteSize)
         }
         return -1;
     }
+
+    this.GetMatrixFromIndex = function(index)
+    {
+        return this.movieLoaderArray[index].GetMatrix();
+    }
     
     var PickerCallback = (function(data) 
     {   

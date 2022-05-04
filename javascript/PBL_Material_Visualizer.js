@@ -48,6 +48,7 @@ function SetMtrTexture(texType)
 function SetAllMtrTextures()
 {
     gPWorld.PWorld_SetAllMtrTextures();
+    // gPWorld.SetMtrToEmpty();
 }
 
 function GetPWorldName(name)

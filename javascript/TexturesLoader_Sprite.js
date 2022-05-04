@@ -146,7 +146,7 @@ function Sprite(patcher, position, spriteSize, texType)
 
     this.ApplyTexturesToShape = function()
     {   
-        FF_Utils.Print("ApplyTexture to shape", this.spriteType)
+        // FF_Utils.Print("ApplyTexture to shape", this.spriteType)
         outlet(0, "SetMtrTexture", this.spriteType);
     }
 

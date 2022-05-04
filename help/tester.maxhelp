@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 2593.0, 805.0, 1462.0, 971.0 ],
+		"rect" : [ 56.0, 100.0, 1325.0, 971.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -40,14 +40,13 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
-					"format" : 6,
-					"id" : "obj-16",
-					"maxclass" : "flonum",
+					"id" : "obj-15",
+					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 2,
-					"outlettype" : [ "", "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 1218.0, 751.0, 50.0, 22.0 ]
+					"outlettype" : [ "", "" ],
+					"patching_rect" : [ 320.0, 793.488028347492218, 69.0, 22.0 ],
+					"text" : "jit.gl.handle"
 				}
 
 			}
@@ -66,12 +65,13 @@
 , 			{
 				"box" : 				{
 					"id" : "obj-20",
+					"linecount" : 2,
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 149.90016371011734, 664.0, 159.322036504745483, 22.0 ],
-					"text" : "metalness 1"
+					"patching_rect" : [ 174.90016371011734, 657.5, 159.322036504745483, 35.0 ],
+					"text" : "environment_texture u026003367"
 				}
 
 			}
@@ -85,7 +85,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 1146.0, 874.851378053426743, 80.0, 36.0 ]
+					"patching_rect" : [ 1152.0, 756.851378053426743, 80.0, 35.0 ]
 				}
 
 			}
@@ -107,7 +107,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 2,
-					"outlettype" : [ "jit_matrix", "" ],
+					"outlettype" : [ "", "" ],
 					"patching_rect" : [ 541.525436639785767, 824.0, 124.0, 22.0 ],
 					"text" : "jit.gl.skybox testWorld"
 				}
@@ -145,7 +145,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "int" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 975.0, 803.862127244472504, 24.0, 24.0 ]
+					"patching_rect" : [ 981.0, 685.862127244472504, 24.0, 24.0 ]
 				}
 
 			}
@@ -156,7 +156,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 3,
 					"outlettype" : [ "jit_matrix", "bang", "" ],
-					"patching_rect" : [ 975.0, 838.474575877189636, 361.0, 22.0 ],
+					"patching_rect" : [ 981.0, 720.474575877189636, 361.0, 22.0 ],
 					"text" : "jit.world testWorld @enable 1 @size 200 100 @fsaa 1 @floating 1"
 				}
 
@@ -217,86 +217,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 719.270709335803986, 791.0, 55.0, 36.0 ],
-					"text" : "u007008903"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-51",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 985.0, 544.813568294048309, 315.0, 22.0 ],
-					"text" : "jit.gl.light @type point @position 2 2 2 @direction -1 0 -35"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"attr" : "spot_falloff",
-					"id" : "obj-61",
-					"maxclass" : "attrui",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 1028.25, 366.813568294048309, 150.0, 22.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"attr" : "spot_angle",
-					"id" : "obj-49",
-					"maxclass" : "attrui",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 1028.25, 404.813568294048309, 150.0, 22.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"attr" : "type",
-					"id" : "obj-34",
-					"maxclass" : "attrui",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 1090.25, 466.813568294048309, 150.0, 22.0 ],
-					"text_width" : 66.0
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"attr" : "direction",
-					"id" : "obj-33",
-					"maxclass" : "attrui",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 1059.75, 436.813568294048309, 224.0, 22.0 ],
-					"text_width" : 77.0
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-43",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 1059.75, 516.813568294048309, 114.0, 22.0 ],
-					"text" : "jit.gl.light @axes 1"
+					"patching_rect" : [ 719.270709335803986, 791.0, 55.0, 35.0 ],
+					"text" : "u026003367"
 				}
 
 			}
@@ -348,7 +270,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "jit_gl_texture", "" ],
-					"patching_rect" : [ 985.0, 630.474593162536621, 271.0, 23.0 ],
+					"patching_rect" : [ 981.0, 635.474593162536621, 271.0, 23.0 ],
 					"text" : "jit.gl.camera @tripod 1 @locklook 1"
 				}
 
@@ -414,7 +336,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 613.734691679477692, 146.0, 115.0, 22.0 ],
+					"patching_rect" : [ 613.734691679477692, 187.0, 115.0, 22.0 ],
 					"text" : "prepend load_folder"
 				}
 
@@ -422,12 +344,13 @@
 , 			{
 				"box" : 				{
 					"id" : "obj-9",
+					"linecount" : 3,
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 638.734691679477692, 122.0, 330.0, 22.0 ],
-					"text" : "\"D:/MyData/My Files/Assets/Textures/PBL/Cobblestone/\""
+					"patching_rect" : [ 638.734691679477692, 122.0, 330.0, 49.0 ],
+					"text" : "\"Macintosh HD:/Users/federicofoderaro/MyData/Assets/Textures/PBL/Cobblestone/\""
 				}
 
 			}
@@ -506,7 +429,7 @@
 					"numoutlets" : 1,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 47.0, 223.0, 700.0, 400.0 ],
+					"patching_rect" : [ 43.0, 226.0, 700.0, 400.0 ],
 					"varname" : "pbl_bpatcher",
 					"viewvisibility" : 1
 				}
@@ -577,6 +500,13 @@
 				"patchline" : 				{
 					"destination" : [ "obj-7", 0 ],
 					"source" : [ "obj-13", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-4", 0 ],
+					"source" : [ "obj-15", 0 ]
 				}
 
 			}
@@ -659,20 +589,6 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-43", 0 ],
-					"source" : [ "obj-33", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-43", 0 ],
-					"source" : [ "obj-34", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-40", 0 ],
 					"source" : [ "obj-38", 0 ]
 				}
@@ -715,13 +631,6 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-43", 0 ],
-					"source" : [ "obj-49", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
 					"source" : [ "obj-5", 0 ]
 				}
@@ -731,13 +640,6 @@
 				"patchline" : 				{
 					"destination" : [ "obj-1", 0 ],
 					"source" : [ "obj-6", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-43", 0 ],
-					"source" : [ "obj-61", 0 ]
 				}
 
 			}
@@ -794,36 +696,42 @@
 		"dependency_cache" : [ 			{
 				"name" : "PBL_Material_Visualizer.js",
 				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/javascript",
+				"patcherrelativepath" : "../javascript",
 				"type" : "TEXT",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "PBL_Parameters.js",
 				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/javascript",
+				"patcherrelativepath" : "../javascript",
 				"type" : "TEXT",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "TexturesLoader.js",
 				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/javascript",
+				"patcherrelativepath" : "../javascript",
 				"type" : "TEXT",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "pbl.material.visualizer.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/patchers",
+				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "pbl.parameters.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/patchers",
+				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "pbl.textures.loader.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/pbr-jitter/patchers",
+				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
@@ -833,13 +741,13 @@
 				"name" : "AudioStatus_Menu",
 				"default" : 				{
 					"bgfillcolor" : 					{
-						"type" : "color",
+						"angle" : 270.0,
+						"autogradient" : 0,
 						"color" : [ 0.294118, 0.313726, 0.337255, 1 ],
 						"color1" : [ 0.454902, 0.462745, 0.482353, 0.0 ],
 						"color2" : [ 0.290196, 0.309804, 0.301961, 1.0 ],
-						"angle" : 270.0,
 						"proportion" : 0.39,
-						"autogradient" : 0
+						"type" : "color"
 					}
 
 				}

@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 964.0, 253.0, 1109.0, 985.0 ],
+		"rect" : [ 444.0, 100.0, 1109.0, 985.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -46,7 +46,7 @@
 					"numinlets" : 0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 75.5, 697.0, 197.0, 22.0 ],
+					"patching_rect" : [ 63.5, 679.0, 197.0, 22.0 ],
 					"text" : "r jit_gl_pbr_messages_receiver_FF"
 				}
 
@@ -75,7 +75,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 466.666666666666686, 10.0, 223.333333333333314, 24.0 ],
+					"patching_rect" : [ 466.666666666666686, 10.0, 223.333333333333314, 23.0 ],
 					"text" : "Shader Parameters",
 					"textcolor" : [ 1.0, 1.0, 1.0, 1.0 ],
 					"textjustification" : 1
@@ -259,7 +259,7 @@
 				"box" : 				{
 					"enable" : 1,
 					"fps" : 30.0,
-					"frozen_box_attributes" : [ "fsaa", "varname" ],
+					"frozen_box_attributes" : [ "varname", "fsaa" ],
 					"fsaa" : 1,
 					"id" : "obj-5",
 					"maxclass" : "jit.pworld",
